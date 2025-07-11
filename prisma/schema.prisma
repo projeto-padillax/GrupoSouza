@@ -6,12 +6,22 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  // output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model ImoveisCorretor{
+  id String @id @default(cuid())
+  status Boolean @default(true)
+  nomeCliente String
+  mensagem String
+  codigosImoveis String[] @default([])
+  corretor Corretor @relation(fields: [corretorId], references: [id])
+  corretorId String
 }
 model Corretor{
   id String @id @default(cuid())
@@ -21,6 +31,7 @@ model Corretor{
   CRECI String @unique
   createdAt DateTime @default(now())
   status Boolean @default(true)
+  imoveis ImoveisCorretor[]
 }
 model User{
   id String @id @default(cuid())
@@ -30,6 +41,7 @@ model User{
   email String 
   login String @unique
   senha String
+  status Boolean @default(true)
 }
 
 model BannerHome{
@@ -123,7 +135,7 @@ model ConfiguracaoPagina{
   telefone String[] @default([])
 }
 
-model formulario{
+model Formulario{
   id String @id @default(cuid())
   tipo tipoFormulario
   nome String
