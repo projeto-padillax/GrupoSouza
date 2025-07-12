@@ -1,339 +1,293 @@
-"use client";
+"use client"
 
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { AdminFooter } from "@/components/admin/footer";
-import { AdminHeader } from "@/components/admin/header";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent } from "@/components/ui/card";
-import { Upload, Image, Link, FileText, Save, X, Sparkles, Globe } from "lucide-react";
+import { useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { ExternalLink, Plus, Edit, Power, PowerOff, Trash2 } from "lucide-react"
 
-const formSchema = z.object({
-  status: z.boolean().default(true),
-  banner: z.string().min(1, { message: "Banner é obrigatório." }),
-  titulo: z.string().min(1, { message: "Título é obrigatório." }),
-  subtitulo: z.string().optional(),
-  link: z.string().url({ message: "Link deve ser uma URL válida." }),
-});
+interface Banner {
+  id: number
+  title: string
+  subtitle: string
+  url: string
+  date: string
+  status: "Ativo" | "Inativo"
+}
 
-export default function AdminPage() {
-  const [previewImage, setPreviewImage] = useState("");
-  const [imageMode, setImageMode] = useState<"upload" | "url">("url");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      status: true,
-      banner: "",
-      titulo: "",
-      subtitulo: "",
-      link: "",
+export default function BannersListPage() {
+  const [banners, setBanners] = useState<Banner[]>([
+    {
+      id: 1,
+      title: "Imóveis à Venda",
+      subtitle: "em Piracicaba",
+      url: "busca/comprar/cidade/piracicaba/1/",
+      date: "04/06/2025 às 11:04:09",
+      status: "Ativo",
     },
-  });
+    {
+      id: 2,
+      title: "Imóveis para Locação",
+      subtitle: "em Piracicaba",
+      url: "busca/alugar/cidade/piracicaba/1/",
+      date: "03/06/2025 às 06:44:02",
+      status: "Ativo",
+    },
+    {
+      id: 3,
+      title: "Imóveis à venda",
+      subtitle: "em Portugal",
+      url: "busca/comprar/pais/portugal/1/",
+      date: "04/06/2025 às 11:06:38",
+      status: "Ativo",
+    },
+  ])
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setPreviewImage(result);
-        form.setValue("banner", result);
-      };
-      reader.readAsDataURL(file);
+  const [selectedBanners, setSelectedBanners] = useState<number[]>([])
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedBanners(banners.map((banner) => banner.id))
+    } else {
+      setSelectedBanners([])
     }
-  };
+  }
 
-  const clearImage = () => {
-    setPreviewImage("");
-    setUploadedFile(null);
-    form.setValue("banner", "");
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+  const handleSelectBanner = (bannerId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedBanners([...selectedBanners, bannerId])
+    } else {
+      setSelectedBanners(selectedBanners.filter((id) => id !== bannerId))
+    }
+  }
 
-  const resetForm = () => {
-    form.reset();
-    clearImage();
-    setImageMode("url");
-  };
+  const handleEdit = () => {
+    if (selectedBanners.length === 0) {
+      alert("Selecione um banner para editar")
+      return
+    }
+    if (selectedBanners.length > 1) {
+      alert("Selecione apenas um banner para editar")
+      return
+    }
+    window.location.href = `/admin/banners/${selectedBanners[0]}/edit`
+  }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Form data:", values);
-    console.log("Uploaded file:", uploadedFile);
-    console.log("Image mode:", imageMode);
-  };
+  const handleActivate = () => {
+    if (selectedBanners.length === 0) {
+      alert("Selecione pelo menos um banner para ativar")
+      return
+    }
+    setBanners(
+      banners.map((banner) => (selectedBanners.includes(banner.id) ? { ...banner, status: "Ativo" as const } : banner)),
+    )
+    setSelectedBanners([])
+    alert(`${selectedBanners.length} banner(s) ativado(s) com sucesso!`)
+  }
+
+  const handleDeactivate = () => {
+    if (selectedBanners.length === 0) {
+      alert("Selecione pelo menos um banner para desativar")
+      return
+    }
+    setBanners(
+      banners.map((banner) =>
+        selectedBanners.includes(banner.id) ? { ...banner, status: "Inativo" as const } : banner,
+      ),
+    )
+    setSelectedBanners([])
+    alert(`${selectedBanners.length} banner(s) desativado(s) com sucesso!`)
+  }
+
+  const handleDelete = () => {
+    if (selectedBanners.length === 0) {
+      alert("Selecione pelo menos um banner para excluir")
+      return
+    }
+    if (confirm(`Tem certeza que deseja excluir ${selectedBanners.length} banner(s)?`)) {
+      setBanners(banners.filter((banner) => !selectedBanners.includes(banner.id)))
+      setSelectedBanners([])
+      alert(`${selectedBanners.length} banner(s) excluído(s) com sucesso!`)
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
-      <AdminHeader />
-      
-      <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-10 text-center">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Configurações do Banner
-            </h1>
-            <p className="mt-3 text-lg text-gray-600">
-              Personalize o banner principal da sua aplicação
-            </p>
+    <div>
+      <main className="py-12">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+          {/* Header Section */}
+          <div className="mb-10">
+            <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+              <h1 className="text-3xl font-semibold text-gray-900 mb-3">Banners na Home</h1>
+              <p className="text-lg text-gray-600">Gerencie os registros no Painel de Controle.</p>
+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-600 text-sm font-medium">Total de Banners</p>
+                      <p className="text-2xl font-semibold text-slate-900 mt-1">{banners.length}</p>
+                    </div>
+                    <div className="bg-slate-100 rounded-lg p-3">
+                      <ExternalLink className="h-5 w-5 text-slate-600" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-emerald-700 text-sm font-medium">Banners Ativos</p>
+                      <p className="text-2xl font-semibold text-emerald-900 mt-1">
+                        {banners.filter((b) => b.status === "Ativo").length}
+                      </p>
+                    </div>
+                    <div className="bg-emerald-100 rounded-lg p-3">
+                      <Power className="h-5 w-5 text-emerald-600" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-700 text-sm font-medium">Selecionados</p>
+                      <p className="text-2xl font-semibold text-blue-900 mt-1">{selectedBanners.length}</p>
+                    </div>
+                    <div className="bg-blue-100 rounded-lg p-3">
+                      <Edit className="h-5 w-5 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardContent className="pt-8">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  
-                  {/* Status */}
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 transition-all hover:shadow-md">
-                          <div className="flex items-center justify-between">
-                            <div className="space-y-1">
-                              <FormLabel className="text-lg font-semibold text-gray-900">
-                                Status do Banner
-                              </FormLabel>
-                              <FormDescription className="text-gray-600">
-                                {field.value ? "Banner ativo e visível" : "Banner desativado"}
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={(checked) => {
-                                  field.onChange(checked);
-                                  console.log("Switch changed to:", checked);
-                                }}
-                                className="data-[state=checked]:bg-blue-600"
-                              />
-                            </FormControl>
-                          </div>
-                          <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20" />
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+          {/* Action Buttons */}
+          <div className="mb-8">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+              <div className="flex flex-wrap gap-3">
+                <Link href="/admin/banners/novo">
+                  <Button
+                    size="lg"
+                    className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-sm transition-colors duration-200"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Banner
+                  </Button>
+                </Link>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleEdit}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Editar
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleActivate}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
+                >
+                  <Power className="h-4 w-4 mr-2" />
+                  Ativar
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleDeactivate}
+                  className="border-amber-300 text-amber-700 hover:bg-amber-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
+                >
+                  <PowerOff className="h-4 w-4 mr-2" />
+                  Desativar
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleDelete}
+                  className="border-red-300 text-red-700 hover:bg-red-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Excluir
+                </Button>
+              </div>
+            </div>
+          </div>
 
-                  {/* Imagem */}
-                  <div className="space-y-4">
-                    <label className="text-base font-medium text-gray-900 flex items-center gap-2">
-                      <Image className="h-4 w-4 text-gray-600" />
-                      Imagem do Banner *
-                    </label>
-                    
-                    {/* Toggle modo */}
-                    <div className="flex items-center justify-center bg-gray-100 rounded-lg p-1 w-fit mx-auto">
-                      <Button
-                        type="button"
-                        variant={imageMode === "upload" ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => {
-                          setImageMode("upload");
-                          clearImage();
-                        }}
+          {/* Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 border-b border-gray-200">
+                  <TableHead className="w-16 py-5">
+                    <Checkbox
+                      checked={selectedBanners.length === banners.length}
+                      onCheckedChange={handleSelectAll}
+                      className="scale-110"
+                    />
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5">Título</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5">Subtítulo</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5">URL</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5">Data</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {banners.map((banner, index) => (
+                  <TableRow
+                    key={banner.id}
+                    className={`hover:bg-gray-50 transition-colors duration-150 border-b border-gray-100 ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                    }`}
+                  >
+                    <TableCell className="py-5">
+                      <Checkbox
+                        checked={selectedBanners.includes(banner.id)}
+                        onCheckedChange={(checked) => handleSelectBanner(banner.id, checked as boolean)}
+                        className="scale-110"
+                      />
+                    </TableCell>
+                    <TableCell className="py-5">
+                      <span className="text-gray-900 font-medium text-base">{banner.title}</span>
+                    </TableCell>
+                    <TableCell className="text-gray-700 text-base py-5">{banner.subtitle}</TableCell>
+                    <TableCell className="py-5">
+                      <a
+                        href={`https://example.com/${banner.url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium text-base bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors duration-200"
                       >
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={imageMode === "url" ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => {
-                          setImageMode("url");
-                          clearImage();
-                        }}
+                        Abrir URL
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm py-5">{banner.date}</TableCell>
+                    <TableCell className="text-center py-5">
+                      <Badge
+                        variant={banner.status === "Ativo" ? "default" : "secondary"}
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${
+                          banner.status === "Ativo"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : "bg-gray-100 text-gray-700 border border-gray-200"
+                        }`}
                       >
-                        <Globe className="h-4 w-4 mr-2" />
-                        URL
-                      </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Preview */}
-                      <div className="relative">
-                        <div className="aspect-video rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 overflow-hidden">
-                          {previewImage ? (
-                            <div className="relative w-full h-full">
-                              <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
-                              <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                className="absolute top-2 right-2 h-6 w-6 p-0"
-                                onClick={clearImage}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                              <Image className="h-12 w-12 mb-2" />
-                              <span className="text-sm">Preview</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Input */}
-                      <div className="flex items-center justify-center">
-                        {imageMode === "upload" ? (
-                          <div className="w-full">
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileUpload}
-                              className="hidden"
-                              id="upload"
-                            />
-                            <label
-                              htmlFor="upload"
-                              className="flex flex-col items-center justify-center w-full min-h-[150px] border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all"
-                            >
-                              <Upload className="h-10 w-10 mb-3 text-gray-400" />
-                              <span className="text-sm font-medium text-gray-700">
-                                Clique para upload
-                              </span>
-                              <p className="text-xs text-gray-500 mt-1">PNG, JPG até 5MB</p>
-                              {uploadedFile && (
-                                <p className="text-xs text-blue-600 mt-2 font-medium">
-                                  {uploadedFile.name}
-                                </p>
-                              )}
-                            </label>
-                          </div>
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name="banner"
-                            render={({ field }) => (
-                              <FormItem className="w-full">
-                                <FormControl>
-                                  <Input
-                                    placeholder="https://exemplo.com/imagem.jpg"
-                                    className="h-12"
-                                    {...field}
-                                    onChange={(e) => {
-                                      field.onChange(e);
-                                      setPreviewImage(e.target.value);
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Título */}
-                  <FormField
-                    control={form.control}
-                    name="titulo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Título Principal *
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Ex: Promoção Especial de Verão"
-                            className="h-12"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Subtítulo */}
-                  <FormField
-                    control={form.control}
-                    name="subtitulo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Subtítulo (Opcional)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Ex: Até 70% de desconto"
-                            className="h-12"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Link */}
-                  <FormField
-                    control={form.control}
-                    name="link"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Link className="h-4 w-4" />
-                          Link de Destino *
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="https://exemplo.com/promocoes"
-                            className="h-12"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Botões */}
-                  <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t">
-                    <Button 
-                      type="submit" 
-                      className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      Salvar
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="flex-1 h-12"
-                      onClick={resetForm}
-                    >
-                      <X className="h-4 w-4 mr-2" />
-                      Cancelar
-                    </Button>
-                  </div>
-
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                        {banner.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </main>
-      
-      <AdminFooter />
     </div>
-  );
+  )
 }
