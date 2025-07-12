@@ -3,11 +3,11 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Plus, Edit, Power, PowerOff, Trash2 } from "lucide-react"
-import { toast } from 'sonner';
+import { Edit } from "lucide-react"
+import { AdminTable } from "@/components/admin/adminTable"
+import { AdminHeader } from "@/components/admin/adminHeader"
+import { ActionButtons } from "@/components/admin/actionButtons"
+import { useAdminListHandlers } from "@/hooks/adminHandlers"
 
 interface Banner {
   id: number
@@ -46,280 +46,70 @@ export default function BannersListPage() {
     },
   ])
 
-  const [selectedBanners, setSelectedBanners] = useState<number[]>([])
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedBanners(banners.map((banner) => banner.id))
-    } else {
-      setSelectedBanners([])
-    }
-  }
-
-  const handleSelectBanner = (bannerId: number, checked: boolean) => {
-    if (checked) {
-      setSelectedBanners([...selectedBanners, bannerId])
-    } else {
-      setSelectedBanners(selectedBanners.filter((id) => id !== bannerId))
-    }
-  }
-
-  const handleEdit = (bannerId?: number) => {
-    const targetId = bannerId || (selectedBanners.length === 1 ? selectedBanners[0] : null)
-
-    if (!targetId) {
-      toast.warning("Nenhum banner selecionado", {
-        description: "Selecione um banner para editar.",
-      })
-      return
-    }
-
-    toast.info( "Redirecionando...", {
-      description: "Abrindo página de edição do banner.",
-    })
-
-    setTimeout(() => {
-      window.location.href = `/admin/banners/${targetId}/edit`
-    }, 1000)
-  }
-
-  const handleDelete = (bannerId?: number) => {
-    const targetIds = bannerId ? [bannerId] : selectedBanners
-
-    if (targetIds.length === 0) {
-      toast.warning( "Nenhum banner selecionado", {
-        description: "Selecione pelo menos um banner para excluir.",
-      })
-      return
-    }
-
-    if (confirm(`Tem certeza que deseja excluir ${targetIds.length} banner(s)?`)) {
-      setBanners(banners.filter((banner) => !targetIds.includes(banner.id)))
-
-      toast.success( "Banners excluídos", {
-        description: `${targetIds.length} banner(s) foram excluídos permanentemente.`,
-      })
-
-      setSelectedBanners([])
-    }
-  }
-
-  const handleActivate = () => {
-    if (selectedBanners.length === 0) {
-      toast.warning("Nenhum banner selecionado", {
-        description: "Selecione pelo menos um banner para ativar.",
-      })
-      return
-    }
-
-    setBanners(
-      banners.map((banner) => (selectedBanners.includes(banner.id) ? { ...banner, status: "Ativo" as const } : banner)),
-    )
-
-    toast.success("Banners ativados com sucesso!", {
-      description: `${selectedBanners.length} banner(s) foram ativados.`,
-    })
-
-    setSelectedBanners([])
-  }
-
-  const handleDeactivate = () => {
-    if (selectedBanners.length === 0) {
-      toast.warning("Nenhum banner selecionado", {
-        description: "Selecione pelo menos um banner para desativar.",
-      })
-      return
-    }
-
-    setBanners(
-      banners.map((banner) =>
-        selectedBanners.includes(banner.id) ? { ...banner, status: "Inativo" as const } : banner,
-      ),
-    )
-
-    toast.warning("Banners desativados", {
-      description: `${selectedBanners.length} banner(s) foram desativados.`,
-    })
-
-    setSelectedBanners([])
-  }
-
+  const {
+    selectedIds,
+    handleSelectAll,
+    handleSelectOne,
+    handleEdit,
+    handleDelete,
+    handleActivate,
+    handleDeactivate
+  } = useAdminListHandlers({
+    items: banners,
+    setItems: setBanners,
+    itemNameSingular: "banner",
+    routeBase: "/admin/banners"
+  })
 
   return (
     <div>
       <main className="py-12">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           {/* Header Section */}
-          <div className="mb-10">
-            <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
-              <h1 className="text-3xl font-semibold text-gray-900 mb-3">Banners na Home</h1>
-              <p className="text-lg text-gray-600">Gerencie os registros no Painel de Controle.</p>
-
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-slate-600 text-sm font-medium">Total de Banners</p>
-                      <p className="text-2xl font-semibold text-slate-900 mt-1">{banners.length}</p>
-                    </div>
-                    <div className="bg-slate-100 rounded-lg p-3">
-                      <ExternalLink className="h-5 w-5 text-slate-600" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-emerald-700 text-sm font-medium">Banners Ativos</p>
-                      <p className="text-2xl font-semibold text-emerald-900 mt-1">
-                        {banners.filter((b) => b.status === "Ativo").length}
-                      </p>
-                    </div>
-                    <div className="bg-emerald-100 rounded-lg p-3">
-                      <Power className="h-5 w-5 text-emerald-600" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-700 text-sm font-medium">Selecionados</p>
-                      <p className="text-2xl font-semibold text-blue-900 mt-1">{selectedBanners.length}</p>
-                    </div>
-                    <div className="bg-blue-100 rounded-lg p-3">
-                      <Edit className="h-5 w-5 text-blue-600" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <AdminHeader
+            title="Banners na Home"
+            subtitle="Gerencie os registros no Painel de Controle."
+            total={banners.length}
+            ativos={banners.filter((b) => b.status === "Ativo").length}
+            selecionados={selectedIds.length}
+          />
           {/* Action Buttons */}
-          <div className="mb-8">
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-              <div className="flex flex-wrap gap-3">
-                <Link href="/admin/banners/novo">
-                  <Button
-                    size="lg"
-                    className="bg-blue-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-sm transition-colors duration-200"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Banner
-                  </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={handleActivate}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
-                >
-                  <Power className="h-4 w-4 mr-2" />
-                  Ativar
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={handleDeactivate}
-                  className="border-amber-300 text-amber-700 hover:bg-amber-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
-                >
-                  <PowerOff className="h-4 w-4 mr-2" />
-                  Desativar
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => handleDelete()}
-                  className="border-red-300 text-red-700 hover:bg-red-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Excluir
-                </Button>
-              </div>
-            </div>
-          </div>
-
+          <ActionButtons
+            addButtonText="Novo Banner"
+            addButtonHref="/admin/banners/novo"
+            onAtivar={handleActivate}
+            onDesativar={handleDeactivate}
+            onExcluir={() => handleDelete()}
+          />
           {/* Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50 border-b border-gray-200">
-                  <TableHead className="w-16 py-5 text-center">
-                    <Checkbox
-                      checked={selectedBanners.length === banners.length}
-                      onCheckedChange={handleSelectAll}
-                      className="scale-110 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                    />
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5">Título</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5">Subtítulo</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5">URL</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5">Data</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">Status</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {banners.map((banner, index) => (
-                  <TableRow
-                    key={banner.id}
-                    className={`hover:bg-gray-50 transition-colors duration-150 border-b border-gray-100 ${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
-                    }`}
-                  >
-                    <TableCell className="py-5 text-center">
-                      <Checkbox
-                        checked={selectedBanners.includes(banner.id)}
-                        onCheckedChange={(checked) => handleSelectBanner(banner.id, checked as boolean)}
-                        className="scale-110 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                      />
-                    </TableCell>
-                    <TableCell className="py-5">
-                      <span className="text-gray-900 font-medium text-base">{banner.title}</span>
-                    </TableCell>
-                    <TableCell className="text-gray-700 text-base py-5">{banner.subtitle}</TableCell>
-                    <TableCell className="py-5">
-                      <a
-                        href={`https://example.com/${banner.url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium text-base bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors duration-200"
-                      >
-                        Abrir URL
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    </TableCell>
-                    <TableCell className="text-gray-600 text-sm py-5">{banner.date}</TableCell>
-                    <TableCell className="text-center py-5">
-                      <Badge
-                        variant={banner.status === "Ativo" ? "default" : "secondary"}
-                        className={`px-3 py-1 text-xs font-medium rounded-full ${
-                          banner.status === "Ativo"
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                            : "bg-gray-100 text-gray-700 border border-gray-200"
-                        }`}
-                      >
-                        {banner.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Link href={`/admin/banners/${banner.id}/edit`}>
-                        <Button variant="outline" size="sm" className="bg-transparent">
-                          <Edit className="h-4 w-4 mr-1" />
-                          Editar
-                        </Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <AdminTable
+            data={banners}
+            selectedIds={selectedIds}
+            onSelect={handleSelectOne}
+            onSelectAll={handleSelectAll}
+            columns={[
+              {
+                header: "Subtítulo",
+                accessor: "subtitle",
+                cell: (item) => <span className="text-gray-700 text-base">{item.subtitle}</span>
+              },
+              {
+                header: "Data",
+                accessor: "date",
+                cell: (item) => <span className="text-gray-600 text-sm">{item.date}</span>
+              }
+            ]}
+            renderActions={(item) => (
+              <Link href={`/admin/banners/${item.id}/edit`}>
+                <Button variant="outline" size="sm" className="bg-transparent">
+                  <Edit className="h-4 w-4 mr-1" />
+                  Editar
+                </Button>
+              </Link>
+            )}
+          />
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }
