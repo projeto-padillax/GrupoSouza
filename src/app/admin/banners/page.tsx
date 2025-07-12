@@ -173,7 +173,7 @@ export default function BannersListPage() {
                 <Link href="/admin/banners/novo">
                   <Button
                     size="lg"
-                    className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-sm transition-colors duration-200"
+                    className="bg-blue-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-sm transition-colors duration-200"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Novo Banner
@@ -224,11 +224,11 @@ export default function BannersListPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50 border-b border-gray-200">
-                  <TableHead className="w-16 py-5">
+                  <TableHead className="w-16 py-5 text-center">
                     <Checkbox
                       checked={selectedBanners.length === banners.length}
                       onCheckedChange={handleSelectAll}
-                      className="scale-110"
+                      className="scale-110 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                     />
                   </TableHead>
                   <TableHead className="font-semibold text-gray-900 text-base py-5">Título</TableHead>
@@ -246,11 +246,11 @@ export default function BannersListPage() {
                       index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
                     }`}
                   >
-                    <TableCell className="py-5">
+                    <TableCell className="py-5 text-center">
                       <Checkbox
                         checked={selectedBanners.includes(banner.id)}
                         onCheckedChange={(checked) => handleSelectBanner(banner.id, checked as boolean)}
-                        className="scale-110"
+                        className="scale-110 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                       />
                     </TableCell>
                     <TableCell className="py-5">
