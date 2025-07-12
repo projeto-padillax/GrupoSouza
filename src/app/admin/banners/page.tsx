@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink, Plus, Edit, Power, PowerOff, Trash2 } from "lucide-react"
+import { toast } from 'sonner';
 
 interface Banner {
   id: number
@@ -63,55 +64,86 @@ export default function BannersListPage() {
     }
   }
 
-  const handleEdit = () => {
-    if (selectedBanners.length === 0) {
-      alert("Selecione um banner para editar")
+  const handleEdit = (bannerId?: number) => {
+    const targetId = bannerId || (selectedBanners.length === 1 ? selectedBanners[0] : null)
+
+    if (!targetId) {
+      toast.warning("Nenhum banner selecionado", {
+        description: "Selecione um banner para editar.",
+      })
       return
     }
-    if (selectedBanners.length > 1) {
-      alert("Selecione apenas um banner para editar")
+
+    toast.info( "Redirecionando...", {
+      description: "Abrindo página de edição do banner.",
+    })
+
+    setTimeout(() => {
+      window.location.href = `/admin/banners/${targetId}/edit`
+    }, 1000)
+  }
+
+  const handleDelete = (bannerId?: number) => {
+    const targetIds = bannerId ? [bannerId] : selectedBanners
+
+    if (targetIds.length === 0) {
+      toast.warning( "Nenhum banner selecionado", {
+        description: "Selecione pelo menos um banner para excluir.",
+      })
       return
     }
-    window.location.href = `/admin/banners/${selectedBanners[0]}/edit`
+
+    if (confirm(`Tem certeza que deseja excluir ${targetIds.length} banner(s)?`)) {
+      setBanners(banners.filter((banner) => !targetIds.includes(banner.id)))
+
+      toast.success( "Banners excluídos", {
+        description: `${targetIds.length} banner(s) foram excluídos permanentemente.`,
+      })
+
+      setSelectedBanners([])
+    }
   }
 
   const handleActivate = () => {
     if (selectedBanners.length === 0) {
-      alert("Selecione pelo menos um banner para ativar")
+      toast.warning("Nenhum banner selecionado", {
+        description: "Selecione pelo menos um banner para ativar.",
+      })
       return
     }
+
     setBanners(
       banners.map((banner) => (selectedBanners.includes(banner.id) ? { ...banner, status: "Ativo" as const } : banner)),
     )
+
+    toast.success("Banners ativados com sucesso!", {
+      description: `${selectedBanners.length} banner(s) foram ativados.`,
+    })
+
     setSelectedBanners([])
-    alert(`${selectedBanners.length} banner(s) ativado(s) com sucesso!`)
   }
 
   const handleDeactivate = () => {
     if (selectedBanners.length === 0) {
-      alert("Selecione pelo menos um banner para desativar")
+      toast.warning("Nenhum banner selecionado", {
+        description: "Selecione pelo menos um banner para desativar.",
+      })
       return
     }
+
     setBanners(
       banners.map((banner) =>
         selectedBanners.includes(banner.id) ? { ...banner, status: "Inativo" as const } : banner,
       ),
     )
+
+    toast.warning("Banners desativados", {
+      description: `${selectedBanners.length} banner(s) foram desativados.`,
+    })
+
     setSelectedBanners([])
-    alert(`${selectedBanners.length} banner(s) desativado(s) com sucesso!`)
   }
 
-  const handleDelete = () => {
-    if (selectedBanners.length === 0) {
-      alert("Selecione pelo menos um banner para excluir")
-      return
-    }
-    if (confirm(`Tem certeza que deseja excluir ${selectedBanners.length} banner(s)?`)) {
-      setBanners(banners.filter((banner) => !selectedBanners.includes(banner.id)))
-      setSelectedBanners([])
-      alert(`${selectedBanners.length} banner(s) excluído(s) com sucesso!`)
-    }
-  }
 
   return (
     <div>
@@ -182,15 +214,6 @@ export default function BannersListPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={handleEdit}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Editar
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
                   onClick={handleActivate}
                   className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
                 >
@@ -209,7 +232,7 @@ export default function BannersListPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={handleDelete}
+                  onClick={() => handleDelete()}
                   className="border-red-300 text-red-700 hover:bg-red-50 px-6 py-3 rounded-lg transition-colors duration-200 bg-transparent"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
@@ -236,6 +259,7 @@ export default function BannersListPage() {
                   <TableHead className="font-semibold text-gray-900 text-base py-5">URL</TableHead>
                   <TableHead className="font-semibold text-gray-900 text-base py-5">Data</TableHead>
                   <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">Status</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -280,6 +304,14 @@ export default function BannersListPage() {
                       >
                         {banner.status}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Link href={`/admin/banners/${banner.id}/edit`}>
+                        <Button variant="outline" size="sm" className="bg-transparent">
+                          <Edit className="h-4 w-4 mr-1" />
+                          Editar
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}

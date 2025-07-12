@@ -1,4 +1,3 @@
-import { AdminDashboard } from "@/components/admin/dashboard";
 import { AdminFooter } from "@/components/admin/footer";
 import { AdminHeader } from "@/components/admin/header";
 import React from "react";

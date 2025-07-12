@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Save, ArrowLeft, ImageIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   status: z.enum(["ativo", "inativo"]),
@@ -55,7 +56,7 @@ export default function NovoBannerPage() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Dados do formulário:", values);
-    alert("Banner criado com sucesso!");
+    toast.success("Banner criado com sucesso!");
     window.location.href = "/admin/banners";
   };
 
@@ -105,8 +106,8 @@ export default function NovoBannerPage() {
                       </FormItem>
                     )}
                   />
-                  {/* Banner */}
                   
+                  {/* Banner */}
                   <FormField
                     control={form.control}
                     name="banner"

@@ -1,150 +1,253 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Save, ArrowLeft, ImageIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent } from "@/components/ui/card"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+// 1. Schema
+const formSchema = z.object({
+  status: z.enum(["ativo", "inativo"]),
+  banner: z.any().optional(),
+  title: z.string().min(1, "Título é obrigatório."),
+  subtitle: z.string().min(1, "Subtítulo é obrigatório."),
+  url: z.string().url("URL inválida (deve começar com https://)."),
+});
 
 export default function EditBannerPage({ params }: { params: { id: string } }) {
-  const [bannerData, setBannerData] = useState({
-    status: "ativo",
-    currentImage: "/hero-house.jpg",
-    newImage: null as File | null,
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string>("/hero-house.jpg");
+
+  // 2. Simule os dados que viriam da API
+  const bannerFromAPI = {
+    status: "ativo" as "ativo" | "inativo",
     title: "Imóveis à Venda",
     subtitle: "em Piracicaba",
-    url: "busca/comprar/cidade/piracicaba/1/",
-  })
+    url: "https://exemplo.com/busca/comprar/cidade/piracicaba/1",
+  };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setBannerData({ ...bannerData, newImage: file })
-    }
-  }
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      ...bannerFromAPI,
+      banner: undefined,
+    },
+  });
 
-  const handleSave = () => {
-    alert("Banner salvo com sucesso!")
-    window.location.href = "/admin/banners"
-  }
+  const handlePreview = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setPreviewImage(result);
+    };
+    reader.readAsDataURL(file);
+  };
 
-  const handleBack = () => {
-    window.location.href = "/admin/banners"
-  }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    toast.success("Banner editado com sucesso!");
+    console.log("Editando banner:", values);
+    setTimeout(() => router.push("/admin/banners"), 1500);
+  };
 
   return (
-    <div>
-      <main className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-2xl font-medium text-gray-700 mb-6">Edição de Banner na Home</h1>
+    <main className="py-12">
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-2">Editar Banner na Home</h1>
+            <p className="text-lg text-gray-600">Edite o banner selecionado</p>
+          </div>
+        </div>
 
-            <Card className="border border-gray-300 rounded-lg">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="border border-gray-200 rounded-xl shadow-sm bg-white">
               <CardContent className="p-8 space-y-8">
                 {/* Status */}
-                <div className="flex items-center gap-8">
-                  <Label className="text-gray-700 font-medium w-24">Status:</Label>
-                  <RadioGroup
-                    value={bannerData.status}
-                    onValueChange={(value) => setBannerData({ ...bannerData, status: value })}
-                    className="flex gap-6"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="ativo" id="ativo" />
-                      <Label htmlFor="ativo" className="text-gray-700">
-                        Ativo
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="inativo" id="inativo" />
-                      <Label htmlFor="inativo" className="text-gray-700">
-                        Inativo
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-8">
+                      <Label className="text-gray-900 font-medium text-lg w-28">Status:</Label>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="flex gap-6"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="ativo" id="ativo" className="scale-110" />
+                            <Label htmlFor="ativo" className="text-gray-700 text-base font-medium">
+                              Ativo
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="inativo" id="inativo" className="scale-110" />
+                            <Label htmlFor="inativo" className="text-gray-700 text-base font-medium">
+                              Inativo
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {/* Banner Atual */}
                 <div className="flex items-start gap-8">
                   <Label className="text-gray-700 font-medium w-24 mt-2">Banner Atual:</Label>
-                  <div>
-                    <img
-                      src={bannerData.currentImage || "/placeholder.svg"}
-                      alt="Banner atual"
-                      className="w-80 h-48 object-cover rounded border"
-                    />
-                  </div>
+                  <img
+                    src={previewImage}
+                    alt="Banner atual"
+                    className="w-80 h-48 object-cover rounded border"
+                  />
                 </div>
 
                 {/* Novo Banner */}
-                <div className="flex items-start gap-8">
-                  <Label className="text-gray-700 font-medium w-24 mt-2">Novo Banner:</Label>
-                  <div className="flex-1">
-                    <Input type="file" accept="image/jpeg,image/png" onChange={handleFileChange} className="mb-2" />
-                    <p className="text-sm text-blue-600">(JPG/PNG 1920x750px)</p>
-                  </div>
-                </div>
-
-                <hr className="border-gray-300" />
+                <FormField
+                  control={form.control}
+                  name="banner"
+                  render={({ field }) => (
+                    <FormItem className="flex items-start gap-8">
+                      <Label className="text-gray-900 font-medium text-lg w-28 mt-2">Banner:</Label>
+                      <div className="flex-1">
+                        <FormControl>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              accept="image/jpeg,image/png"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  field.onChange(file);
+                                  handlePreview(file);
+                                  toast.info("Arquivo selecionado", {
+                                    description: `Banner "${file.name}" selecionado.`,
+                                  });
+                                }
+                              }}
+                              className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                            />
+                            <ImageIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                          </div>
+                        </FormControl>
+                        <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
                 {/* Título */}
-                <div className="flex items-center gap-8">
-                  <Label className="text-gray-700 font-medium w-24">Título:</Label>
-                  <Input
-                    value={bannerData.title}
-                    onChange={(e) => setBannerData({ ...bannerData, title: e.target.value })}
-                    className="flex-1"
-                    placeholder="Digite o título do banner"
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-8">
+                      <Label className="text-gray-900 font-medium text-lg w-28">Título:</Label>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="flex-1 text-base py-3 px-4 border border-gray-300 rounded-lg"
+                          placeholder="Digite o título do banner"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {/* Subtítulo */}
-                <div className="flex items-center gap-8">
-                  <Label className="text-gray-700 font-medium w-24">Subtítulo:</Label>
-                  <Input
-                    value={bannerData.subtitle}
-                    onChange={(e) => setBannerData({ ...bannerData, subtitle: e.target.value })}
-                    className="flex-1"
-                    placeholder="Digite o subtítulo do banner"
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="subtitle"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-8">
+                      <Label className="text-gray-900 font-medium text-lg w-28">Subtítulo:</Label>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="flex-1 text-base py-3 px-4 border border-gray-300 rounded-lg"
+                          placeholder="Digite o subtítulo do banner"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {/* URL */}
-                <div className="flex items-start gap-8">
-                  <div className="w-24">
-                    <Label className="text-gray-700 font-medium">URL:</Label>
-                    <p className="text-xs text-blue-600 mt-1">(com https://)</p>
-                  </div>
-                  <Textarea
-                    value={bannerData.url}
-                    onChange={(e) => setBannerData({ ...bannerData, url: e.target.value })}
-                    className="flex-1 min-h-32"
-                    placeholder="Digite a URL de destino do banner"
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <FormItem className="flex items-start gap-8">
+                      <div className="w-28">
+                        <Label className="text-gray-900 font-medium text-lg">URL:</Label>
+                        <p className="text-blue-600 font-medium mt-1 text-sm">(com https://)</p>
+                      </div>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          className="flex-1 min-h-32 text-base py-3 px-4 border border-gray-300 rounded-lg resize-none"
+                          placeholder="Digite a URL de destino do banner"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardContent>
             </Card>
 
-            {/* Botões */}
-            <Card className="border border-gray-300 rounded-lg mt-4">
+            {/* Action Buttons */}
+            <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
               <CardContent className="p-6">
                 <div className="flex gap-4">
-                  <Button onClick={handleSave} className="bg-gray-800 hover:bg-gray-900 text-white px-8">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 text-base font-medium rounded-lg shadow-sm"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
                     Salvar
                   </Button>
-                  <Button variant="outline" onClick={handleBack} className="px-8 bg-gray-300 hover:bg-gray-400">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    onClick={() => router.push("/admin/banners")}
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
                     Voltar
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </main>
-    </div>
-  )
+          </form>
+        </Form>
+      </div>
+    </main>
+  );
 }
