@@ -14,7 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ImoveisCorretor{
+model ImoveisCorretor {
   id String @id @default(cuid())
   status Boolean @default(true)
   nomeCliente String
@@ -23,7 +23,7 @@ model ImoveisCorretor{
   corretor Corretor @relation(fields: [corretorId], references: [id])
   corretorId String
 }
-model Corretor{
+model Corretor {
   id String @id @default(cuid())
   name String
   email String
@@ -33,7 +33,7 @@ model Corretor{
   status Boolean @default(true)
   imoveis ImoveisCorretor[]
 }
-model User{
+model User {
   id String @id @default(cuid())
   name String
   perfil PerfilUsuario
@@ -44,17 +44,17 @@ model User{
   status Boolean @default(true)
 }
 
-model BannerHome{
+model Banners {
   id Int @id @default(autoincrement())
   titulo String
-  subTitulo String?
-  imagemUrl String
-  link String
+  subtitulo String
+  imagem String
+  url String
   createdAt DateTime @default(now())
   status Boolean @default(true)
 }
 
-model SlidesHome{
+model Slides {
   id Int @id @default(autoincrement())
   titulo String
   imagemUrl String
@@ -64,7 +64,7 @@ model SlidesHome{
   ordem Int
 }
 
-model ChamadasHome{
+model Chamadas {
   id Int @id @default(autoincrement())
   titulo String
   subTitulo String?
@@ -75,14 +75,14 @@ model ChamadasHome{
   ordem Int
 }
 
-model MaisAcessador{
+model MaisAcessado {
   id Int @id @default(autoincrement())
   titulo String
   link String
   status Boolean @default(true)
 }
 
-model PaginasConteudo{
+model PaginasConteudo {
   id Int @id @default(autoincrement())
   titulo String?
   ordem Int?
@@ -93,7 +93,7 @@ model PaginasConteudo{
   createdAt DateTime @default(now())
 }
 
-model LinkConteudo{
+model LinkConteudo {
   id Int @id @default(autoincrement())
   titulo String
   link String
@@ -102,7 +102,7 @@ model LinkConteudo{
   createdAt DateTime @default(now())
 }
 
-model Secao{
+model Secao {
   id Int @id @default(autoincrement())
   tituloMetadado String?
   isOnSiteMap Boolean @default(true)
@@ -114,7 +114,7 @@ model Secao{
   imagemUrl String?
 }
 
-model ConfiguracaoPagina{
+model ConfiguracaoPagina {
   id Int @id @default(autoincrement())
   nomeSite String?
   CRECI String? @unique
@@ -135,7 +135,7 @@ model ConfiguracaoPagina{
   telefone String[] @default([])
 }
 
-model Formulario{
+model Formulario {
   id String @id @default(cuid())
   tipo tipoFormulario
   nome String
@@ -153,7 +153,7 @@ model Formulario{
   assunto String?
 }
 
-enum tipoFormulario{
+enum tipoFormulario {
   WHATSAPP
   FINANCIAMENTO
   INFORMACOES
@@ -164,12 +164,12 @@ enum tipoFormulario{
   ADMCONDOMINIO
 }
 
-enum InteresseFormulario{
+enum InteresseFormulario {
   VENDA
   LOCAÇÃO
 }
 
-enum OrigemFormulario{
+enum OrigemFormulario {
   ORGANICO
   YOUTUBE
   META
@@ -179,7 +179,7 @@ enum OrigemFormulario{
   GOOGLE
 }
 
-enum PerfilUsuario{
+enum PerfilUsuario {
   ADMIN
   CORRETOR
   SUPERADMIN
