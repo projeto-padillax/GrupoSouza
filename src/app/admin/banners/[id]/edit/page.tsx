@@ -3,7 +3,7 @@ import { findBanner } from "@/lib/actions/banner";
 import { notFound } from "next/navigation";
 
 export default async function EditBannerPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const { id } = await params;
   const banner = await findBanner(parseInt(id));
 
   if (!banner) return notFound();

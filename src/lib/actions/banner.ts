@@ -9,7 +9,7 @@ export async function getAllBanners(): Promise<BannerORM[]> {
 }
 
 export async function findBanner(id: number): Promise<BannerORM | null> {
-    return await prisma.banners.findUnique({ where: { id }})
+    return await prisma.banners.findUnique({ where: { id } })
 }
 
 export async function createBanner({ titulo, subtitulo, imagem, url, status }: BannerInput) {
@@ -22,6 +22,17 @@ export async function createBanner({ titulo, subtitulo, imagem, url, status }: B
             imagem,
             status
         },
+    });
+}
+
+export async function updateBanner(banner: Omit<BannerORM, "createdAt">) {
+    const { id, ...bannerWithoutId } = banner;
+
+    console.log(bannerWithoutId)
+
+    await prisma.banners.update({
+        where: { id },
+        data: {...bannerWithoutId, imagem: "teste" },
     });
 }
 
@@ -39,6 +50,6 @@ export async function deactivateBanners(ids: number[]) {
 
 export async function deleteBanners(ids: number[]) {
     await Promise.all(
-        ids.map(id => prisma.banners.deleteMany({ where: { id }}))
+        ids.map(id => prisma.banners.deleteMany({ where: { id } }))
     );
 }

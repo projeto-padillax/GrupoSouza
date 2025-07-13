@@ -3,8 +3,7 @@
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import { Save, ArrowLeft } from "lucide-react";
@@ -12,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Banners as BannerORM } from "@prisma/client";
 import { FormFields } from "./formFields";
+import { updateBanner } from "@/lib/actions/banner";
 
 const bannerSchema = z.object({
   status: z.boolean(),
@@ -32,13 +32,13 @@ type BannerFormProps = {
 };
 
 export default function EditBannerClient({ banner }: BannerFormProps) {
-  const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string>(banner.imagem || "/hero-house.jpg");
 
   const form = useForm<BannerInput>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
       ...banner,
+      imagem: "placeholder.jpg", // TEMPORARY: replace later with actual upload
     },
   });
 
@@ -51,10 +51,18 @@ export default function EditBannerClient({ banner }: BannerFormProps) {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = (values: BannerInput) => {
-    toast.success("Banner editado com sucesso!");
-    console.log("Editando banner:", values);
-    setTimeout(() => router.push("/admin/banners"), 1500);
+  const onSubmit = async (values: BannerInput) => {
+    try {
+      await updateBanner({
+        ...values,
+        id: banner.id,
+      });
+      toast.success("Banner editado com sucesso!");
+      // window.location.href = "/admin/banners";
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao editar banner, tente novamente mais tarde!");
+    }
   };
 
   return (
