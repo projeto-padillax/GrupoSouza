@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
 import React from "react"
-import { Banners } from "@prisma/client"
+import { Banners, Slides } from "@prisma/client"
 
 interface Column<T> {
     header: string
@@ -30,7 +30,7 @@ interface AdminTableProps<T> {
     showStatus?: boolean
 }
 
-export function AdminTable<T extends Banners>(
+export function AdminTable<T extends Banners | Slides>(
     props: AdminTableProps<T>
 ) {
     const {
