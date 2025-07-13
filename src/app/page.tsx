@@ -11,8 +11,6 @@ export default async function Home() {
     id: doc.id
   }))
 
-  console.log(testList)
-
   return (
     <main >
       <ul>

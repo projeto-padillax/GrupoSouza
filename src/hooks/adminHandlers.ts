@@ -1,5 +1,6 @@
 "use client"
 
+import { activateBanners, deactivateBanners, deleteBanners } from "@/lib/actions/banner";
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -48,7 +49,7 @@ export function useAdminListHandlers<T extends { id: number; status: boolean }>(
     }, 1000)
   }
 
-  const handleDelete = (itemId?: number) => {
+  const handleDelete = async (itemId?: number) => {
     const targetIds = itemId ? [itemId] : selectedIds
 
     if (targetIds.length === 0) {
@@ -58,18 +59,24 @@ export function useAdminListHandlers<T extends { id: number; status: boolean }>(
       return
     }
 
-    if (confirm(`Tem certeza que deseja excluir ${targetIds.length} ${itemNameSingular}(s)?`)) {
+    try {
+      await deleteBanners(selectedIds)
+
+      if (confirm(`Tem certeza que deseja excluir ${targetIds.length} ${itemNameSingular}(s)?`)) {
       setItems(items.filter((item) => !targetIds.includes(item.id)))
 
       toast.success(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) excluídos`, {
         description: `${targetIds.length} ${itemNameSingular}(s) foram excluídos permanentemente.`,
       })
-
       setSelectedIds([])
+    }
+    } catch(error) {
+      console.error(error)
+      toast.error("Erro ao deletar banners.")
     }
   }
 
-  const handleActivate = () => {
+  const handleActivate = async () => {
     if (selectedIds.length === 0) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione pelo menos um ${itemNameSingular} para ativar.`,
@@ -77,20 +84,24 @@ export function useAdminListHandlers<T extends { id: number; status: boolean }>(
       return
     }
 
-    setItems(
-      items.map((item) =>
-        selectedIds.includes(item.id) ? { ...item } : item
+    try {
+      await activateBanners(selectedIds)
+      setItems(
+        items.map((item) =>
+          selectedIds.includes(item.id) ? { ...item, status: true } : item
+        )
       )
-    )
-
-    toast.success(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) ativados com sucesso!`, {
-      description: `${selectedIds.length} ${itemNameSingular}(s) foram ativados.`,
-    })
-
-    setSelectedIds([])
+      toast.success(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) ativados com sucesso!`, {
+        description: `${selectedIds.length} ${itemNameSingular}(s) foram ativados.`,
+      })
+      setSelectedIds([])
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao ativar banners.")
+    }
   }
 
-  const handleDeactivate = () => {
+  const handleDeactivate = async () => {
     if (selectedIds.length === 0) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione pelo menos um ${itemNameSingular} para desativar.`,
@@ -98,17 +109,22 @@ export function useAdminListHandlers<T extends { id: number; status: boolean }>(
       return
     }
 
-    setItems(
-      items.map((item) =>
-        selectedIds.includes(item.id) ? { ...item } : item
+    try {
+      await deactivateBanners(selectedIds)
+      setItems(
+        items.map((item) =>
+          selectedIds.includes(item.id) ? { ...item, status: false } : item
+        )
       )
-    )
+      toast.warning(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) desativados`, {
+        description: `${selectedIds.length} ${itemNameSingular}(s) foram desativados.`,
+      })
 
-    toast.warning(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) desativados`, {
-      description: `${selectedIds.length} ${itemNameSingular}(s) foram desativados.`,
-    })
-
-    setSelectedIds([])
+      setSelectedIds([])
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao ativar banners.")
+    }
   }
 
   return {

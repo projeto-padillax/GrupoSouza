@@ -16,7 +16,6 @@ interface Props {
 
 export default function BannersListClient({ initialBanners }: Props) {
   const [banners, setBanners] = useState(initialBanners)
-  console.log(banners)
 
   const {
     selectedIds,
@@ -44,7 +43,6 @@ export default function BannersListClient({ initialBanners }: Props) {
             ativos={banners.filter((banner: BannerORM) => banner.status === true).length}
             selecionados={selectedIds.length}
           />
-          Action Buttons 
           <ActionButtons
             addButtonText="Novo Banner"
             addButtonHref="/admin/banners/novo"
