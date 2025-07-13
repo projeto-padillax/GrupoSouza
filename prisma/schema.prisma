@@ -57,8 +57,8 @@ model Banners {
 model Slides {
   id Int @id @default(autoincrement())
   titulo String
-  imagemUrl String
-  link String
+  imagem String
+  url String
   createdAt DateTime @default(now())
   status Boolean @default(true)
   ordem Int
@@ -68,8 +68,8 @@ model Chamadas {
   id Int @id @default(autoincrement())
   titulo String
   subTitulo String?
-  imagemUrl String?
-  link String?
+  imagem String?
+  url String?
   createdAt DateTime @default(now())
   status Boolean @default(true)
   ordem Int
@@ -78,7 +78,7 @@ model Chamadas {
 model MaisAcessado {
   id Int @id @default(autoincrement())
   titulo String
-  link String
+  url String
   status Boolean @default(true)
 }
 
@@ -87,7 +87,7 @@ model PaginasConteudo {
   titulo String?
   ordem Int?
   conteudo String?
-  imagemUrl String?
+  imagem String?
   isOnMenu Boolean @default(true)
   status Boolean @default(true)
   createdAt DateTime @default(now())
@@ -96,7 +96,7 @@ model PaginasConteudo {
 model LinkConteudo {
   id Int @id @default(autoincrement())
   titulo String
-  link String
+  url String
   ordem Int
   status Boolean @default(true)
   createdAt DateTime @default(now())
@@ -111,7 +111,7 @@ model Secao {
   palavrasChaves String ?
   tituloH1 String?
   textoPagina String?
-  imagemUrl String?
+  imagem String?
 }
 
 model ConfiguracaoPagina {

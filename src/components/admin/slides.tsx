@@ -7,16 +7,16 @@ import { AdminTable } from "@/components/admin/adminTable"
 import { AdminHeader } from "@/components/admin/adminHeader"
 import { useAdminListHandlers } from "@/hooks/adminHandlers"
 import { useState } from "react"
-import { Banners as BannerORM } from "@prisma/client";
+import { Slides as SlideORM } from "@prisma/client";
 import { ActionButtons } from "./actionButtons"
 
 interface Props {
-  initialBanners: BannerORM[]
+  initialSlides: SlideORM[]
 }
 
-export default function BannersListClient({ initialBanners }: Props) {
-  const [banners, setBanners] = useState(initialBanners)
-  console.log(banners)
+export default function SlidesListClient({ initialSlides }: Props) {
+  const [slides, setSlides] = useState(initialSlides)
+  console.log(slides)
 
   const {
     selectedIds,
@@ -26,10 +26,10 @@ export default function BannersListClient({ initialBanners }: Props) {
     handleActivate,
     handleDeactivate
   } = useAdminListHandlers({
-    items: banners,
-    setItems: setBanners,
-    itemNameSingular: "banner",
-    routeBase: "/admin/banners"
+    items: slides,
+    setItems: setSlides,
+    itemNameSingular: "slide",
+    routeBase: "/admin/slides"
   })
 
   return (
@@ -38,15 +38,15 @@ export default function BannersListClient({ initialBanners }: Props) {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           {/* Header Section */}
           <AdminHeader
-            title="Banners na Home"
+            title="Slides na Home"
             subtitle="Gerencie os registros no Painel de Controle."
-            total={banners.length}
-            ativos={banners.filter((banner: BannerORM) => banner.status === true).length}
+            total={slides.length}
+            ativos={slides.filter((slide: SlideORM) => slide.status === true).length}
             selecionados={selectedIds.length}
           />
           <ActionButtons
-            addButtonText="Novo Banner"
-            addButtonHref="/admin/banners/novo"
+            addButtonText="Novo Slide"
+            addButtonHref="/admin/slides/novo"
             onAtivar={handleActivate}
             onDesativar={handleDeactivate}
             onExcluir={() => handleDelete()}
@@ -54,15 +54,15 @@ export default function BannersListClient({ initialBanners }: Props) {
          
           {/* Table */}
           <AdminTable
-            data={banners}
+            data={slides}
             selectedIds={selectedIds}
             onSelect={handleSelectOne}
             onSelectAll={handleSelectAll}
             columns={[
               {
-                header: "Subtítulo",
-                accessor: "subtitle",
-                cell: (item) => <span className="text-gray-700 text-base">{item.subtitulo}</span>
+                header: "Ordem",
+                accessor: "ordem",
+                cell: (item) => <span className="text-gray-700 text-base">{item.ordem}</span>
               },
               {
                 header: "Data",
@@ -71,7 +71,7 @@ export default function BannersListClient({ initialBanners }: Props) {
               }
             ]}
             renderActions={(item) => (
-              <Link href={`/admin/banners/${item.id}/edit`}>
+              <Link href={`/admin/slides/${item.id}/edit`}>
                 <Button variant="outline" size="sm" className="bg-transparent">
                   <Edit className="h-4 w-4 mr-1" />
                   Editar
