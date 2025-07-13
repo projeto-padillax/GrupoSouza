@@ -8,6 +8,10 @@ export async function getAllBanners(): Promise<BannerORM[]> {
     return await prisma.banners.findMany()
 }
 
+export async function findBanner(id: number): Promise<BannerORM | null> {
+    return await prisma.banners.findUnique({ where: { id }})
+}
+
 export async function createBanner({ titulo, subtitulo, imagem, url, status }: BannerInput) {
     imagem = 'teste'
     await prisma.banners.create({
