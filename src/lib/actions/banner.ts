@@ -20,7 +20,7 @@ export async function createBanner({ titulo, subtitulo, imagem, url, status }: B
             subtitulo,
             url,
             imagem,
-            status: status === "ativo"
+            status
         },
     });
 }

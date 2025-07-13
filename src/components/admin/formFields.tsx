@@ -52,8 +52,8 @@ export function FormFields({
             <Label className="text-gray-900 font-medium text-lg w-28">Status:</Label>
             <FormControl>
               <RadioGroup
-                value={field.value}
-                onValueChange={field.onChange}
+                value={field.value ? "ativo" : "inativo"}
+                onValueChange={(value) => field.onChange(value === "ativo")}
                 className="flex gap-6"
               >
                 <div className="flex items-center space-x-2">

@@ -1,29 +1,21 @@
 "use client"
 
+import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
 } from "@/components/ui/form";
-import { Save, ArrowLeft, ImageIcon } from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { createBanner } from "@/lib/actions/banner";
 import { FormFields } from "@/components/admin/formFields";
 
 const bannerSchema = z.object({
-  status: z.enum(["ativo", "inativo"]),
+  status: z.boolean(),
   imagem: z
     .any()
     .refine((file) => file instanceof File, {
@@ -37,13 +29,12 @@ const bannerSchema = z.object({
 export type BannerInput = z.infer<typeof bannerSchema>;
 
 export default function NovoBannerPage() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string>("");
 
   const form = useForm<BannerInput>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
-      status: "ativo",
+      status: true,
       imagem: undefined,
       titulo: "",
       subtitulo: "",

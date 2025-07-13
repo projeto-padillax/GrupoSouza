@@ -94,7 +94,7 @@ export function AdminTable<T extends Banners | Slides>(
                             </TableCell>
                             <TableCell className="py-5">
                                 <a
-                                    href={`https://example.com/${item.url}`}
+                                    href={item.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium text-base bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors duration-200"
