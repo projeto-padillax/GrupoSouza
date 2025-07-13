@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
 import React from "react"
+import { Banners } from "@prisma/client"
 
 interface Column<T> {
     header: string
@@ -29,7 +30,7 @@ interface AdminTableProps<T> {
     showStatus?: boolean
 }
 
-export function AdminTable<T extends { id: number; title: string; url: string; status: string }>(
+export function AdminTable<T extends Banners>(
     props: AdminTableProps<T>
 ) {
     const {
@@ -89,7 +90,7 @@ export function AdminTable<T extends { id: number; title: string; url: string; s
                                 />
                             </TableCell>
                             <TableCell className="py-5">
-                                <span className="text-gray-900 font-medium text-base">{item.title}</span>
+                                <span className="text-gray-900 font-medium text-base">{item.titulo}</span>
                             </TableCell>
                             <TableCell className="py-5">
                                 <a
@@ -110,13 +111,13 @@ export function AdminTable<T extends { id: number; title: string; url: string; s
                             {showStatus && (
                                 <TableCell className="text-center py-5">
                                     <Badge
-                                        variant={item.status === "Ativo" ? "default" : "secondary"}
-                                        className={`px-3 py-1 text-xs font-medium rounded-full ${item.status === "Ativo"
+                                        variant={item.status ? "default" : "secondary"}
+                                        className={`px-3 py-1 text-xs font-medium rounded-full ${item.status
                                                 ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
                                                 : "bg-gray-100 text-gray-700 border border-gray-200"
                                             }`}
                                     >
-                                        {item.status}
+                                        {item.status ? "Ativo" : "Inativo"}
                                     </Badge>
                                 </TableCell>
                             )}

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function useAdminListHandlers<T extends { id: number; status: string }>(params: {
+export function useAdminListHandlers<T extends { id: number; status: boolean }>(params: {
   items: T[]
   setItems: React.Dispatch<React.SetStateAction<T[]>>
   itemNameSingular: string
@@ -79,7 +79,7 @@ export function useAdminListHandlers<T extends { id: number; status: string }>(p
 
     setItems(
       items.map((item) =>
-        selectedIds.includes(item.id) ? { ...item, status: "Ativo" as string } : item
+        selectedIds.includes(item.id) ? { ...item } : item
       )
     )
 
@@ -100,7 +100,7 @@ export function useAdminListHandlers<T extends { id: number; status: string }>(p
 
     setItems(
       items.map((item) =>
-        selectedIds.includes(item.id) ? { ...item, status: "Inativo" as string } : item
+        selectedIds.includes(item.id) ? { ...item } : item
       )
     )
 
