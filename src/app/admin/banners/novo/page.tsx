@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,10 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Save, ArrowLeft, ImageIcon } from "lucide-react";
-import { createBanner } from "@/lib/actions/banner";
 import { toast } from "sonner";
+import { createBanner } from "@/lib/actions/banner";
 
-const formSchema = z.object({
+const bannerSchema = z.object({
   status: z.enum(["ativo", "inativo"]),
   imagem: z
     .any()
@@ -33,12 +33,14 @@ const formSchema = z.object({
   url: z.string().url("URL inválida (deve começar com https://)."),
 });
 
+export type BannerInput = z.infer<typeof bannerSchema>;
+
 export default function NovoBannerPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string>("");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<BannerInput>({
+    resolver: zodResolver(bannerSchema),
     defaultValues: {
       status: "ativo",
       imagem: undefined,
@@ -57,22 +59,13 @@ export default function NovoBannerPage() {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = {
-      titulo: values.titulo,
-      subtitulo: values.subtitulo,
-      url: values.url,
-      status: values.status === "ativo",
-      imagem: "placeholder.jpg",
-    };
-
+  const onSubmit = async (values: BannerInput) => {
     try {
-      console.log("Dados do formulário:", values);
-      await createBanner(formData);
+      await createBanner(values);
+      window.location.href = "/admin/banners";
       toast.success("Banner criado com sucesso!");
-    } catch (error) {
-      console.log(error)
-      console.error("Erro ao salvar banner:", error);
+    } catch(error) {
+      console.error(error)
       toast.error("Erro ao salvar banner.");
     }
   };
