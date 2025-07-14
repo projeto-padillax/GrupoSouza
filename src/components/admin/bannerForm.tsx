@@ -11,15 +11,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Banners as BannerORM } from "@prisma/client";
 import { FormFields } from "./formFields";
-import { updateBanner } from "@/lib/actions/banner";
+import { createBanner, updateBanner } from "@/lib/actions/banner";
+import { useRouter } from "next/navigation";
 
 const bannerSchema = z.object({
   status: z.boolean(),
-  imagem: z
-    .any()
-    .refine((file) => file instanceof File, {
-      message: "O banner é obrigatório.",
-    }),
+  imagem: z.any().refine((file) => file instanceof File, {
+    message: "O banner é obrigatório.",
+  }),
   titulo: z.string().min(1, "Título é obrigatório."),
   subtitulo: z.string().min(1, "Subtítulo é obrigatório."),
   url: z.string().url("URL inválida (deve começar com https://)."),
@@ -28,37 +27,47 @@ const bannerSchema = z.object({
 export type BannerInput = z.infer<typeof bannerSchema>;
 
 type BannerFormProps = {
-  banner: BannerORM
+  banner?: BannerORM;
 };
 
-export default function EditBannerClient({ banner }: BannerFormProps) {
-  const [previewImage, setPreviewImage] = useState<string>(banner.imagem || "/hero-house.jpg");
+export default function BannerForm({ banner }: BannerFormProps) {
+  const router = useRouter();
+  const [previewImage, setPreviewImage] = useState<string>(
+    banner?.imagem || ""
+  );
 
   const form = useForm<BannerInput>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
-      ...banner,
-      imagem: "placeholder.jpg", // TEMPORARY: replace later with actual upload
+      status: banner?.status || true,
+      imagem: "",
+      titulo: banner?.titulo || "",
+      subtitulo: banner?.subtitulo || "",
+      url: banner?.url || "",
     },
   });
 
-  const handlePreview = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setPreviewImage(result);
-    };
-    reader.readAsDataURL(file);
-  };
+  // const handlePreview = (file: File) => {
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => {
+  //     const result = e.target?.result as string;
+  //     setPreviewImage(result);
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
   const onSubmit = async (values: BannerInput) => {
     try {
-      await updateBanner({
-        ...values,
-        id: banner.id,
-      });
+      if (!banner) {
+        await createBanner(values);
+      } else {
+        await updateBanner({
+          ...values,
+          id: banner!.id,
+        });
+      }
+      router.push("/admin/banners");
       toast.success("Banner editado com sucesso!");
-      // window.location.href = "/admin/banners";
     } catch (error) {
       console.error(error);
       toast.error("Erro ao editar banner, tente novamente mais tarde!");
@@ -72,7 +81,7 @@ export default function EditBannerClient({ banner }: BannerFormProps) {
           <CardContent className="p-8 space-y-8">
             <FormFields
               form={form}
-              previewImage={previewImage}
+              previewImage={previewImage ?? ""}
               setPreviewImage={setPreviewImage}
               showSubtitulo
               showImagem
@@ -91,9 +100,7 @@ export default function EditBannerClient({ banner }: BannerFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() =>
-                  (window.location.href = "/admin/banners")
-                }
+                onClick={() => router.replace("/admin/banners")}
                 size="lg"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />

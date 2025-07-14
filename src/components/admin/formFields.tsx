@@ -87,7 +87,14 @@ export function FormFields({
                 <Input
                   type="number"
                   placeholder="Digite a ordem"
-                  {...field}
+                  value={field.value?.toString() ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const numValue = value === '' ? undefined : Number(value);
+                    field.onChange(numValue);
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
                 />
               </FormControl>
               <FormMessage />

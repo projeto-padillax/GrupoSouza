@@ -9,6 +9,7 @@ import { useAdminListHandlers } from "@/hooks/adminHandlers"
 import { useState } from "react"
 import { Slides as SlideORM } from "@prisma/client";
 import { ActionButtons } from "./actionButtons"
+import { activateSlides, deactivateSlides, deleteSlides } from "@/lib/actions/slide"
 
 interface Props {
   initialSlides: SlideORM[]
@@ -16,7 +17,6 @@ interface Props {
 
 export default function SlidesListClient({ initialSlides }: Props) {
   const [slides, setSlides] = useState(initialSlides)
-  console.log(slides)
 
   const {
     selectedIds,
@@ -29,7 +29,12 @@ export default function SlidesListClient({ initialSlides }: Props) {
     items: slides,
     setItems: setSlides,
     itemNameSingular: "slide",
-    routeBase: "/admin/slides"
+    routeBase: "/admin/slides",
+    actions:{
+      activate: activateSlides,
+      deactivate: deactivateSlides,
+      delete: deleteSlides
+    }
   })
 
   return (

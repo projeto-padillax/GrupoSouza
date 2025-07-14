@@ -1,139 +1,177 @@
-"use client"
+"use client";
 
-import { activateBanners, deactivateBanners, deleteBanners } from "@/lib/actions/banner";
-import { useState } from "react"
-import { toast } from "sonner"
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export function useAdminListHandlers<T extends { id: number; status: boolean }>(params: {
-  items: T[]
-  setItems: React.Dispatch<React.SetStateAction<T[]>>
-  itemNameSingular: string
-  routeBase: string
+export function useAdminListHandlers<
+  T extends { id: number; status: boolean }
+>(params: {
+  items: T[];
+  setItems: React.Dispatch<React.SetStateAction<T[]>>;
+  itemNameSingular: string;
+  routeBase: string;
+  actions: {
+    activate: (ids: number[]) => Promise<void>;
+    deactivate: (ids: number[]) => Promise<void>;
+    delete: (ids: number[]) => Promise<void>;
+  };
 }) {
-  const { items, setItems, itemNameSingular, routeBase } = params
-
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const router = useRouter();
+  const { items, setItems, itemNameSingular, routeBase, actions } = params;
+  const [isPending, startTransition] = useTransition();
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(items.map((item) => item.id))
+      setSelectedIds(items.map((item) => item.id));
     } else {
-      setSelectedIds([])
+      setSelectedIds([]);
     }
-  }
+  };
 
   const handleSelectOne = (itemId: number, checked: boolean) => {
     if (checked) {
-      setSelectedIds((prev) => [...prev, itemId])
+      setSelectedIds((prev) => [...prev, itemId]);
     } else {
-      setSelectedIds((prev) => prev.filter((id) => id !== itemId))
+      setSelectedIds((prev) => prev.filter((id) => id !== itemId));
     }
-  }
+  };
 
   const handleEdit = (itemId?: number) => {
-    const targetId = itemId || (selectedIds.length === 1 ? selectedIds[0] : null)
+    const targetId =
+      itemId || (selectedIds.length === 1 ? selectedIds[0] : null);
 
     if (!targetId) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione um ${itemNameSingular} para editar.`,
-      })
-      return
+      });
+      return;
     }
 
     toast.info("Redirecionando...", {
       description: `Abrindo página de edição do ${itemNameSingular}.`,
-    })
+    });
 
-    setTimeout(() => {
-      window.location.href = `${routeBase}/${targetId}/edit`
-    }, 1000)
-  }
+    router.push(`${routeBase}/${targetId}/edit`);
+  };
 
   const handleDelete = async (itemId?: number) => {
-    const targetIds = itemId ? [itemId] : selectedIds
+    const targetIds = itemId ? [itemId] : selectedIds;
 
     if (targetIds.length === 0) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione pelo menos um ${itemNameSingular} para excluir.`,
-      })
-      return
+      });
+      return;
     }
 
-    try {
-      await deleteBanners(selectedIds)
+    const confirmed = confirm(
+      `Tem certeza que deseja excluir ${targetIds.length} ${itemNameSingular}(s)?`
+    );
 
-      if (confirm(`Tem certeza que deseja excluir ${targetIds.length} ${itemNameSingular}(s)?`)) {
-      setItems(items.filter((item) => !targetIds.includes(item.id)))
+    if (!confirmed) {
+      toast.info("Exclusão cancelada.");
+      return;
+    }
 
-      toast.success(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) excluídos`, {
-        description: `${targetIds.length} ${itemNameSingular}(s) foram excluídos permanentemente.`,
-      })
-      setSelectedIds([])
-    }
-    } catch(error) {
-      console.error(error)
-      toast.error("Erro ao deletar banners.")
-    }
-  }
+    startTransition(async () => {
+      try {
+        await actions.delete(targetIds)
+
+        setItems(items.filter((item) => !targetIds.includes(item.id)));
+
+        toast.success(
+          `${
+            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          }(s) excluídos`,
+          {
+            description: `${targetIds.length} ${itemNameSingular}(s) foram excluídos permanentemente.`,
+          }
+        );
+        setSelectedIds([]);
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao deletar banners.");
+      }
+    });
+  };
 
   const handleActivate = async () => {
     if (selectedIds.length === 0) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione pelo menos um ${itemNameSingular} para ativar.`,
-      })
-      return
+      });
+      return;
     }
+    startTransition(async () => {
+      try {
+        await actions.activate(selectedIds)
+        setItems(
+          items.map((item) =>
+            selectedIds.includes(item.id) ? { ...item, status: true } : item
+          )
+        );
+        toast.success(
+          `${
+            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          }(s) ativados com sucesso!`,
+          {
+            description: `${selectedIds.length} ${itemNameSingular}(s) foram ativados.`,
+          }
+        );
+        setSelectedIds([]);
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao ativar banners.");
+      }
+    });
+  };
 
-    try {
-      await activateBanners(selectedIds)
-      setItems(
-        items.map((item) =>
-          selectedIds.includes(item.id) ? { ...item, status: true } : item
-        )
-      )
-      toast.success(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) ativados com sucesso!`, {
-        description: `${selectedIds.length} ${itemNameSingular}(s) foram ativados.`,
-      })
-      setSelectedIds([])
-    } catch (error) {
-      console.error(error)
-      toast.error("Erro ao ativar banners.")
-    }
-  }
-
-  const handleDeactivate = async () => {
+  const handleDeactivate = () => {
     if (selectedIds.length === 0) {
       toast.warning(`Nenhum ${itemNameSingular} selecionado`, {
         description: `Selecione pelo menos um ${itemNameSingular} para desativar.`,
-      })
-      return
+      });
+      return;
     }
 
-    try {
-      await deactivateBanners(selectedIds)
-      setItems(
-        items.map((item) =>
-          selectedIds.includes(item.id) ? { ...item, status: false } : item
-        )
-      )
-      toast.warning(`${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)}(s) desativados`, {
-        description: `${selectedIds.length} ${itemNameSingular}(s) foram desativados.`,
-      })
+    startTransition(async () => {
+      try {
+        // Usando a função de deactivate passada como parâmetro
+        await actions.deactivate(selectedIds);
 
-      setSelectedIds([])
-    } catch (error) {
-      console.error(error)
-      toast.error("Erro ao ativar banners.")
-    }
-  }
+        setItems(
+          items.map((item) =>
+            selectedIds.includes(item.id) ? { ...item, status: false } : item
+          )
+        );
+
+        toast.warning(
+          `${
+            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          }(s) desativado(s)`,
+          {
+            description: `${selectedIds.length} ${itemNameSingular}(s) foram desativados.`,
+          }
+        );
+
+        setSelectedIds([]);
+      } catch (error) {
+        console.error(error);
+        toast.error(`Erro ao desativar ${itemNameSingular}(s).`);
+      }
+    });
+  };
 
   return {
     selectedIds,
+    isPending,
     handleSelectAll,
     handleSelectOne,
     handleEdit,
     handleDelete,
     handleActivate,
-    handleDeactivate
-  }
+    handleDeactivate,
+  };
 }

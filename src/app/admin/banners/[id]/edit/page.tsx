@@ -1,6 +1,6 @@
-import EditBannerClient from "@/components/admin/editbanner";
-import { findBanner } from "@/lib/actions/banner";
 import { notFound } from "next/navigation";
+import { findBanner } from "@/lib/actions/banner";
+import BannerForm from "@/components/admin/bannerForm";
 
 export default async function EditBannerPage({ params }: { params: { id: string } }) {
   const { id } = await params;
@@ -18,7 +18,7 @@ export default async function EditBannerPage({ params }: { params: { id: string 
           </div>
         </div>
 
-        <EditBannerClient banner={banner} />
+        <BannerForm banner={banner} />
       </div>
     </div>
   );
