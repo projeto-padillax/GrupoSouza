@@ -12,8 +12,20 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
+import Image from "next/image"
+import { FieldValues, Path, UseFormReturn } from "react-hook-form/dist/types"
 
-export function FormFields({
+type FormFieldsProps<T extends FieldValues> = {
+  form: UseFormReturn<T>;
+  previewImage: string;
+  setPreviewImage: (url: string) => void;
+  showOrdenacao?: boolean;
+  showImagem?: boolean;
+  imagemLabel?: string;
+  showSubtitulo?: boolean;
+};
+
+export function FormFields<T extends FieldValues>({
   form,
   previewImage,
   setPreviewImage,
@@ -21,15 +33,7 @@ export function FormFields({
   showImagem = false,
   imagemLabel = "Imagem",
   showSubtitulo = false,
-}: {
-  form: any
-  previewImage: string
-  setPreviewImage: (url: string) => void
-  showOrdenacao?: boolean
-  showImagem?: boolean
-  imagemLabel?: string
-  showSubtitulo?: boolean
-}) {
+}: FormFieldsProps<T>) {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const handlePreview = (file: File) => {
@@ -46,7 +50,7 @@ export function FormFields({
       {/* Status - SEMPRE */}
       <FormField
         control={form.control}
-        name="status"
+        name={"status" as Path<T>}
         render={({ field }) => (
           <FormItem className="flex items-center gap-8">
             <Label className="text-gray-900 font-medium text-lg w-28">Status:</Label>
@@ -79,7 +83,7 @@ export function FormFields({
       {showOrdenacao && (
         <FormField
           control={form.control}
-          name="ordem"
+          name={"ordem" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Ordem:</Label>
@@ -107,7 +111,7 @@ export function FormFields({
       {showImagem && (
         <FormField
           control={form.control}
-          name="imagem"
+          name={"imagem" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-start gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28 mt-2">{imagemLabel}:</Label>
@@ -133,7 +137,7 @@ export function FormFields({
                 </FormControl>
                 <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
                 {previewImage && (
-                  <img
+                  <Image
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"
@@ -149,7 +153,7 @@ export function FormFields({
       {/* Título - SEMPRE */}
       <FormField
         control={form.control}
-        name="titulo"
+        name={"titulo" as Path<T>}
         render={({ field }) => (
           <FormItem className="flex items-center gap-8">
             <Label className="text-gray-900 font-medium text-lg w-28">Título:</Label>
@@ -168,7 +172,7 @@ export function FormFields({
       {showSubtitulo && (
         <FormField
           control={form.control}
-          name="subtitulo"
+          name={"subitulo" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Subtítulo:</Label>
@@ -187,7 +191,7 @@ export function FormFields({
       {/* URL - SEMPRE */}
       <FormField
         control={form.control}
-        name="url"
+        name={"url" as Path<T>}
         render={({ field }) => (
           <FormItem className="flex items-start gap-8">
             <div className="w-28">

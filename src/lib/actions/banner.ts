@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { prisma } from "../neon/db";
 import { Banners as BannerORM } from "@prisma/client";
-import { BannerInput } from "@/app/admin/banners/novo/page";
+import { BannerInput } from "@/components/admin/bannerForm";
 
 // Schema para validação no servidor
 const bannerServerSchema = z.object({
@@ -47,6 +47,7 @@ export async function createBanner({
   status,
 }: BannerInput) {
   // Validar dados de entrada
+  console.log(imagem)
   const validatedData = bannerServerSchema.parse({
     titulo,
     subtitulo,
