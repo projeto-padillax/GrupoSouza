@@ -1,22 +1,30 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { LogOut, User } from "lucide-react"
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { LogOut, User } from "lucide-react";
+import Link from "next/link";
 
 export function AdminHeader() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("admin_token")
-    router.push("/admin/login")
-  }
+    localStorage.removeItem("admin_token");
+    router.push("/admin/login");
+  };
 
   return (
     <header className="bg-gray-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <h1 className="text-xl font-semibold">Painel de Controle</h1>
+          <Link href="/admin">
+            <h1
+              className="text-xl font-semibold cursor-pointer"
+              onClick={() => router.push("/admin")}
+            >
+              Painel de Controle
+            </h1>
+          </Link>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -36,5 +44,5 @@ export function AdminHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }
