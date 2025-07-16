@@ -66,6 +66,7 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
             status: chamada?.status ?? true,
             imagem: "",
             titulo: chamada?.titulo ?? "",
+            subtitulo: chamada?.subtitulo ?? "",
             ordem: chamada?.ordem ?? 1,
             url: chamada?.url ?? "",
         },
