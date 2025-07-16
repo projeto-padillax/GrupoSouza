@@ -137,7 +137,7 @@ export function FormFields<T extends FieldValues>({
                 </FormControl>
                 <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
                 {previewImage && (
-                  <Image
+                  <img
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"

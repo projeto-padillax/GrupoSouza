@@ -67,12 +67,12 @@ model Slides {
 model Chamadas {
   id Int @id @default(autoincrement())
   titulo String
-  subTitulo String?
-  imagem String?
-  url String?
-  createdAt DateTime @default(now())
+  subtitulo String
+  imagem String
+  url String
   status Boolean @default(true)
   ordem Int
+  createdAt DateTime @default(now())
 }
 
 model MaisAcessado {
@@ -166,7 +166,7 @@ enum tipoFormulario {
 
 enum InteresseFormulario {
   VENDA
-  LOCAÇÃO
+  LOCACAO
 }
 
 enum OrigemFormulario {
