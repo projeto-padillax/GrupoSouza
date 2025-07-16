@@ -27,7 +27,7 @@ export function AdminHeader({
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-600 text-sm font-medium">Total de Slides</p>
+                <p className="text-slate-600 text-sm font-medium">Total de {title}</p>
                 <p className="text-2xl font-semibold text-slate-900 mt-1">{total}</p>
               </div>
               <div className="bg-slate-100 rounded-lg p-3">
@@ -39,7 +39,7 @@ export function AdminHeader({
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-emerald-700 text-sm font-medium">Slides Ativos</p>
+                <p className="text-emerald-700 text-sm font-medium">{title} Ativos</p>
                 <p className="text-2xl font-semibold text-emerald-900 mt-1">{ativos}</p>
               </div>
               <div className="bg-emerald-100 rounded-lg p-3">
