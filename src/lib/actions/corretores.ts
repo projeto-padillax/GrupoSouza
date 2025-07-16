@@ -3,9 +3,8 @@
 import { z } from "zod";
 import { prisma } from "../neon/db";
 import { Corretor as CorretorORM } from "@prisma/client";
-// import { CorretorInput } from "@/app/admin/corretores/novo/page";
+import { CorretorInput } from "@/components/admin/corretorForm";
 
-// Schema para validação no servidor
 const corretoreserverSchema = z.object({
     status: z.boolean(),
     name: z
@@ -39,39 +38,31 @@ export async function findCorretor(id: string): Promise<CorretorORM | null> {
     return await prisma.corretor.findUnique({ where: { id: validId } });
 }
 
-// export async function createCorretor({
-//     name,
-//     email,
-//     telefone,
-//     CRECI,
-//     status,
-//     imagem
-// }: CorretorInput) {
-//     // Validar dados de entrada
-//     const validatedData = corretoreserverSchema.parse({
-//         name,
-//         email,
-//         telefone,
-//         CRECI,
-//         status,
-//         imagem: "teste", // Seu código atual
-//     });
-//         subtitulo,
-//         url,
-//         status,
-//         imagem: "teste", // Seu código atual
-//     });
+export async function createCorretor({
+    name,
+    email,
+    telefone,
+    CRECI,
+    status,
+}: CorretorInput) {
+    const validatedData = corretoreserverSchema.parse({
+        name,
+        email,
+        telefone,
+        CRECI,
+        status,
+    });
 
-//     await prisma.corretores.create({
-//         data: {
-//             titulo: validatedData.titulo,
-//             subtitulo: validatedData.subtitulo,
-//             url: validatedData.url,
-//             imagem: validatedData.imagem,
-//             status: validatedData.status,
-//         },
-//     });
-// }
+    await prisma.corretor.create({
+        data: {
+            name: validatedData.name,
+            email: validatedData.email,
+            telefone: validatedData.telefone,
+            CRECI: validatedData.CRECI,
+            status: validatedData.status,
+        },
+    });
+}
 
 export async function updateCorretor(corretor: Omit<CorretorORM, "createdAt">) {
     const { id, ...corretorWithoutId } = corretor;
@@ -82,9 +73,7 @@ export async function updateCorretor(corretor: Omit<CorretorORM, "createdAt">) {
     // Validar dados do corretor
     const validatedData = corretoreserverSchema.parse({
         ...corretorWithoutId,
-        imagem: "teste", // Seu código atual
     });
-
 
     await prisma.corretor.update({
         where: { id: validId },
