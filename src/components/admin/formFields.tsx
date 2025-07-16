@@ -88,18 +88,17 @@ export function FormFields<T extends FieldValues>({
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Ordem:</Label>
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Digite a ordem"
-                  value={field.value?.toString() ?? ''}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const numValue = value === '' ? undefined : Number(value);
-                    field.onChange(numValue);
-                  }}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                />
+                   <select
+                    value={field.value?.toString() ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-[80px]"
+                  >
+                    {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -137,7 +136,7 @@ export function FormFields<T extends FieldValues>({
                 </FormControl>
                 <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
                 {previewImage && (
-                  <Image
+                  <img
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"
@@ -172,7 +171,7 @@ export function FormFields<T extends FieldValues>({
       {showSubtitulo && (
         <FormField
           control={form.control}
-          name={"subitulo" as Path<T>}
+          name={"subtitulo" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Subtítulo:</Label>

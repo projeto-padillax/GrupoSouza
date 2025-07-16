@@ -10,20 +10,24 @@ import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
 import { Save, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { createSlide, updateSlide } from "@/lib/actions/slide";
+import { createChamada, updateChamada } from "@/lib/actions/chamada";
 import { FormFields } from "@/components/admin/formFields";
-import { Slides as SlideORM } from "@prisma/client";
+import { Chamadas as ChamadaORM } from "@prisma/client";
 
 // Schema unificado
-const slideSchema = z.object({
+const chamadaSchema = z.object({
     status: z.boolean(),
     imagem: z.any().refine((file) => file instanceof File, {
-        message: "O slide é obrigatório.",
+        message: "A foto é obrigatória.",
     }),
     titulo: z
         .string()
         .min(1, "Título é obrigatório.")
         .max(100, "Título deve ter no máximo 100 caracteres."),
+    subtitulo: z
+        .string()
+        .min(1, "Subtítulo é obrigatório.")
+        .max(200, "Subtítulo deve ter no máximo 200 caracteres."),
     ordem: z.number().int().positive().max(999),
     url: z
         .string()
@@ -35,35 +39,36 @@ const slideSchema = z.object({
         ),
 });
 
-export type SlideInput = z.infer<typeof slideSchema>;
+export type ChamadaInput = z.infer<typeof chamadaSchema>;
 
-interface SlideFormProps {
-    slide?: SlideORM; // ✅ Opcional - se não existir, é criação
+interface ChamadaFormProps {
+    chamada?: ChamadaORM; // Opcional - se nao existir, eh criacao
     mode: "create" | "edit";
 }
 
-export default function SlideForm({ slide, mode }: SlideFormProps) {
+export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [previewImage, setPreviewImage] = useState<string>(
-        slide?.imagem || ""
+        chamada?.imagem || ""
     );
     console.log(previewImage)
 
-    const isEditing = mode === "edit" && slide;
-    const pageTitle = isEditing ? "Editar Slide" : "Novo Slide na Home";
-    const pageSubtitle = isEditing 
-        ? `Edite as informações do slide #${slide.ordem}` 
-        : "Crie um novo slide para a página inicial";
+    const isEditing = mode === "edit" && chamada;
+    const pageTitle = isEditing ? "Editar Chamada" : "Nova Chamada na Home";
+    const pageSubtitle = isEditing
+        ? `Edite as informações da chamada #${chamada.ordem}`
+        : "Crie uma nova chamada para a página inicial";
 
-    const form = useForm<SlideInput>({
-        resolver: zodResolver(slideSchema),
+    const form = useForm<ChamadaInput>({
+        resolver: zodResolver(chamadaSchema),
         defaultValues: {
-            status: slide?.status ?? true,
+            status: chamada?.status ?? true,
             imagem: "",
-            titulo: slide?.titulo ?? "",
-            ordem: slide?.ordem ?? 1,
-            url: slide?.url ?? "",
+            titulo: chamada?.titulo ?? "",
+            subtitulo: chamada?.subtitulo ?? "",
+            ordem: chamada?.ordem ?? 1,
+            url: chamada?.url ?? "",
         },
     });
 
@@ -78,39 +83,39 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
     //     setPreviewImage(objectUrl);
     // };
 
-    const onSubmit = (values: SlideInput) => {
+    const onSubmit = (values: ChamadaInput) => {
         startTransition(async () => {
             try {
                 if (isEditing) {
-                    await updateSlide({
+                    await updateChamada({
                         ...values,
-                        id: slide.id,
+                        id: chamada.id,
                         // Se não há nova imagem, manter a atual
                         imagem: '',
                     });
-                    toast.success("Slide editado com sucesso!");
+                    toast.success("Chamada editada com sucesso!");
                 } else {
-                    const slideData = {
+                    const chamadaData = {
                         ...values,
                         imagem: '' // Temporário até implementar upload real
                     };
-                    await createSlide(slideData);
-                    toast.success("Slide criado com sucesso!");
+                    await createChamada(chamadaData);
+                    toast.success("Chamada criada com sucesso!");
                 }
-                
-                router.push("/admin/slides");
+
+                router.push("/admin/chamadas");
             } catch (error) {
                 console.error(error);
-                const errorMessage = error instanceof Error 
-                    ? error.message 
-                    : `Erro ao ${isEditing ? 'editar' : 'criar'} slide`;
+                const errorMessage = error instanceof Error
+                    ? error.message
+                    : `Erro ao ${isEditing ? 'editar' : 'criar'} chamada`;
                 toast.error(errorMessage);
             }
         });
     };
 
     const handleBack = () => {
-        router.replace("/admin/slides");
+        router.replace("/admin/chamadas");
     };
 
     return (
@@ -136,18 +141,19 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                                     previewImage={""}
                                     setPreviewImage={setPreviewImage}
                                     showOrdenacao
+                                    showSubtitulo
                                     showImagem
-                                    imagemLabel="Slide"
+                                    imagemLabel="Foto"
                                 />
                             </CardContent>
                         </Card>
-                        
+
                         {/* Buttons */}
                         <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
                             <CardContent className="p-6">
                                 <div className="flex gap-4">
-                                    <Button 
-                                        type="submit" 
+                                    <Button
+                                        type="submit"
                                         size="lg"
                                         disabled={isPending}
                                     >
