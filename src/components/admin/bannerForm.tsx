@@ -16,9 +16,7 @@ import { useRouter } from "next/navigation";
 
 const bannerSchema = z.object({
   status: z.boolean(),
-  imagem: z.any().refine((file) => file instanceof File, {
-    message: "O banner é obrigatório.",
-  }),
+  imagem: z.string().url("O banner é obrigatório."),
   titulo: z.string().min(1, "Título é obrigatório."),
   subtitulo: z.string().min(1, "Subtítulo é obrigatório."),
   url: z.string().url("URL inválida (deve começar com https://)."),
@@ -39,11 +37,11 @@ export default function BannerForm({ banner }: BannerFormProps) {
   const form = useForm<BannerInput>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
-      status: banner?.status || true,
-      imagem: "",
-      titulo: banner?.titulo || "",
-      subtitulo: banner?.subtitulo || "",
-      url: banner?.url || "",
+      status: banner?.status ?? true,
+      imagem: banner?.imagem ?? "",
+      titulo: banner?.titulo ?? "",
+      subtitulo: banner?.subtitulo ?? "",
+      url: banner?.url ?? "",
     },
   });
 

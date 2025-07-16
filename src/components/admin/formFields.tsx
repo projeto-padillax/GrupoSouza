@@ -12,8 +12,8 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import Image from "next/image"
 import { FieldValues, Path, UseFormReturn } from "react-hook-form/dist/types"
+import { CldUploadWidget } from "next-cloudinary"
 
 type FormFieldsProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -88,16 +88,16 @@ export function FormFields<T extends FieldValues>({
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Ordem:</Label>
               <FormControl>
-                   <select
-                    value={field.value?.toString() ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    className="border border-gray-300 rounded-md px-3 py-2 w-[80px]"
-                  >
-                    {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
+                <select
+                  value={field.value?.toString() ?? ""}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  className="border border-gray-300 rounded-md px-3 py-2 w-[80px]"
+                >
+                  {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
                 </select>
               </FormControl>
               <FormMessage />
@@ -106,35 +106,48 @@ export function FormFields<T extends FieldValues>({
         />
       )}
 
-      {/* Imagem - OPCIONAL */}
       {showImagem && (
         <FormField
           control={form.control}
           name={"imagem" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-start gap-8">
-              <Label className="text-gray-900 font-medium text-lg w-28 mt-2">{imagemLabel}:</Label>
+              <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                {imagemLabel}:
+              </Label>
               <div className="flex-1">
                 <FormControl>
-                  <div className="relative">
-                    <input
-                      name="imagem"
-                      type="file"
-                      ref={fileInputRef}
-                      accept="image/jpeg,image/png"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          field.onChange(file)
-                          handlePreview(file)
-                        }
-                      }}
-                      className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-                    />
-                    <ImageIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                  </div>
+                  <CldUploadWidget
+                    options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
+                    uploadPreset="grupo-souze-unsigned"
+                    onSuccess={(result) => {
+                      if (result?.info && typeof result.info !== "string") {
+                        const url = result.info.secure_url;
+                        field.onChange(url);
+                        setPreviewImage(url);
+                      }
+                    }}
+                    onError={(error) => {
+                      console.error("Cloudinary upload error:", error);
+                    }}
+                  >
+                    {({ open }: { open: () => void }) => (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => open()}
+                          className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                        >
+                          Enviar imagem
+                        </button>
+                        <ImageIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                      </div>
+                    )}
+                  </CldUploadWidget>
                 </FormControl>
-                <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
+                <p className="text-blue-600 font-medium mt-2 text-sm">
+                  (JPG/PNG 1920x750px)
+                </p>
                 {previewImage && (
                   <img
                     src={previewImage}
