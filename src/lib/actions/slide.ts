@@ -56,6 +56,7 @@ export async function findSlide(id: number): Promise<SlideORM | null> {
 }
 
 export async function createSlide({titulo, ordem, imagem, url, status}: slideSchema) {
+    console.log(imagem)
     try {
         // Validar dados de entrada
         const validatedData = slideServerSchema.parse({
