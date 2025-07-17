@@ -22,6 +22,7 @@ import {
   createConfiguracaoPagina,
   updateConfiguracaoPagina,
 } from "@/lib/actions/config";
+import React, { useTransition } from "react";
 
 const siteConfigSchema = z.object({
   nomeSite: z.string().optional(),
@@ -74,6 +75,8 @@ export default function ConfigPageForm({
 }: {
   config?: SiteConfigSchema;
 }) {
+  const [isPending, startTransition] = useTransition();
+
   const router = useRouter();
   const form = useForm<SiteConfigSchema>({
     resolver: zodResolver(siteConfigSchema),
@@ -121,14 +124,16 @@ export default function ConfigPageForm({
   }
 
   const onSubmit = (values: SiteConfigSchema) => {
-    const valuesWithNull = convertFormDataToDbFormat(values);
-    if (!config) {
-      createConfiguracaoPagina(valuesWithNull);
+    startTransition(async () => {
+      const valuesWithNull = convertFormDataToDbFormat(values);
+      if (!config) {
+        createConfiguracaoPagina(valuesWithNull);
+        router.push("/admin");
+        return;
+      }
+      updateConfiguracaoPagina(valuesWithNull);
       router.push("/admin");
-      return;
-    }
-    updateConfiguracaoPagina(valuesWithNull);
-    router.push("/admin");
+    });
   };
 
   return (
@@ -439,15 +444,26 @@ export default function ConfigPageForm({
         <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
           <CardContent className="p-6">
             <div className="flex gap-4">
-              <Button type="submit" size="lg">
-                <Save className="h-4 w-4 mr-2" />
-                Salvar
+              <Button type="submit" size="lg" className="cursor-pointer" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    {"Salvando..."}
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {"Salvar"}
+                  </>
+                )}
               </Button>
               <Button
                 type="button"
                 variant="outline"
+                className="cursor-pointer"
                 onClick={() => router.push("/admin")}
                 size="lg"
+                disabled={isPending}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
@@ -458,4 +474,4 @@ export default function ConfigPageForm({
       </form>
     </Form>
   );
-}
+};

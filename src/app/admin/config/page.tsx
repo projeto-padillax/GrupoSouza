@@ -1,6 +1,7 @@
 import ConfigPageForm from "@/components/admin/configPage";
 import { getConfiguracaoPagina } from "@/lib/actions/config";
 
+
 export default async function SiteConfig() {
   const config = await getConfiguracaoPagina();
 

@@ -8,56 +8,56 @@ import { ConfiguracaoPagina as ConfiguracaoPaginaORM } from "@prisma/client";
 const configuracaoServerSchema = z.object({
   nomeSite: z
     .string()
-    .max(100, "Nome do site deve ter no máximo 100 caracteres.").optional(),
+    .max(100, "Nome do site deve ter no máximo 100 caracteres.").nullable().transform(v => v ?? undefined),
   CRECI: z
     .string()
-    .max(20, "CRECI deve ter no máximo 20 caracteres.").optional(),
-  logoUrl: z.string().url("URL do logo inválida.").optional().or(z.literal("")),
+    .max(20, "CRECI deve ter no máximo 20 caracteres.").nullable().transform(v => v ?? undefined),
+  logoUrl: z.string().url("URL do logo inválida.").nullable().transform(v => v ?? undefined).or(z.literal("")),
   facebookUrl: z
     .string()
     .url("URL do Facebook inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   instagramUrl: z
     .string()
     .url("URL do Instagram inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   youtubeUrl: z
     .string()
     .url("URL do YouTube inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   twitterUrl: z
     .string()
     .url("URL do Twitter inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   whatsappNumber: z
     .string()
     .min(1, "Número do WhatsApp é obrigatório.")
-    .max(20, "Número do WhatsApp deve ter no máximo 20 caracteres.").optional(),
+    .max(20, "Número do WhatsApp deve ter no máximo 20 caracteres.").nullable().transform(v => v ?? undefined),
   linkedInUrl: z
     .string()
     .url("URL do LinkedIn inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   sobreNos: z
     .string()
-    .max(2000, "Sobre nós deve ter no máximo 2000 caracteres.").optional(),
+    .max(2000, "Sobre nós deve ter no máximo 2000 caracteres.").nullable().transform(v => v ?? undefined),
   endereco: z
     .string()
-    .max(200, "Endereço deve ter no máximo 200 caracteres.").optional(),
+    .max(200, "Endereço deve ter no máximo 200 caracteres.").nullable().transform(v => v ?? undefined),
   bairro: z
     .string()
-    .max(100, "Bairro deve ter no máximo 100 caracteres.").optional(),
+    .max(100, "Bairro deve ter no máximo 100 caracteres.").nullable().transform(v => v ?? undefined),
   cidade: z
     .string()
-    .max(100, "Cidade deve ter no máximo 100 caracteres.").optional(),
+    .max(100, "Cidade deve ter no máximo 100 caracteres.").nullable().transform(v => v ?? undefined),
   estado: z
-    .string().optional(),
-  CEP: z.string().max(10, "CEP deve ter no máximo 10 caracteres.").optional(),
+    .string().nullable().transform(v => v ?? undefined),
+  CEP: z.string().max(10, "CEP deve ter no máximo 10 caracteres.").nullable().transform(v => v ?? undefined),
   linkGoogleMaps: z
     .string()
     .url("URL do Google Maps inválida.")
-    .or(z.literal("")).optional(),
+    .or(z.literal("")).nullable().transform(v => v ?? undefined),
   telefone: z
-    .array(z.string()).optional()
+    .array(z.string())
 });
 
 export type configuracaoSchema = z.infer<typeof configuracaoServerSchema>;
@@ -128,7 +128,7 @@ export async function createConfiguracaoPagina(
     if (existingConfig) {
       throw new Error("Já existe uma configuração. Use a função de atualizar.");
     }
-
+    console.log(configuracao)
     const validatedData = configuracaoServerSchema.parse(configuracao);
 
     await prisma.configuracaoPagina.create({
