@@ -106,33 +106,34 @@ export function FormFields<T extends FieldValues>({
               </Label>
               <div className="flex-1">
                 <FormControl>
-                  <CldUploadWidget
-                    options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
-                    uploadPreset="grupo-souze-unsigned"
-                    onSuccess={(result) => {
-                      if (result?.info && typeof result.info !== "string") {
-                        const url = result.info.secure_url;
-                        field.onChange(url);
-                        setPreviewImage(url);
-                      }
-                    }}
-                    onError={(error) => {
-                      console.error("Cloudinary upload error:", error);
-                    }}
-                  >
-                    {({ open }: { open: () => void }) => (
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => open()}
-                          className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-                        >
-                          Enviar imagem
-                        </button>
-                        <ImageIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                      </div>
-                    )}
-                  </CldUploadWidget>
+        <CldUploadWidget
+  options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
+  uploadPreset="grupo-souze-unsigned"
+  onSuccess={(result) => {
+    if (result?.info && typeof result.info !== "string") {
+      const url = result.info.secure_url;
+      field.onChange(url);
+      setPreviewImage(url);
+    }
+  }}
+  onError={(error) => {
+    console.error("Cloudinary upload error:", error);
+  }}
+>
+  {({ open }: { open: () => void }) => (
+    <div className="relative w-fit">
+      <button
+        type="button"
+        onClick={() => open()}
+        className="text-sm text-blue-700 font-semibold bg-blue-50 hover:bg-blue-100 
+                   rounded-md px-3 py-1.5 cursor-pointer"
+      >
+        Enviar imagem
+      </button>
+      <ImageIcon className="absolute right-[-24px] top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+    </div>
+  )}
+</CldUploadWidget>
                 </FormControl>
                 <p className="text-blue-600 font-medium mt-2 text-sm">
                   (JPG/PNG 1920x750px)
