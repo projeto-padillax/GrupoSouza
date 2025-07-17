@@ -36,15 +36,6 @@ export function FormFields<T extends FieldValues>({
 }: FormFieldsProps<T>) {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  const handlePreview = (file: File) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const result = e.target?.result as string
-      setPreviewImage(result)
-    }
-    reader.readAsDataURL(file)
-  }
-
   return (
     <>
       {/* Status - SEMPRE */}

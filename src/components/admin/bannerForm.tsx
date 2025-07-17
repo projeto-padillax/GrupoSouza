@@ -45,15 +45,6 @@ export default function BannerForm({ banner }: BannerFormProps) {
     },
   });
 
-  // const handlePreview = (file: File) => {
-  //   const reader = new FileReader();
-  //   reader.onload = (e) => {
-  //     const result = e.target?.result as string;
-  //     setPreviewImage(result);
-  //   };
-  //   reader.readAsDataURL(file);
-  // };
-
   const onSubmit = async (values: BannerInput) => {
     try {
       if (!banner) {

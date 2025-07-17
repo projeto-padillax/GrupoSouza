@@ -17,9 +17,7 @@ import { Slides as SlideORM } from "@prisma/client";
 // Schema unificado
 const slideSchema = z.object({
     status: z.boolean(),
-    imagem: z.any().refine((file) => file instanceof File, {
-        message: "O slide é obrigatório.",
-    }),
+    imagem: z.string().url("O banner é obrigatório."),
     titulo: z
         .string()
         .min(1, "Título é obrigatório.")
@@ -38,7 +36,7 @@ const slideSchema = z.object({
 export type SlideInput = z.infer<typeof slideSchema>;
 
 interface SlideFormProps {
-    slide?: SlideORM; // ✅ Opcional - se não existir, é criação
+    slide?: SlideORM; // Opcional - se não existir, é criação
     mode: "create" | "edit";
 }
 
@@ -60,23 +58,12 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
         resolver: zodResolver(slideSchema),
         defaultValues: {
             status: slide?.status ?? true,
-            imagem: "",
+            imagem: slide?.imagem ?? "",
             titulo: slide?.titulo ?? "",
             ordem: slide?.ordem ?? 1,
             url: slide?.url ?? "",
         },
     });
-
-    // const handlePreview = (file: File) => {
-    //     // ✅ Cleanup preview anterior
-    //     if (previewImage.startsWith('blob:')) {
-    //         URL.revokeObjectURL(previewImage);
-    //     }
-
-    //     // Criar novo preview
-    //     const objectUrl = URL.createObjectURL(file);
-    //     setPreviewImage(objectUrl);
-    // };
 
     const onSubmit = (values: SlideInput) => {
         startTransition(async () => {
@@ -85,14 +72,11 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                     await updateSlide({
                         ...values,
                         id: slide.id,
-                        // Se não há nova imagem, manter a atual
-                        imagem: '',
                     });
                     toast.success("Slide editado com sucesso!");
                 } else {
                     const slideData = {
                         ...values,
-                        imagem: '' // Temporário até implementar upload real
                     };
                     await createSlide(slideData);
                     toast.success("Slide criado com sucesso!");
@@ -133,7 +117,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                             <CardContent className="p-8 space-y-8">
                                 <FormFields
                                     form={form}
-                                    previewImage={""}
+                                    previewImage={previewImage ?? ""}
                                     setPreviewImage={setPreviewImage}
                                     showOrdenacao
                                     showImagem

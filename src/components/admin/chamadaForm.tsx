@@ -17,9 +17,7 @@ import { Chamadas as ChamadaORM } from "@prisma/client";
 // Schema unificado
 const chamadaSchema = z.object({
     status: z.boolean(),
-    imagem: z.any().refine((file) => file instanceof File, {
-        message: "A foto é obrigatória.",
-    }),
+    imagem: z.string().url("O banner é obrigatório."),
     titulo: z
         .string()
         .min(1, "Título é obrigatório.")
@@ -52,7 +50,6 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     const [previewImage, setPreviewImage] = useState<string>(
         chamada?.imagem || ""
     );
-    console.log(previewImage)
 
     const isEditing = mode === "edit" && chamada;
     const pageTitle = isEditing ? "Editar Chamada" : "Nova Chamada na Home";
@@ -64,24 +61,13 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
         resolver: zodResolver(chamadaSchema),
         defaultValues: {
             status: chamada?.status ?? true,
-            imagem: "",
+            imagem: chamada?.imagem ?? "",
             titulo: chamada?.titulo ?? "",
             subtitulo: chamada?.subtitulo ?? "",
             ordem: chamada?.ordem ?? 1,
             url: chamada?.url ?? "",
         },
     });
-
-    // const handlePreview = (file: File) => {
-    //     // ✅ Cleanup preview anterior
-    //     if (previewImage.startsWith('blob:')) {
-    //         URL.revokeObjectURL(previewImage);
-    //     }
-
-    //     // Criar novo preview
-    //     const objectUrl = URL.createObjectURL(file);
-    //     setPreviewImage(objectUrl);
-    // };
 
     const onSubmit = (values: ChamadaInput) => {
         startTransition(async () => {
@@ -90,14 +76,11 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
                     await updateChamada({
                         ...values,
                         id: chamada.id,
-                        // Se não há nova imagem, manter a atual
-                        imagem: '',
                     });
                     toast.success("Chamada editada com sucesso!");
                 } else {
                     const chamadaData = {
                         ...values,
-                        imagem: '' // Temporário até implementar upload real
                     };
                     await createChamada(chamadaData);
                     toast.success("Chamada criada com sucesso!");
@@ -138,7 +121,7 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
                             <CardContent className="p-8 space-y-8">
                                 <FormFields
                                     form={form}
-                                    previewImage={""}
+                                    previewImage={previewImage ?? ""}
                                     setPreviewImage={setPreviewImage}
                                     showOrdenacao
                                     showSubtitulo
