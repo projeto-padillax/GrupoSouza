@@ -81,11 +81,21 @@ export default function BannersListClient({ initialBanners }: Props) {
               {
                 header: "Data",
                 accessor: "date",
-                cell: (item) => (
-                  <span className="text-gray-600 text-sm">
-                    {new Date(item.createdAt).toLocaleDateString("pt-BR")}
-                  </span>
-                ),
+                cell: (item) => {
+                  const date = new Date(item.createdAt);
+                  const formattedDate = date.toLocaleDateString("pt-BR");
+                  const formattedTime = date.toLocaleTimeString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  });
+
+                  return (
+                    <span className="text-gray-600 text-sm">
+                      {`${formattedDate} ${formattedTime}`}
+                    </span>
+                  );
+                },
               },
             ]}
             renderActions={(item) => (
