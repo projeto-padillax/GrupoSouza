@@ -56,7 +56,7 @@ const siteConfigSchema = z.object({
     .or(z.literal("")),
   whatsappNumber: z.string().optional(),
   endereco: z.string().optional(),
-  telefone: z.array(z.string()).optional(),
+  telefone: z.array(z.string().regex(/^55\d{11}$/, "Invalid Number!")).optional(),
   bairro: z.string().optional(),
   cidade: z.string().optional(),
   estado: z.string().optional(),
