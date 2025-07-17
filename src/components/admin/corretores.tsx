@@ -45,7 +45,9 @@ export default function CorretoresListClient({ initialCorretores }: Props) {
                     <AdminHeader
                         title="Corretores"
                         subtitle="Gerencie os registros no Painel de Controle."
+                        totalLabel="Total de Corretores"
                         total={corretores.length}
+                        ativosLabel="Corretores Ativos"
                         ativos={
                             corretores.filter((corretor: CorretorORM) => corretor.status === true)
                                 .length
