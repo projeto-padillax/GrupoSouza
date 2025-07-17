@@ -180,6 +180,7 @@ export function FormFields<T extends FieldValues>({
                 <Input
                   placeholder="Digite o subtítulo"
                   {...field}
+                  value={field.value || ''}
                 />
               </FormControl>
               <FormMessage />

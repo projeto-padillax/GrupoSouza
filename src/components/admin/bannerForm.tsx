@@ -39,11 +39,11 @@ export default function BannerForm({ banner }: BannerFormProps) {
   const form = useForm<BannerInput>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
-      status: banner?.status || true,
+      status: banner?.status ?? true,
       imagem: "",
-      titulo: banner?.titulo || "",
-      subtitulo: banner?.subtitulo || "",
-      url: banner?.url || "",
+      titulo: banner?.titulo ?? "",
+      subtitulo: banner?.subtitulo ?? "",
+      url: banner?.url ?? "",
     },
   });
 
