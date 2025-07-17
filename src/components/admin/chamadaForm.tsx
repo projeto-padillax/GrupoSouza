@@ -48,7 +48,7 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [previewImage, setPreviewImage] = useState<string>(
-        chamada?.imagem || ""
+        chamada?.imagem ?? ""
     );
 
     const isEditing = mode === "edit" && chamada;

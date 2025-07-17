@@ -34,8 +34,6 @@ export function FormFields<T extends FieldValues>({
   imagemLabel = "Imagem",
   showSubtitulo = false,
 }: FormFieldsProps<T>) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-
   return (
     <>
       {/* Status - SEMPRE */}

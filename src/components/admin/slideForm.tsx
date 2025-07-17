@@ -44,7 +44,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [previewImage, setPreviewImage] = useState<string>(
-        slide?.imagem || ""
+        slide?.imagem ?? ""
     );
     console.log(previewImage)
 
