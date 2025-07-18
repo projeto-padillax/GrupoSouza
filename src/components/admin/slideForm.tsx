@@ -90,7 +90,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
     };
 
     const handleBack = () => {
-        router.replace("/admin/slides");
+        router.push("/admin/slides");
     };
 
     return (
