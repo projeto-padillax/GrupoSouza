@@ -52,10 +52,6 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     );
 
     const isEditing = mode === "edit" && chamada;
-    const pageTitle = isEditing ? "Editar Chamada" : "Nova Chamada na Home";
-    const pageSubtitle = isEditing
-        ? `Edite as informações da chamada #${chamada.ordem}`
-        : "Crie uma nova chamada para a página inicial";
 
     const form = useForm<ChamadaInput>({
         resolver: zodResolver(chamadaSchema),
@@ -102,72 +98,57 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     };
 
     return (
-        <main className="py-12">
-            <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
-                <div className="mb-8">
-                    <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
-                        <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                            {pageTitle}
-                        </h1>
-                        <p className="text-lg text-gray-600">
-                            {pageSubtitle}
-                        </p>
-                    </div>
-                </div>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Card>
+                    <CardContent className="p-8 space-y-8">
+                        <FormFields
+                            form={form}
+                            previewImage={previewImage ?? ""}
+                            setPreviewImage={setPreviewImage}
+                            showOrdenacao
+                            showSubtitulo
+                            showImagem
+                            imagemLabel="Foto"
+                        />
+                    </CardContent>
+                </Card>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <Card>
-                            <CardContent className="p-8 space-y-8">
-                                <FormFields
-                                    form={form}
-                                    previewImage={previewImage ?? ""}
-                                    setPreviewImage={setPreviewImage}
-                                    showOrdenacao
-                                    showSubtitulo
-                                    showImagem
-                                    imagemLabel="Foto"
-                                />
-                            </CardContent>
-                        </Card>
-
-                        {/* Buttons */}
-                        <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
-                            <CardContent className="p-6">
-                                <div className="flex gap-4">
-                                    <Button
-                                        type="submit"
-                                        size="lg"
-                                        disabled={isPending}
-                                    >
-                                        {isPending ? (
-                                            <>
-                                                <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                                {isEditing ? "Salvando..." : "Criando..."}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Save className="h-4 w-4 mr-2" />
-                                                {isEditing ? "Salvar" : "Criar"}
-                                            </>
-                                        )}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={handleBack}
-                                        size="lg"
-                                        disabled={isPending}
-                                    >
-                                        <ArrowLeft className="h-4 w-4 mr-2" />
-                                        Voltar
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </form>
-                </Form>
-            </div>
-        </main>
+                {/* Buttons */}
+                <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
+                    <CardContent className="p-6">
+                        <div className="flex gap-4">
+                            <Button
+                                type="submit"
+                                size="lg"
+                                disabled={isPending}
+                            >
+                                {isPending ? (
+                                    <>
+                                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                        {isEditing ? "Salvando..." : "Criando..."}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        {isEditing ? "Salvar" : "Criar"}
+                                    </>
+                                )}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleBack}
+                                size="lg"
+                                disabled={isPending}
+                            >
+                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                Voltar
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </form>
+        </Form>
     );
 }

@@ -49,10 +49,6 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
     console.log(previewImage)
 
     const isEditing = mode === "edit" && slide;
-    const pageTitle = isEditing ? "Editar Slide" : "Novo Slide na Home";
-    const pageSubtitle = isEditing 
-        ? `Edite as informações do slide #${slide.ordem}` 
-        : "Crie um novo slide para a página inicial";
 
     const form = useForm<SlideInput>({
         resolver: zodResolver(slideSchema),
@@ -81,12 +77,12 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                     await createSlide(slideData);
                     toast.success("Slide criado com sucesso!");
                 }
-                
+
                 router.push("/admin/slides");
             } catch (error) {
                 console.error(error);
-                const errorMessage = error instanceof Error 
-                    ? error.message 
+                const errorMessage = error instanceof Error
+                    ? error.message
                     : `Erro ao ${isEditing ? 'editar' : 'criar'} slide`;
                 toast.error(errorMessage);
             }
@@ -98,71 +94,56 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
     };
 
     return (
-        <main className="py-12">
-            <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
-                <div className="mb-8">
-                    <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
-                        <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                            {pageTitle}
-                        </h1>
-                        <p className="text-lg text-gray-600">
-                            {pageSubtitle}
-                        </p>
-                    </div>
-                </div>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Card>
+                    <CardContent className="p-8 space-y-8">
+                        <FormFields
+                            form={form}
+                            previewImage={previewImage ?? ""}
+                            setPreviewImage={setPreviewImage}
+                            showOrdenacao
+                            showImagem
+                            imagemLabel="Slide"
+                        />
+                    </CardContent>
+                </Card>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <Card>
-                            <CardContent className="p-8 space-y-8">
-                                <FormFields
-                                    form={form}
-                                    previewImage={previewImage ?? ""}
-                                    setPreviewImage={setPreviewImage}
-                                    showOrdenacao
-                                    showImagem
-                                    imagemLabel="Slide"
-                                />
-                            </CardContent>
-                        </Card>
-                        
-                        {/* Buttons */}
-                        <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
-                            <CardContent className="p-6">
-                                <div className="flex gap-4">
-                                    <Button 
-                                        type="submit" 
-                                        size="lg"
-                                        disabled={isPending}
-                                    >
-                                        {isPending ? (
-                                            <>
-                                                <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                                {isEditing ? "Salvando..." : "Criando..."}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Save className="h-4 w-4 mr-2" />
-                                                {isEditing ? "Salvar" : "Criar"}
-                                            </>
-                                        )}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={handleBack}
-                                        size="lg"
-                                        disabled={isPending}
-                                    >
-                                        <ArrowLeft className="h-4 w-4 mr-2" />
-                                        Voltar
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </form>
-                </Form>
-            </div>
-        </main>
+                {/* Buttons */}
+                <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
+                    <CardContent className="p-6">
+                        <div className="flex gap-4">
+                            <Button
+                                type="submit"
+                                size="lg"
+                                disabled={isPending}
+                            >
+                                {isPending ? (
+                                    <>
+                                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                        {isEditing ? "Salvando..." : "Criando..."}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="h-4 w-4 mr-2" />
+                                        {isEditing ? "Salvar" : "Criar"}
+                                    </>
+                                )}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleBack}
+                                size="lg"
+                                disabled={isPending}
+                            >
+                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                Voltar
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </form>
+        </Form>
     );
 }

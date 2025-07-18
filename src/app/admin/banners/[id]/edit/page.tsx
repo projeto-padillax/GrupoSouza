@@ -31,10 +31,10 @@ export default async function EditBannerPage({ params }: EditBannerPageProps) {
                             </p>
                         </div>
                     </div>
-                    <BannerForm banner={banner} mode="edit" />;
+                    <BannerForm banner={banner} mode="edit" />
                 </div>
             </main>
-        )
+        );
 
     } catch (error) {
         console.error("Erro ao carregar banner:", error);
