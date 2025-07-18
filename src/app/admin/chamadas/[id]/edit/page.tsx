@@ -15,12 +15,27 @@ export default async function EditChamadasPage({ params }: EditChamadasPageProps
 
     try {
         const chamada = await findChamada(chamadaId);
-        console.log( chamada) 
         if (!chamada) {
             notFound();
         }
+        return (
+            <main className="py-12">
+                <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
+                    <div className="mb-8">
+                        <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+                            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                                Editar Chamada
+                            </h1>
+                            <p className="text-lg text-gray-600">
+                                {`Edite as informações da chamada #${chamada.ordem}`}
+                            </p>
+                        </div>
+                    </div>
+                    <ChamadaForm chamada={chamada} mode="edit" />
+                </div>
+            </main>
+        );
 
-        return <ChamadaForm chamada={chamada} mode="edit" />;
     } catch (error) {
         console.error("Erro ao carregar chamada:", error);
         notFound();

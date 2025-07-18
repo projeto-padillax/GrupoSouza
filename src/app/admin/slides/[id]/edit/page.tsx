@@ -15,12 +15,28 @@ export default async function EditSlidePage({ params }: EditSlidePageProps) {
 
     try {
         const slide = await findSlide(slideId);
-        console.log( slide) 
         if (!slide) {
             notFound();
         }
 
-        return <SlideForm slide={slide} mode="edit" />;
+        return (
+            <main className="py-12">
+                <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
+                    <div className="mb-8">
+                        <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+                            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                                Editar Slide
+                            </h1>
+                            <p className="text-lg text-gray-600">
+                                {`Edite as informações do slide #${slide.ordem}`}
+                            </p>
+                        </div>
+                    </div>
+                    <SlideForm slide={slide} mode="edit" />
+                </div>
+            </main>
+        );
+
     } catch (error) {
         console.error("Erro ao carregar slide:", error);
         notFound();

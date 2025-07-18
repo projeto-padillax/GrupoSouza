@@ -60,7 +60,6 @@ export async function findChamada(id: number): Promise<ChamadaORM | null> {
 }
 
 export async function createChamada({titulo, subtitulo, ordem, imagem, url, status}: chamadaSchema) {
-    console.log(imagem)
     try {
         // Validar dados de entrada
         const validatedData = chamadaServerSchema.parse({
@@ -69,7 +68,7 @@ export async function createChamada({titulo, subtitulo, ordem, imagem, url, stat
             ordem,
             url,
             status,
-            imagem: 'teste'
+            imagem
         });
 
         await prisma.chamadas.create({
@@ -98,7 +97,6 @@ export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
         
         const validatedData = chamadaServerSchema.parse({
             ...chamadaWithouId,
-            imagem: "teste" // Seu código atual
         });
 
         await prisma.chamadas.update({
