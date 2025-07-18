@@ -117,6 +117,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                                 type="submit"
                                 size="lg"
                                 disabled={isPending}
+                                className="cursor-pointer"
                             >
                                 {isPending ? (
                                     <>
@@ -136,6 +137,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
                                 onClick={handleBack}
                                 size="lg"
                                 disabled={isPending}
+                                className="cursor-pointer"
                             >
                                 <ArrowLeft className="h-4 w-4 mr-2" />
                                 Voltar

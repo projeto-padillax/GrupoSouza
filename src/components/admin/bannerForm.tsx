@@ -115,6 +115,7 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                                 type="submit"
                                 size="lg"
                                 disabled={isPending}
+                                className="cursor-pointer"
                             >
                                 {isPending ? (
                                     <>
@@ -130,6 +131,7 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                             </Button>
                             <Button
                                 type="button"
+                                className="cursor-pointer"
                                 variant="outline"
                                 onClick={handleBack}
                                 size="lg"

@@ -14,7 +14,7 @@ export default function NovoBannerPage() {
                         </p>
                     </div>
                 </div>
-                <BannerForm mode="create" />;
+                <BannerForm mode="create" />
             </div>
         </main>
     )
