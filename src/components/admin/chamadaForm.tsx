@@ -1,27 +1,32 @@
-"use client";
+"use client"
 
-import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 import { useState, useTransition } from "react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
 import { Save, ArrowLeft } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Banners as BannerORM } from "@prisma/client";
-import { FormFields } from "./formFields";
-import { createBanner, updateBanner } from "@/lib/actions/banner";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { createChamada, updateChamada } from "@/lib/actions/chamada";
+import { FormFields } from "@/components/admin/formFields";
+import { Chamadas as ChamadaORM } from "@prisma/client";
 
-const bannerSchema = z.object({
+// Schema unificado
+const chamadaSchema = z.object({
     status: z.boolean(),
     imagem: z.string().url("O banner é obrigatório."),
     titulo: z
         .string()
         .min(1, "Título é obrigatório.")
         .max(100, "Título deve ter no máximo 100 caracteres."),
-    subtitulo: z.string().min(1, "Subtítulo é obrigatório."),
+    subtitulo: z
+        .string()
+        .min(1, "Subtítulo é obrigatório.")
+        .max(200, "Subtítulo deve ter no máximo 200 caracteres."),
+    ordem: z.number().int().positive().max(999),
     url: z
         .string()
         .min(1, "URL é obrigatória.")
@@ -32,63 +37,64 @@ const bannerSchema = z.object({
         ),
 });
 
-export type BannerInput = z.infer<typeof bannerSchema>;
+export type ChamadaInput = z.infer<typeof chamadaSchema>;
 
-interface BannerFormProps {
-    banner?: BannerORM; // Opcional - se não existir, é criação
+interface ChamadaFormProps {
+    chamada?: ChamadaORM; // Opcional - se nao existir, eh criacao
     mode: "create" | "edit";
 }
 
-export default function BannerForm({ banner, mode }: BannerFormProps) {
+export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [previewImage, setPreviewImage] = useState<string>(
-        banner?.imagem ?? ""
+        chamada?.imagem ?? ""
     );
 
-    const isEditing = mode === "edit" && banner;
+    const isEditing = mode === "edit" && chamada;
 
-    const form = useForm<BannerInput>({
-        resolver: zodResolver(bannerSchema),
+    const form = useForm<ChamadaInput>({
+        resolver: zodResolver(chamadaSchema),
         defaultValues: {
-            status: banner?.status ?? true,
-            imagem: banner?.imagem ?? "",
-            titulo: banner?.titulo ?? "",
-            subtitulo: banner?.subtitulo ?? "",
-            url: banner?.url ?? "",
+            status: chamada?.status ?? true,
+            imagem: chamada?.imagem ?? "",
+            titulo: chamada?.titulo ?? "",
+            subtitulo: chamada?.subtitulo ?? "",
+            ordem: chamada?.ordem ?? 1,
+            url: chamada?.url ?? "",
         },
     });
 
-    const onSubmit = (values: BannerInput) => {
+    const onSubmit = (values: ChamadaInput) => {
         startTransition(async () => {
             try {
                 if (isEditing) {
-                    await updateBanner({
+                    await updateChamada({
                         ...values,
-                        id: banner.id,
+                        id: chamada.id,
                     });
-                    toast.success("Banner editado com sucesso!");
+                    toast.success("Chamada editada com sucesso!");
                 } else {
-                    const bannerData = {
+                    const chamadaData = {
                         ...values,
                     };
-                    await createBanner(bannerData);
-                    toast.success("Banner criado com sucesso!");
+                    await createChamada(chamadaData);
+                    toast.success("Chamada criada com sucesso!");
                 }
 
-                router.push("/admin/banners");
+                router.push("/admin/chamadas");
             } catch (error) {
                 console.error(error);
                 const errorMessage = error instanceof Error
                     ? error.message
-                    : `Erro ao ${isEditing ? 'editar' : 'criar'} banner`;
+                    : `Erro ao ${isEditing ? 'editar' : 'criar'} chamada`;
                 toast.error(errorMessage);
             }
         });
     };
 
     const handleBack = () => {
-        router.replace("/admin/banners");
+        router.replace("/admin/chamadas");
     };
 
     return (
@@ -100,9 +106,10 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                             form={form}
                             previewImage={previewImage ?? ""}
                             setPreviewImage={setPreviewImage}
-                            showImagem
+                            showOrdenacao
                             showSubtitulo
-                            imagemLabel="Banner"
+                            showImagem
+                            imagemLabel="Foto"
                         />
                     </CardContent>
                 </Card>
@@ -115,7 +122,6 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                                 type="submit"
                                 size="lg"
                                 disabled={isPending}
-                                className="cursor-pointer"
                             >
                                 {isPending ? (
                                     <>
@@ -131,7 +137,6 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                             </Button>
                             <Button
                                 type="button"
-                                className="cursor-pointer"
                                 variant="outline"
                                 onClick={handleBack}
                                 size="lg"
@@ -145,5 +150,5 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
                 </Card>
             </form>
         </Form>
-    )
+    );
 }

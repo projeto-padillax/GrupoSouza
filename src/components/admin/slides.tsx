@@ -45,7 +45,9 @@ export default function SlidesListClient({ initialSlides }: Props) {
           <AdminHeader
             title="Slides na Home"
             subtitle="Gerencie os registros no Painel de Controle."
+            totalLabel="Total de Slides"
             total={slides.length}
+            ativosLabel="Slides Ativos"
             ativos={slides.filter((slide: SlideORM) => slide.status === true).length}
             selecionados={selectedIds.length}
           />

@@ -5,22 +5,23 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export function useAdminListHandlers<
-  T extends { id: number; status: boolean }
+  IdType extends string | number,
+  T extends { id: IdType; status: boolean }
 >(params: {
   items: T[];
   setItems: React.Dispatch<React.SetStateAction<T[]>>;
   itemNameSingular: string;
   routeBase: string;
   actions: {
-    activate: (ids: number[]) => Promise<void>;
-    deactivate: (ids: number[]) => Promise<void>;
-    delete: (ids: number[]) => Promise<void>;
+    activate: (ids: IdType[]) => Promise<void>;
+    deactivate: (ids: IdType[]) => Promise<void>;
+    delete: (ids: IdType[]) => Promise<void>;
   };
 }) {
   const router = useRouter();
   const { items, setItems, itemNameSingular, routeBase, actions } = params;
   const [isPending, startTransition] = useTransition();
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<IdType[]>([]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -30,7 +31,7 @@ export function useAdminListHandlers<
     }
   };
 
-  const handleSelectOne = (itemId: number, checked: boolean) => {
+  const handleSelectOne = (itemId: IdType, checked: boolean) => {
     if (checked) {
       setSelectedIds((prev) => [...prev, itemId]);
     } else {
@@ -38,7 +39,7 @@ export function useAdminListHandlers<
     }
   };
 
-  const handleEdit = (itemId?: number) => {
+  const handleEdit = (itemId?: IdType) => {
     const targetId =
       itemId || (selectedIds.length === 1 ? selectedIds[0] : null);
 
@@ -56,7 +57,7 @@ export function useAdminListHandlers<
     router.push(`${routeBase}/${targetId}/edit`);
   };
 
-  const handleDelete = async (itemId?: number) => {
+  const handleDelete = async (itemId?: IdType) => {
     const targetIds = itemId ? [itemId] : selectedIds;
 
     if (targetIds.length === 0) {

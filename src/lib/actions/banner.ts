@@ -47,13 +47,12 @@ export async function createBanner({
   status,
 }: BannerInput) {
   // Validar dados de entrada
-  console.log(imagem)
   const validatedData = bannerServerSchema.parse({
     titulo,
     subtitulo,
     url,
     status,
-    imagem: "teste", // Seu código atual
+    imagem,
   });
 
   await prisma.banners.create({
@@ -76,7 +75,6 @@ export async function updateBanner(banner: Omit<BannerORM, "createdAt">) {
   // Validar dados do banner
   const validatedData = bannerServerSchema.parse({
     ...bannerWithoutId,
-    imagem: "teste", // Seu código atual
   });
 
 

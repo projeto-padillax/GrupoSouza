@@ -56,7 +56,6 @@ export async function findSlide(id: number): Promise<SlideORM | null> {
 }
 
 export async function createSlide({titulo, ordem, imagem, url, status}: slideSchema) {
-    console.log(imagem)
     try {
         // Validar dados de entrada
         const validatedData = slideServerSchema.parse({
@@ -64,7 +63,7 @@ export async function createSlide({titulo, ordem, imagem, url, status}: slideSch
             ordem,
             url,
             status,
-            imagem: 'teste'
+            imagem,
         });
 
         await prisma.slides.create({
@@ -92,7 +91,6 @@ export async function updateSlide(slide: Omit<SlideORM, "createdAt">) {
         
         const validatedData = slideServerSchema.parse({
             ...slideWithoutId,
-            imagem: "teste" // Seu código atual
         });
 
         await prisma.slides.update({

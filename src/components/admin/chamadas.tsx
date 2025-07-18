@@ -1,22 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
+import { Chamadas as ChamadasORM } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 import { AdminTable } from "@/components/admin/adminTable";
 import { AdminHeader } from "@/components/admin/adminHeader";
 import { useAdminListHandlers } from "@/hooks/adminHandlers";
-import { useState } from "react";
-import { Banners as BannerORM } from "@prisma/client";
 import { ActionButtons } from "./actionButtons";
-import { activateBanners, deactivateBanners, deleteBanners } from "@/lib/actions/banner"
+import { activateChamadas, deactivateChamadas, deleteChamadas } from "@/lib/actions/chamada"
 
 interface Props {
-  initialBanners: BannerORM[];
+  initialChamadas: ChamadasORM[];
 }
 
-export default function BannersListClient({ initialBanners }: Props) {
-  const [banners, setBanners] = useState(initialBanners);
+export default function ChamadasListClient({ initialChamadas }: Props) {
+  const [chamadas, setChamadas] = useState(initialChamadas);
 
   const {
     selectedIds,
@@ -26,14 +26,14 @@ export default function BannersListClient({ initialBanners }: Props) {
     handleActivate,
     handleDeactivate,
   } = useAdminListHandlers({
-    items: banners,
-    setItems: setBanners,
-    itemNameSingular: "banner",
-    routeBase: "/admin/banners",
+    items: chamadas,
+    setItems: setChamadas,
+    itemNameSingular: "chamada",
+    routeBase: "/admin/chamadas",
     actions: {
-      activate: activateBanners,
-      deactivate: deactivateBanners,
-      delete: deleteBanners,
+      activate: activateChamadas,
+      deactivate: deactivateChamadas,
+      delete: deleteChamadas,
     },
   });
 
@@ -43,20 +43,20 @@ export default function BannersListClient({ initialBanners }: Props) {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           {/* Header Section */}
           <AdminHeader
-            title="Banners na Home"
-            subtitle="Gerencie os registros no Painel de Controle."
-            totalLabel="Total de Banners"
-            total={banners.length}
-            ativosLabel="Banners Ativos"
+            title="Chamadas na Home"
+            subtitle="Gerencie as chamadas no sistema de administração."
+            totalLabel="Total de Chamadas"
+            total={chamadas.length}
+            ativosLabel="Chamadas Ativas"
             ativos={
-              banners.filter((banner: BannerORM) => banner.status === true)
+              chamadas.filter((banner: ChamadasORM) => banner.status === true)
                 .length
             }
             selecionados={selectedIds.length}
           />
           <ActionButtons
-            addButtonText="Novo Banner"
-            addButtonHref="/admin/banners/novo"
+            addButtonText="Nova Chamada"
+            addButtonHref="/admin/chamadas/novo"
             onAtivar={handleActivate}
             onDesativar={handleDeactivate}
             onExcluir={() => handleDelete()}
@@ -64,7 +64,7 @@ export default function BannersListClient({ initialBanners }: Props) {
 
           {/* Table */}
           <AdminTable
-            data={banners}
+            data={chamadas}
             selectedIds={selectedIds}
             onSelect={handleSelectOne}
             onSelectAll={handleSelectAll}
@@ -81,25 +81,15 @@ export default function BannersListClient({ initialBanners }: Props) {
               {
                 header: "Data",
                 accessor: "date",
-                cell: (item) => {
-                  const date = new Date(item.createdAt);
-                  const formattedDate = date.toLocaleDateString("pt-BR");
-                  const formattedTime = date.toLocaleTimeString("pt-BR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  });
-
-                  return (
-                    <span className="text-gray-600 text-sm">
-                      {`${formattedDate} ${formattedTime}`}
-                    </span>
-                  );
-                },
+                cell: (item) => (
+                  <span className="text-gray-600 text-sm">
+                    {new Date(item.createdAt).toLocaleDateString("pt-BR")}
+                  </span>
+                ),
               },
             ]}
             renderActions={(item) => (
-              <Link href={`/admin/banners/${item.id}/edit`}>
+              <Link href={`/admin/chamadas/${item.id}/edit`}>
                 <Button variant="outline" size="sm" className="bg-transparent">
                   <Edit className="h-4 w-4 mr-1" />
                   Editar

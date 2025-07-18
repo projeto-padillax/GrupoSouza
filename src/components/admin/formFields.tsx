@@ -12,8 +12,8 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import Image from "next/image"
 import { FieldValues, Path, UseFormReturn } from "react-hook-form/dist/types"
+import { CldUploadWidget } from "next-cloudinary"
 
 type FormFieldsProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -34,17 +34,6 @@ export function FormFields<T extends FieldValues>({
   imagemLabel = "Imagem",
   showSubtitulo = false,
 }: FormFieldsProps<T>) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-
-  const handlePreview = (file: File) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const result = e.target?.result as string
-      setPreviewImage(result)
-    }
-    reader.readAsDataURL(file)
-  }
-
   return (
     <>
       {/* Status - SEMPRE */}
@@ -88,18 +77,17 @@ export function FormFields<T extends FieldValues>({
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Ordem:</Label>
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Digite a ordem"
-                  value={field.value?.toString() ?? ''}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const numValue = value === '' ? undefined : Number(value);
-                    field.onChange(numValue);
-                  }}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                />
+                <select
+                  value={field.value?.toString() ?? ""}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  className="border border-gray-300 rounded-md px-3 py-2 w-[80px]"
+                >
+                  {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,37 +95,51 @@ export function FormFields<T extends FieldValues>({
         />
       )}
 
-      {/* Imagem - OPCIONAL */}
       {showImagem && (
         <FormField
           control={form.control}
           name={"imagem" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-start gap-8">
-              <Label className="text-gray-900 font-medium text-lg w-28 mt-2">{imagemLabel}:</Label>
+              <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                {imagemLabel}:
+              </Label>
               <div className="flex-1">
                 <FormControl>
-                  <div className="relative">
-                    <input
-                      name="imagem"
-                      type="file"
-                      ref={fileInputRef}
-                      accept="image/jpeg,image/png"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          field.onChange(file)
-                          handlePreview(file)
-                        }
-                      }}
-                      className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
-                    />
-                    <ImageIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                  </div>
+        <CldUploadWidget
+  options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
+  uploadPreset="grupo-souze-unsigned"
+  onSuccess={(result) => {
+    if (result?.info && typeof result.info !== "string") {
+      const url = result.info.secure_url;
+      field.onChange(url);
+      setPreviewImage(url);
+    }
+  }}
+  onError={(error) => {
+    console.error("Cloudinary upload error:", error);
+  }}
+>
+  {({ open }: { open: () => void }) => (
+    <div className="relative w-fit">
+      <button
+        type="button"
+        onClick={() => open()}
+        className="text-sm text-blue-700 font-semibold bg-blue-50 hover:bg-blue-100 
+                   rounded-md px-3 py-1.5 cursor-pointer"
+      >
+        Enviar imagem
+      </button>
+      <ImageIcon className="absolute right-[-24px] top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+    </div>
+  )}
+</CldUploadWidget>
                 </FormControl>
-                <p className="text-blue-600 font-medium mt-2 text-sm">(JPG/PNG 1920x750px)</p>
+                <p className="text-blue-600 font-medium mt-2 text-sm">
+                  (JPG/PNG 1920x750px)
+                </p>
                 {previewImage && (
-                  <Image
+                  <img
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"
@@ -172,7 +174,7 @@ export function FormFields<T extends FieldValues>({
       {showSubtitulo && (
         <FormField
           control={form.control}
-          name={"subitulo" as Path<T>}
+          name={"subtitulo" as Path<T>}
           render={({ field }) => (
             <FormItem className="flex items-center gap-8">
               <Label className="text-gray-900 font-medium text-lg w-28">Subtítulo:</Label>
