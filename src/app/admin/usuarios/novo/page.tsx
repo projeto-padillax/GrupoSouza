@@ -1,9 +1,9 @@
-// "use client";
+"use client";
 
-// import UserForm from "@/components/admin/userForm";
+import UserForm from "@/components/admin/userForm";
 
-// export default function NovoUserPage() {
-//     return (
-//         <UserForm />
-//     );
-// }
+export default function NovoUserPage() {
+    return (
+        <UserForm />
+    );
+}
