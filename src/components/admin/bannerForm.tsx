@@ -30,6 +30,7 @@ const bannerSchema = z.object({
             (url) => url.startsWith("https://"),
             { message: "URL deve começar com https://" }
         ),
+    publicId: z.string().min(1, "publicId é obrigatório")
 });
 
 export type BannerInput = z.infer<typeof bannerSchema>;
@@ -56,6 +57,7 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
             titulo: banner?.titulo ?? "",
             subtitulo: banner?.subtitulo ?? "",
             url: banner?.url ?? "",
+            publicId: banner?.publicId ?? "",
         },
     });
 

@@ -8,7 +8,6 @@ interface EditChamadasPageProps {
 
 export default async function EditChamadasPage({ params }: EditChamadasPageProps) {
     const chamadaId = await params.then(p => parseInt(p.id));
-    console.log(chamadaId)
     if (isNaN(chamadaId)) {
         notFound();
     }

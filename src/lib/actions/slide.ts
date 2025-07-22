@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { prisma } from "../neon/db";
 import { Slides as SlideORM } from "@prisma/client";
+import { deleteCloudinaryImage } from "./cloudinary";
 
 // Schema para validação no servidor
 const slideServerSchema = z.object({
@@ -24,6 +25,7 @@ const slideServerSchema = z.object({
       { message: "URL deve começar com https://" }
     ),
   status: z.boolean(),
+  publicId: z.string().min(1, "publicId é obrigatório."),
 });
 
 const idsSchema = z.array(z.number().positive());
@@ -55,7 +57,7 @@ export async function findSlide(id: number): Promise<SlideORM | null> {
     }
 }
 
-export async function createSlide({titulo, ordem, imagem, url, status}: slideSchema) {
+export async function createSlide({titulo, ordem, imagem, url, status, publicId}: slideSchema) {
     try {
         // Validar dados de entrada
         const validatedData = slideServerSchema.parse({
@@ -64,6 +66,7 @@ export async function createSlide({titulo, ordem, imagem, url, status}: slideSch
             url,
             status,
             imagem,
+            publicId
         });
 
         await prisma.slides.create({
@@ -72,7 +75,8 @@ export async function createSlide({titulo, ordem, imagem, url, status}: slideSch
                 ordem: validatedData.ordem,
                 imagem: validatedData.imagem,
                 url: validatedData.url,
-                status: validatedData.status
+                status: validatedData.status,
+                publicId: validatedData.publicId
             },
         });
     } catch (error) {
@@ -141,10 +145,30 @@ export async function deactivateSlides(ids: number[]) {
 export async function deleteSlides(ids: number[]) {
     try {
         const validIds = idsSchema.parse(ids);
-        
-        await prisma.$transaction(
-            validIds.map(id => prisma.slides.delete({ where: { id } }))
+
+        const slides = await prisma.slides.findMany({
+            where: { id: { in: validIds } },
+            select: { id: true, publicId: true },
+        });
+
+        await Promise.all(
+            slides.map(async (slide) => {
+                if (slide.publicId) {
+                    try {
+                        await deleteCloudinaryImage(slide.publicId);
+                    } catch (error) {
+                        console.error(`Failed to delete image for slide ${slide.id}`, error);
+                    }
+                }
+            })
         );
+
+        await prisma.$transaction([
+            prisma.slides.deleteMany({
+                where: { id: { in: validIds } },
+            }),
+        ]);
+
     } catch (error) {
         if (error instanceof z.ZodError) {
             throw new Error("IDs inválidos");

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../neon/db";
 import { Banners as BannerORM } from "@prisma/client";
 import { BannerInput } from "@/components/admin/bannerForm";
+import { deleteCloudinaryImage } from "./cloudinary";
 
 // Schema para validação no servidor
 const bannerServerSchema = z.object({
@@ -24,6 +25,7 @@ const bannerServerSchema = z.object({
       message: "URL deve começar com https://",
     }),
   imagem: z.string().min(1, "Imagem é obrigatória."),
+  publicId: z.string().min(1, "publicId é obrigatório."),
 });
 
 const idsSchema = z.array(z.number().positive());
@@ -45,6 +47,7 @@ export async function createBanner({
   imagem,
   url,
   status,
+  publicId
 }: BannerInput) {
   // Validar dados de entrada
   const validatedData = bannerServerSchema.parse({
@@ -53,6 +56,7 @@ export async function createBanner({
     url,
     status,
     imagem,
+    publicId
   });
 
   await prisma.banners.create({
@@ -62,6 +66,7 @@ export async function createBanner({
       url: validatedData.url,
       imagem: validatedData.imagem,
       status: validatedData.status,
+      publicId: validatedData.publicId
     },
   });
 }
@@ -107,10 +112,28 @@ export async function deactivateBanners(ids: number[]) {
 }
 
 export async function deleteBanners(ids: number[]) {
-  // Validar IDs
   const validIds = idsSchema.parse(ids);
 
+  const banners = await prisma.banners.findMany({
+    where: { id: { in: validIds } },
+    select: { id: true, publicId: true },
+  });
+
   await Promise.all(
-    validIds.map((id) => prisma.banners.deleteMany({ where: { id } }))
+    banners.map(async (banner) => {
+      if (banner.publicId) {
+        try {
+          await deleteCloudinaryImage(banner.publicId);
+        } catch (error) {
+          console.error(`Failed to delete image for banner ${banner.id}`, error);
+        }
+      }
+    })
   );
+
+  await prisma.$transaction([
+    prisma.banners.deleteMany({
+      where: { id: { in: validIds } },
+    }),
+  ]);
 }

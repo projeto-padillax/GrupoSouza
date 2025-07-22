@@ -11,7 +11,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import { FieldValues, Path, UseFormReturn } from "react-hook-form/dist/types"
+import { FieldValues, Path, PathValue, UseFormReturn } from "react-hook-form/dist/types"
 import { CldUploadWidget } from "next-cloudinary"
 
 type FormFieldsProps<T extends FieldValues> = {
@@ -105,34 +105,37 @@ export function FormFields<T extends FieldValues>({
               </Label>
               <div className="flex-1">
                 <FormControl>
-        <CldUploadWidget
-  options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
-  uploadPreset="grupo-souze-unsigned"
-  onSuccess={(result) => {
-    if (result?.info && typeof result.info !== "string") {
-      const url = result.info.secure_url;
-      field.onChange(url);
-      setPreviewImage(url);
-    }
-  }}
-  onError={(error) => {
-    console.error("Cloudinary upload error:", error);
-  }}
->
-  {({ open }: { open: () => void }) => (
-    <div className="relative w-fit">
-      <button
-        type="button"
-        onClick={() => open()}
-        className="text-sm text-blue-700 font-semibold bg-blue-50 hover:bg-blue-100 
+                  <CldUploadWidget
+                    options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
+                    uploadPreset="grupo-souze-unsigned"
+                    onSuccess={(result) => {
+                      if (result?.info && typeof result.info !== "string") {
+                        const url = result.info.secure_url;
+                        const publicId = result.info.public_id;
+                        field.onChange(url);
+                        setPreviewImage(url);
+
+                        form.setValue("publicId" as Path<T>, publicId as PathValue<T, Path<T>>);
+                      }
+                    }}
+                    onError={(error) => {
+                      console.error("Cloudinary upload error:", error);
+                    }}
+                  >
+                    {({ open }: { open: () => void }) => (
+                      <div className="relative w-fit">
+                        <button
+                          type="button"
+                          onClick={() => open()}
+                          className="text-sm text-blue-700 font-semibold bg-blue-50 hover:bg-blue-100 
                    rounded-md px-3 py-1.5 cursor-pointer"
-      >
-        Enviar imagem
-      </button>
-      <ImageIcon className="absolute right-[-24px] top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-    </div>
-  )}
-</CldUploadWidget>
+                        >
+                          Enviar imagem
+                        </button>
+                        <ImageIcon className="absolute right-[-24px] top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                      </div>
+                    )}
+                  </CldUploadWidget>
                 </FormControl>
                 <p className="text-blue-600 font-medium mt-2 text-sm">
                   (JPG/PNG 1920x750px)
@@ -210,6 +213,12 @@ export function FormFields<T extends FieldValues>({
             <FormMessage />
           </FormItem>
         )}
+      />
+
+      {/* Hidden field for publicId */}
+      <input
+        type="hidden"
+        {...form.register("publicId" as Path<T>)}
       />
     </>
   )
