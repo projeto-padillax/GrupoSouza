@@ -35,6 +35,7 @@ const chamadaSchema = z.object({
             (url) => url.startsWith("https://"),
             { message: "URL deve começar com https://" }
         ),
+    publicId: z.string().min(1, "publicId é obrigatório")
 });
 
 export type ChamadaInput = z.infer<typeof chamadaSchema>;
@@ -62,6 +63,7 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
             subtitulo: chamada?.subtitulo ?? "",
             ordem: chamada?.ordem ?? 1,
             url: chamada?.url ?? "",
+            publicId: chamada?.publicId ?? "",
         },
     });
 

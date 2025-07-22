@@ -4,13 +4,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { logoutUser } from "@/lib/auth/logout";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  userName: string;
+  userRole: "ADMIN" | "CORRETOR" | "SUPERADMIN";
+}
+
+export function AdminHeader({ userName, userRole }: AdminHeaderProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    router.push("/admin/login");
+    const handleLogout = async () => {
+    try {
+      await logoutUser();
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
   };
 
   return (
@@ -29,7 +39,7 @@ export function AdminHeader() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              <span className="text-sm">Bem-vindo, Administrador</span>
+              <span className="text-sm">Bem-vindo, {userName} ({userRole})</span>
             </div>
             <Button
               variant="outline"

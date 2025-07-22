@@ -31,6 +31,7 @@ const slideSchema = z.object({
             (url) => url.startsWith("https://"),
             { message: "URL deve começar com https://" }
         ),
+    publicId: z.string().min(1, "publicId é obrigatório")
 });
 
 export type SlideInput = z.infer<typeof slideSchema>;
@@ -58,6 +59,7 @@ export default function SlideForm({ slide, mode }: SlideFormProps) {
             titulo: slide?.titulo ?? "",
             ordem: slide?.ordem ?? 1,
             url: slide?.url ?? "",
+            publicId: slide?.publicId ?? "",
         },
     });
 
