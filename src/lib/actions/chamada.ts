@@ -3,31 +3,33 @@
 import { z } from "zod";
 import { prisma } from "../neon/db";
 import { Chamadas as ChamadaORM } from "@prisma/client";
+import { deleteCloudinaryImage } from "./cloudinary";
 
 // Schema para validação no servidor
 const chamadaServerSchema = z.object({
-  titulo: z
-    .string()
-    .min(1, "Título é obrigatório.")
-    .max(100, "Título deve ter no máximo 100 caracteres."),
-  subtitulo: z
-    .string()
-    .min(1, "Subtítulo é obrigatório.")
-    .max(200, "Subtítulo deve ter no máximo 200 caracteres."),
-  ordem: z
-    .number()
-    .int("Ordem deve ser um número inteiro.")
-    .positive("Ordem deve ser um número positivo."),
-  imagem: z.string().min(1, "Imagem é obrigatória."),
-  url: z
-    .string()
-    .min(1, "URL é obrigatória.")
-    .url("URL inválida.")
-    .refine(
-      (url) => url.startsWith("https://"),
-      { message: "URL deve começar com https://" }
-    ),
-  status: z.boolean(),
+    titulo: z
+        .string()
+        .min(1, "Título é obrigatório.")
+        .max(100, "Título deve ter no máximo 100 caracteres."),
+    subtitulo: z
+        .string()
+        .min(1, "Subtítulo é obrigatório.")
+        .max(200, "Subtítulo deve ter no máximo 200 caracteres."),
+    ordem: z
+        .number()
+        .int("Ordem deve ser um número inteiro.")
+        .positive("Ordem deve ser um número positivo."),
+    imagem: z.string().min(1, "Imagem é obrigatória."),
+    url: z
+        .string()
+        .min(1, "URL é obrigatória.")
+        .url("URL inválida.")
+        .refine(
+            (url) => url.startsWith("https://"),
+            { message: "URL deve começar com https://" }
+        ),
+    status: z.boolean(),
+    publicId: z.string().min(1, "publicId é obrigatório."),
 });
 
 const idsSchema = z.array(z.number().positive());
@@ -59,7 +61,7 @@ export async function findChamada(id: number): Promise<ChamadaORM | null> {
     }
 }
 
-export async function createChamada({titulo, subtitulo, ordem, imagem, url, status}: chamadaSchema) {
+export async function createChamada({ titulo, subtitulo, ordem, imagem, url, status, publicId }: chamadaSchema) {
     try {
         // Validar dados de entrada
         const validatedData = chamadaServerSchema.parse({
@@ -68,7 +70,8 @@ export async function createChamada({titulo, subtitulo, ordem, imagem, url, stat
             ordem,
             url,
             status,
-            imagem
+            imagem,
+            publicId
         });
 
         await prisma.chamadas.create({
@@ -78,7 +81,8 @@ export async function createChamada({titulo, subtitulo, ordem, imagem, url, stat
                 ordem: validatedData.ordem,
                 imagem: validatedData.imagem,
                 url: validatedData.url,
-                status: validatedData.status
+                status: validatedData.status,
+                publicId: validatedData.publicId
             },
         });
     } catch (error) {
@@ -94,7 +98,7 @@ export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
     try {
         const { id, ...chamadaWithouId } = chamada;
         const validId = idSchema.parse(id);
-        
+
         const validatedData = chamadaServerSchema.parse({
             ...chamadaWithouId,
         });
@@ -115,7 +119,7 @@ export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
 export async function activateChamadas(ids: number[]) {
     try {
         const validIds = idsSchema.parse(ids);
-        
+
         await prisma.$transaction(
             validIds.map(id => prisma.chamadas.update({ where: { id }, data: { status: true } }))
         );
@@ -131,7 +135,7 @@ export async function activateChamadas(ids: number[]) {
 export async function deactivateChamadas(ids: number[]) {
     try {
         const validIds = idsSchema.parse(ids);
-        
+
         await prisma.$transaction(
             validIds.map(id => prisma.chamadas.update({ where: { id }, data: { status: false } }))
         );
@@ -147,10 +151,30 @@ export async function deactivateChamadas(ids: number[]) {
 export async function deleteChamadas(ids: number[]) {
     try {
         const validIds = idsSchema.parse(ids);
-        
-        await prisma.$transaction(
-            validIds.map(id => prisma.chamadas.delete({ where: { id } }))
+
+        const chamadas = await prisma.chamadas.findMany({
+            where: { id: { in: validIds } },
+            select: { id: true, publicId: true },
+        });
+
+        await Promise.all(
+            chamadas.map(async (chamada) => {
+                if (chamada.publicId) {
+                    try {
+                        await deleteCloudinaryImage(chamada.publicId);
+                    } catch (error) {
+                        console.error(`Failed to delete image for chamada ${chamada.id}`, error);
+                    }
+                }
+            })
         );
+
+        await prisma.$transaction([
+            prisma.chamadas.deleteMany({
+                where: { id: { in: validIds } },
+            }),
+        ]);
+
     } catch (error) {
         if (error instanceof z.ZodError) {
             throw new Error("IDs inválidos");
