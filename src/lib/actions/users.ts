@@ -5,6 +5,7 @@ import { prisma } from "../neon/db";
 import { User as UserORM } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { UserInput } from "@/components/admin/userForm";
+import { getSession } from "../auth/session";
 
 const userserverSchema = z.object({
     status: z.boolean(),
@@ -89,12 +90,33 @@ export async function createUser({
 }
 
 export async function updateUser(User: Omit<UserORM, "createdAt">) {
+    const session = await getSession();
+
+    if (!session) {
+        throw new Error("Sessão inválida ou expirada.");
+    }
+
     const { id, ...UserWithoutId } = User;
 
     // Validar ID
     const validId = idSchema.parse(id);
 
-    // Validar dados do User
+    const userToUpdate = await prisma.user.findUnique({
+        where: { id: validId },
+        select: { perfil: true },
+    });
+
+    if (!userToUpdate) {
+        throw new Error("Usuário não encontrado.");
+    }
+
+    if (
+        userToUpdate.perfil === "SUPERADMIN" &&
+        session.role !== "SUPERADMIN"
+    ) {
+        throw new Error("Apenas SUPERADMINs podem editar usuários SUPERADMIN.");
+    }
+
     const validatedData = updateUserSchema.parse({
         ...UserWithoutId,
     });
@@ -121,8 +143,29 @@ export async function activateUsers(ids: string[]) {
 }
 
 export async function deactivateUsers(ids: string[]) {
-    // Validar IDs
+    const session = await getSession();
+
+    if (!session) {
+        throw new Error("Sessão inválida ou expirada.");
+    }
+
     const validIds = idsSchema.parse(ids);
+
+    for (const id of validIds) {
+        const userToDeactivate = await prisma.user.findUnique({
+            where: { id },
+            select: { perfil: true },
+        });
+
+        if (!userToDeactivate) continue;
+
+        if (
+            userToDeactivate.perfil === "SUPERADMIN" &&
+            session.role !== "SUPERADMIN"
+        ) {
+            throw new Error("Apenas SUPERADMINs podem desativar outros SUPERADMINs.");
+        }
+    }
 
     await prisma.$transaction(
         validIds.map((id) =>
@@ -132,10 +175,33 @@ export async function deactivateUsers(ids: string[]) {
 }
 
 export async function deleteUsers(ids: string[]) {
-    // Validar IDs
+    const session = await getSession();
+
+    if (!session) {
+        throw new Error("Sessão inválida ou expirada");
+    }
+
     const validIds = idsSchema.parse(ids);
 
-    await Promise.all(
-        validIds.map((id) => prisma.user.deleteMany({ where: { id } }))
-    );
+    for (const id of validIds) {
+        const userToDelete = await prisma.user.findUnique({
+            where: { id },
+            select: { perfil: true },
+        });
+
+        if (!userToDelete) continue;
+
+        if (
+            userToDelete.perfil === "SUPERADMIN" &&
+            session.role !== "SUPERADMIN"
+        ) {
+            throw new Error("Não autorizado para remover um SUPERADMIN");
+        }
+    }
+
+    await prisma.user.deleteMany({
+        where: {
+            id: { in: validIds },
+        },
+    });
 }

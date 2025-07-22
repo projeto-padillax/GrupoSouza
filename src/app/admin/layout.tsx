@@ -1,6 +1,6 @@
 import { AdminFooter } from "@/components/admin/footer";
 import { AdminHeader } from "@/components/admin/header";
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -9,15 +9,14 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode
 }) {
-    const cookieStore = cookies();
-    const session = (await cookieStore).get("session")?.value;
+    const session = await getSession();
 
     if (!session) {
         redirect("/login");
     }
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
-            <AdminHeader />
+            <AdminHeader userName={session.name} userRole={session.role}/>
             <main className="flex-1 py-4">
                 {children}
             </main>

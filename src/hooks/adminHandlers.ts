@@ -83,17 +83,21 @@ export function useAdminListHandlers<
         setItems(items.filter((item) => !targetIds.includes(item.id)));
 
         toast.success(
-          `${
-            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          `${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
           }(s) excluídos`,
           {
             description: `${targetIds.length} ${itemNameSingular}(s) foram excluídos permanentemente.`,
           }
         );
         setSelectedIds([]);
-      } catch (error) {
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Erro inesperado ao deletar.";
+
         console.error(error);
-        toast.error("Erro ao deletar banners.");
+        toast.error("Erro ao excluir " + itemNameSingular + "(s)", {
+          description: message,
+        });
       }
     });
   };
@@ -114,8 +118,7 @@ export function useAdminListHandlers<
           )
         );
         toast.success(
-          `${
-            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          `${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
           }(s) ativados com sucesso!`,
           {
             description: `${selectedIds.length} ${itemNameSingular}(s) foram ativados.`,
@@ -124,7 +127,7 @@ export function useAdminListHandlers<
         setSelectedIds([]);
       } catch (error) {
         console.error(error);
-        toast.error("Erro ao ativar banners.");
+        toast.error(`Erro ao ativar ${itemNameSingular}(s).`);
       }
     });
   };
@@ -149,8 +152,7 @@ export function useAdminListHandlers<
         );
 
         toast.warning(
-          `${
-            itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
+          `${itemNameSingular.charAt(0).toUpperCase() + itemNameSingular.slice(1)
           }(s) desativado(s)`,
           {
             description: `${selectedIds.length} ${itemNameSingular}(s) foram desativados.`,
@@ -158,9 +160,14 @@ export function useAdminListHandlers<
         );
 
         setSelectedIds([]);
-      } catch (error) {
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Erro inesperado ao desativar.";
+
         console.error(error);
-        toast.error(`Erro ao desativar ${itemNameSingular}(s).`);
+        toast.error(`Erro ao desativar ${itemNameSingular}(s).`, {
+          description: message,
+        })
       }
     });
   };

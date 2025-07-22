@@ -28,7 +28,7 @@ export default function UsersListClient({ initialUsers }: Props) {
     } = useAdminListHandlers({
         items: users,
         setItems: setUsers,
-        itemNameSingular: "banner",
+        itemNameSingular: "user",
         routeBase: "//admin/usuarios",
         actions: {
             activate: activateUsers,

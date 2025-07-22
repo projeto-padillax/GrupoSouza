@@ -15,7 +15,7 @@ export async function loginUser({ login, senha }: { login: string; senha: string
     const senhaOk = await bcrypt.compare(senha, user.senha);
     if (!senhaOk) throw new Error("Credenciais inválidas");
 
-    const token = await new SignJWT({ userId: user.id })
+    const token = await new SignJWT({ userId: user.id, role: user.perfil, name:user.name })
         .setProtectedHeader({ alg: "HS256" })
         .setExpirationTime("2h")
         .sign(secret);
