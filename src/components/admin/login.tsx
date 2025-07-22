@@ -35,7 +35,6 @@ export default function LoginPage() {
     const onSubmit = (values: LoginInput) => {
         startTransition(async () => {
             try {
-                console.log(values);
                 await loginUser(values);
                 toast.success("Login realizado com sucesso!");
                 router.push("/admin");
