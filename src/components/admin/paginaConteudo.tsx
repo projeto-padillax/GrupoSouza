@@ -102,11 +102,11 @@ export default function PaginaConteudo({ initialContentPages }: Props) {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           {/* Header Section */}
           <AdminHeader
-            title="conteudos na Home"
+            title="Conteúdos na Home"
             subtitle="Gerencie os registros no Painel de Controle."
-            totalLabel="Total de conteudos"
+            totalLabel="Total de conteúdos"
             total={pages.length}
-            ativosLabel="conteudos Ativos"
+            ativosLabel="Conteúdos Ativos"
             ativos={
               pages.filter((pages: PaginasConteudo) => pages.status === true)
                 .length
@@ -114,7 +114,7 @@ export default function PaginaConteudo({ initialContentPages }: Props) {
             selecionados={selectedIds.length}
           />
           <ActionButtons
-            addButtonText="Novo conteudo"
+            addButtonText="Novo conteúdo"
             addButtonHref="/admin/paginas/novo"
             onAtivar={handleActivate}
             onDesativar={handleDeactivate}
@@ -148,7 +148,7 @@ export default function PaginaConteudo({ initialContentPages }: Props) {
                     Tipo
                   </TableHead>
                   <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">
-                    Exibir no Meno
+                    Exibir no Menu
                   </TableHead>
                   <TableHead className="font-semibold text-gray-900 text-base py-5 text-center">
                     Data
