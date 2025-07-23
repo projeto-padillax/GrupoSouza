@@ -30,7 +30,7 @@ export default function SlidesListClient({ initialSlides }: Props) {
     setItems: setSlides,
     itemNameSingular: "slide",
     routeBase: "/admin/slides",
-    actions:{
+    actions: {
       activate: activateSlides,
       deactivate: deactivateSlides,
       delete: deleteSlides
@@ -58,7 +58,7 @@ export default function SlidesListClient({ initialSlides }: Props) {
             onDesativar={handleDeactivate}
             onExcluir={() => handleDelete()}
           />
-         
+
           {/* Table */}
           <AdminTable
             data={slides}
@@ -74,8 +74,22 @@ export default function SlidesListClient({ initialSlides }: Props) {
               {
                 header: "Data",
                 accessor: "date",
-                cell: (item) => <span className="text-gray-600 text-sm">{new Date(item.createdAt).toLocaleDateString("pt-BR")}</span>
-              }
+                cell: (item) => {
+                  const date = new Date(item.createdAt);
+                  const formattedDate = date.toLocaleDateString("pt-BR");
+                  const formattedTime = date.toLocaleTimeString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  });
+
+                  return (
+                    <span className="text-gray-600 text-sm">
+                      {`${formattedDate} ${formattedTime}`}
+                    </span>
+                  );
+                },
+              },
             ]}
             renderActions={(item) => (
               <Link href={`/admin/slides/${item.id}/edit`}>
