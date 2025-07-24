@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPaginaById } from "@/lib/actions/contetnPages";
+import { getPaginaById } from "@/lib/actions/contentPages";
 import PaginaDeConteudoForm from "@/components/admin/paginaDeConteudoForm";
 
 interface EditPaginaDeConteudoProps {

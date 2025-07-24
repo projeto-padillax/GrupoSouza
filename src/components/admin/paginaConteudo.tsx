@@ -13,7 +13,7 @@ import {
   activatePaginas,
   deactivatePaginas,
   deletePaginas,
-} from "@/lib/actions/contetnPages";
+} from "@/lib/actions/contentPages";
 import {
     Table,
     TableBody,
