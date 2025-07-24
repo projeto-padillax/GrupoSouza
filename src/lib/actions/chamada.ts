@@ -96,23 +96,42 @@ export async function createChamada({ titulo, subtitulo, ordem, imagem, url, sta
 
 export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
     try {
-        const { id, ...chamadaWithouId } = chamada;
-        const validId = idSchema.parse(id);
+        const validId = idSchema.parse(chamada.id);
+        const { id, ...chamadaWithoutId } = chamada;
 
-        const validatedData = chamadaServerSchema.parse({
-            ...chamadaWithouId,
+        const validatedData = chamadaServerSchema.parse(chamadaWithoutId);
+
+        const existingChamada = await prisma.chamadas.findUnique({ where: { id: validId } });
+        if (!existingChamada) {
+            throw new Error(`Chamada com ID ${validId} não encontrado.`);
+        }
+
+
+        if (
+            existingChamada.publicId &&
+            existingChamada.publicId !== validatedData.publicId
+        ) {
+            try {
+                await deleteCloudinaryImage(existingChamada.publicId);
+            } catch (error) {
+                console.error(`Failed to delete old Cloudinary image: ${existingChamada.publicId}`, error);
+            }
+        }
+
+        return await prisma.$transaction(async (tx) => {
+            return tx.chamadas.update({
+                where: { id: validId },
+                data: validatedData,
+            });
         });
 
-        await prisma.chamadas.update({
-            where: { id: validId },
-            data: validatedData,
-        });
     } catch (error) {
         if (error instanceof z.ZodError) {
             throw new Error(`Dados inválidos: ${error.message}`);
         }
+
         console.error("Erro ao atualizar chamada:", error);
-        throw new Error("Erro ao atualizar chamada");
+        throw new Error("Erro ao atualizar chamada.");
     }
 }
 

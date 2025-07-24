@@ -5,6 +5,7 @@
 import { z } from "zod";
 import { revalidatePath } from 'next/cache';
 import { prisma } from '../neon/db';
+import { deleteCloudinaryImage } from "./cloudinary";
 
 // === AÇÕES PARA PÁGINAS ===
 
@@ -20,6 +21,9 @@ const paginaSchema = z.object({
   createdAt: z.date().optional(),
   publicId: z.string().optional(),
 });
+
+const idsSchema = z.array(z.number().positive());
+const idSchema = z.number().positive();
 
 export type PaginaInput = z.infer<typeof paginaSchema>;
 
@@ -42,22 +46,38 @@ export async function createPagina(data: PaginaInput) {
 }
 
 export async function updatePagina(id: number, data: PaginaInput) {
-  try {
-    const validatedData = paginaSchema.parse(data);
+  const validId = idSchema.parse(id);
+  const validatedData = paginaSchema.parse(data);
 
-    const pagina = await prisma.paginasConteudo.update({
-      where: { id },
-      data: validatedData
-    });
-
-    revalidatePath('/admin/paginas');
-    console.log(`✅ Página atualizada:`, pagina.id);
-    return pagina;
-  } catch (error) {
-    console.error('Erro ao atualizar página:', error);
-
-    throw new Error('Erro ao atualizar página');
+  const existingPagina = await prisma.paginasConteudo.findUnique({ where: { id: validId } });
+  if (!existingPagina) {
+    throw new Error(`Página com ID ${validId} não encontrada.`);
   }
+
+  if (
+    existingPagina.publicId &&
+    existingPagina.publicId !== validatedData.publicId
+  ) {
+    try {
+      await deleteCloudinaryImage(existingPagina.publicId);
+    } catch (error) {
+      console.error(
+        `Erro ao deletar imagem antiga do Cloudinary: ${existingPagina.publicId}`,
+        error
+      );
+    }
+  }
+
+  const updatedPagina = await prisma.$transaction(async (tx) => {
+    return tx.paginasConteudo.update({
+      where: { id: validId },
+      data: validatedData,
+    });
+  });
+
+  revalidatePath("/admin/paginas");
+  console.log(`✅ Página atualizada:`, updatedPagina.id);
+  return updatedPagina;
 }
 
 
@@ -92,17 +112,35 @@ export async function deactivatePaginas(ids: number[]) {
 }
 
 export async function deletePaginas(ids: number[]) {
-  try {
-    const result = await prisma.paginasConteudo.deleteMany({
-      where: { id: { in: ids } }
-    });
+  const validIds = idsSchema.parse(ids);
 
-    revalidatePath('/admin/paginas');
-    console.log(`✅ ${result.count} páginas excluídas:`, ids);
-  } catch (error) {
-    console.error('Erro ao excluir páginas:', error);
-    throw new Error('Erro ao excluir páginas');
-  }
+  // 1. Fetch current pages with publicId
+  const paginas = await prisma.paginasConteudo.findMany({
+    where: { id: { in: validIds } },
+    select: { id: true, publicId: true },
+  });
+
+  // 2. Delete images from Cloudinary if publicId exists
+  await Promise.all(
+    paginas.map(async (pagina) => {
+      if (pagina.publicId) {
+        try {
+          await deleteCloudinaryImage(pagina.publicId);
+        } catch (error) {
+          console.error(`Erro ao deletar imagem da página ${pagina.id}`, error);
+        }
+      }
+    })
+  );
+
+  await prisma.$transaction([
+    prisma.paginasConteudo.deleteMany({
+      where: { id: { in: validIds } },
+    }),
+  ]);
+
+  revalidatePath("/admin/paginas");
+  console.log(`✅ ${validIds.length} páginas excluídas:`, validIds);
 }
 
 

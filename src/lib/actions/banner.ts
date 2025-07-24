@@ -72,20 +72,31 @@ export async function createBanner({
 }
 
 export async function updateBanner(banner: Omit<BannerORM, "createdAt">) {
+  const validId = idSchema.parse(banner.id);
   const { id, ...bannerWithoutId } = banner;
+  const validatedData = bannerServerSchema.parse(bannerWithoutId);
 
-  // Validar ID
-  const validId = idSchema.parse(id);
+  const existingBanner = await prisma.banners.findUnique({ where: { id: validId } });
+  if (!existingBanner) {
+    throw new Error(`Banner with ID ${validId} not found.`);
+  }
 
-  // Validar dados do banner
-  const validatedData = bannerServerSchema.parse({
-    ...bannerWithoutId,
-  });
+  if (
+    existingBanner.publicId &&
+    existingBanner.publicId !== validatedData.publicId
+  ) {
+    try {
+      await deleteCloudinaryImage(existingBanner.publicId);
+    } catch (error) {
+      console.error(`Failed to delete old Cloudinary image: ${existingBanner.publicId}`, error);
+    }
+  }
 
-
-  await prisma.banners.update({
-    where: { id: validId },
-    data: validatedData,
+  return await prisma.$transaction(async (tx) => {
+    return tx.banners.update({
+      where: { id: validId },
+      data: validatedData,
+    });
   });
 }
 

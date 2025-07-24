@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PaginasConteudo } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { createPagina, updatePagina } from "@/lib/actions/contetnPages";
+import { createPagina, updatePagina } from "@/lib/actions/contentPages";
 import { CldUploadWidget } from "next-cloudinary";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
@@ -93,7 +93,6 @@ export default function PaginaDeConteudoForm({
         }
 
         if (isEditing) {
-          console.log(dataToSubmit);
           await updatePagina(paginaDeConteudo.id, dataToSubmit);
           toast.success("Página editada com sucesso!");
         } else {
