@@ -87,21 +87,14 @@ model MaisAcessado {
 
 model PaginasConteudo {
   id Int @id @default(autoincrement())
-  titulo String?
-  ordem Int?
+  titulo String
+  ordem Int
   conteudo String?
   imagem String?
   publicId String?
+  url String?
+  tipo String
   isOnMenu Boolean @default(true)
-  status Boolean @default(true)
-  createdAt DateTime @default(now())
-}
-
-model LinkConteudo {
-  id Int @id @default(autoincrement())
-  titulo String
-  url String
-  ordem Int
   status Boolean @default(true)
   createdAt DateTime @default(now())
 }
