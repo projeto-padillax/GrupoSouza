@@ -22,6 +22,7 @@ model ImoveisCorretor {
   codigosImoveis String[] @default([])
   corretor Corretor @relation(fields: [corretorId], references: [id])
   corretorId String
+  createdAt DateTime @default(now())
 }
 model Corretor {
   id String @id @default(cuid())
