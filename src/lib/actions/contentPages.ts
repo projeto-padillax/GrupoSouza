@@ -165,3 +165,14 @@ export async function getPaginaById(id: number) {
     throw new Error('Erro ao buscar página');
   }
 }
+
+export async function getPaginaByTitle(titulo: string) {
+  try {
+    return await prisma.paginasConteudo.findFirst({
+      where: { titulo }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar página:', error);
+    throw new Error('Erro ao buscar página');
+  }
+}
