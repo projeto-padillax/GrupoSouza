@@ -1,7 +1,9 @@
+import { db } from "@/lib/firebase/clientApp";
+import { doc, setDoc } from "firebase/firestore";
+
 export async function POST(request: Request) {
   try {
-
-    const pesquisa = {
+    const basePesquisa = {
       fields: [
         "Codigo", "Categoria", "Bairro", "Cidade", "ValorVenda", "ValorLocacao",
         "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
@@ -15,44 +17,82 @@ export async function POST(request: Request) {
       }
     };
 
-    const params = new URLSearchParams({
-      key: "5c0ad54d962643c872414a5944020381",
-      pesquisa: JSON.stringify(pesquisa),
+    const baseParams = {
+      key: process.env.VISTA_KEY!,
       showtotal: "1"
-    });
+    };
 
-    const url = `https://gruposou-rest.vistahost.com.br/imoveis/listar?${params}`;
-    console.log(url)
-
-    const externalResponse = await fetch(url, {
-      method: 'GET',
-      headers: {
-        "Accept": 'application/json',
-      },
-    });
-
-    console.log(externalResponse)
-
-    if (!externalResponse.ok) {
-      console.error(externalResponse.statusText)
-      return new Response(JSON.stringify({ error: "Failed to fetch data" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
+    const makeUrl = (pagina: number) => {
+      const pesquisa = {
+        ...basePesquisa,
+        paginacao: { pagina, quantidade: basePesquisa.paginacao.quantidade }
+      };
+      const params = new URLSearchParams({
+        ...baseParams,
+        pesquisa: JSON.stringify(pesquisa)
       });
+      return `https://gruposou-rest.vistahost.com.br/imoveis/listar?${params}`;
+    };
+
+    const extrairImoveis = (data: any) => {
+      const imoveis: Record<string, any> = {};
+      for (const key in data) {
+        if (!["total", "paginas", "pagina", "quantidade"].includes(key)) {
+          imoveis[key] = data[key];
+        }
+      }
+      return imoveis;
+    };
+
+    // Pega a primeira página para saber total de páginas
+    const firstResponse = await fetch(makeUrl(1), {
+      method: "GET",
+      headers: { Accept: "application/json" }
+    });
+
+    if (!firstResponse.ok) throw new Error("Falha ao obter página 1");
+
+    const firstData = await firstResponse.json();
+
+    const totalPaginas = Number(firstData.paginas) || 1;
+
+    let todosImoveis: Record<string, any> = extrairImoveis(firstData);
+
+    // Pega as demais páginas e junta os imóveis
+    for (let pagina = 2; pagina <= totalPaginas; pagina++) {
+      const response = await fetch(makeUrl(pagina), {
+        method: "GET",
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        console.warn(`Falha ao obter página ${pagina}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const imoveisPagina = extrairImoveis(data);
+
+      todosImoveis = { ...todosImoveis, ...imoveisPagina };
     }
 
-    const data = await externalResponse.json();
+    // Grava todos imóveis em documentos separados no Firestore
+    await Promise.all(
+      Object.entries(todosImoveis).map(([codigo, imovel]) =>
+        setDoc(doc(db, "imoveis", codigo), imovel)
+      )
+    );
 
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ message: "Imóveis armazenados com sucesso", total: Object.keys(todosImoveis).length }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Erro no POST:", error);
+    return new Response(
+      JSON.stringify({ error: "Erro interno no servidor" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
 
