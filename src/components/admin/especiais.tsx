@@ -6,9 +6,10 @@ import { useAdminListHandlers } from "@/hooks/adminHandlers";
 import { useState } from "react";
 import { ActionButtons } from "./actionButtons";
 import { activateEspeciais, deactivateEspeciais, deleteEspeciais } from "@/lib/actions/especiais";
-import { Edit, Link } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { EspecialTable } from "./especialTable";
+import Link from "next/link";
 
 
 interface Props {
@@ -57,11 +58,12 @@ export default function EspeciaisListClient({ initialEspeciais }: Props) {
 
                     <ActionButtons
                         addButtonText="Nova Seleção"
-                        addButtonHref="/admin/especial/novo"
+                        addButtonHref="/admin/especiais/novo"
                         onAtivar={handleActivate}
                         onDesativar={handleDeactivate}
                         onExcluir={() => handleDelete()}
                     />
+                    
                     <EspecialTable
                         data={especiais}
                         selectedIds={selectedIds}

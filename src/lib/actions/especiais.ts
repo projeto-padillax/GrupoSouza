@@ -3,13 +3,14 @@ import { ImoveisCorretor as ImoveisCorretorORM } from "@prisma/client";
 
 import z from "zod";
 import { prisma } from "../neon/db";
+import { EspecialInput } from "@/components/admin/especialForm";
 
 const especialServerSchema = z.object({
     status: z.boolean(),
     nomeCliente: z
         .string()
         .min(1, "Nome é obrigatório.")
-        .max(100, "Nome deve ter no máximo 100 caracteres."),
+        .max(40, "Nome deve ter no máximo 40 caracteres."),
     mensagem: z
         .string()
         .min(1, "Mensagem é obrigatório")
@@ -22,8 +23,17 @@ const especialServerSchema = z.object({
 const idsSchema = z.array(z.cuid());
 const idSchema = z.cuid();
 
-export async function getAllEspeciais(): Promise<ImoveisCorretorORM[]> {
-    return await prisma.imoveisCorretor.findMany();
+export async function getAllEspeciais() {
+  return await prisma.imoveisCorretor.findMany({
+    include: {
+      corretor: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
 }
 
 export async function findEspecial(id: string): Promise<ImoveisCorretorORM | null> {
@@ -32,30 +42,30 @@ export async function findEspecial(id: string): Promise<ImoveisCorretorORM | nul
     return await prisma.imoveisCorretor.findUnique({ where: { id: validId } });
 }
 
-// export async function createEspecial({
-//     status,
-//     nomeCliente,
-//     mensagem,
-//     corretorId,
-//     codigosImoveis,
-// }: EspecialInput) {
-//     const validatedData = especialServerSchema.parse({
-//         status,
-//         nomeCliente,
-//         mensagem,
-//         corretorId,
-//         codigosImoveis
-//     });
-//     await prisma.imoveisCorretor.create({
-//         data: {
-//             status: validatedData.status,
-//             nomeCliente: validatedData.nomeCliente,
-//             mensagem: validatedData.mensagem,
-//             corretorId: validatedData.corretorId,
-//             codigosImoveis: validatedData.codigosImoveis ?? [],
-//         },
-//     });
-// }
+export async function createEspecial({
+    status,
+    nomeCliente,
+    mensagem,
+    corretorId,
+    codigosImoveis,
+}: EspecialInput) {
+    const validatedData = especialServerSchema.parse({
+        status,
+        nomeCliente,
+        mensagem,
+        corretorId,
+        codigosImoveis
+    });
+    await prisma.imoveisCorretor.create({
+        data: {
+            status: validatedData.status,
+            nomeCliente: validatedData.nomeCliente,
+            mensagem: validatedData.mensagem,
+            corretorId: validatedData.corretorId,
+            codigosImoveis: validatedData.codigosImoveis ?? [],
+        },
+    });
+}
 
 export async function updateEspecial(especial: Omit<ImoveisCorretorORM, "createdAt">) {
     const { id, ...especialWithoutId } = especial;

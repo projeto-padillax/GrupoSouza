@@ -17,7 +17,10 @@ export interface EspecialItem {
     nomeCliente: string
     status: boolean
     createdAt: Date
-    corretorId: string
+    corretor?: {
+        id: string;
+        name: string;
+    };
 }
 
 interface EspecialTableProps {
@@ -69,7 +72,7 @@ export function EspecialTable({
                                 />
                             </TableCell>
                             <TableCell className="py-5 text-center">{item.nomeCliente}</TableCell>
-                            <TableCell className="py-5 text-center">{item.corretorId|| "-"}</TableCell>
+                            <TableCell className="py-5 text-center">{item.corretor?.name|| "-"}</TableCell>
                             <TableCell className="py-5 text-center">
                                 {new Date(item.createdAt).toLocaleDateString("pt-BR")}
                             </TableCell>
@@ -84,7 +87,7 @@ export function EspecialTable({
                                     {item.status ? "Ativo" : "Inativo"}
                                 </Badge>
                             </TableCell>
-                            <TableCell className="py-5 text-center">
+                            <TableCell className="text-center">
                                 {renderActions(item)}
                             </TableCell>
                         </TableRow>
