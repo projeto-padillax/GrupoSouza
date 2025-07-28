@@ -1,23 +1,23 @@
 // components/Footer.tsx
 import Link from 'next/link';
 import { Phone, Instagram, Facebook, Youtube } from 'lucide-react';
+import Image from 'next/image';
+
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-800 text-white">
+    <footer className="bg-[#001c40] text-white rounded-lg w-11/12 mx-auto max-w-6xl">
       {/* Container principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Seção superior */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+        <div className="flex flex-col lg:flex-row justify-between items-center lg:items-center mb-8">
           
           {/* Logo */}
           <div className="mb-6 lg:mb-0">
-            <div className="flex items-center">
-              <div className="w-40 h-12 bg-slate-800 flex items-center">
-                <span className="text-white font-bold text-xl">Grupo Souza</span>
-              </div>
-            </div>
+            <Link href="/">
+                <Image src={"/logo_rodape.png"} alt={'Logo do Site'} width={150} height={47}></Image>
+              </Link>
           </div>
 
           {/* Telefones e Redes Sociais */}
@@ -37,21 +37,21 @@ export default function Footer() {
             {/* Redes Sociais */}
             <div className="flex space-x-3">
               <a 
-                href="#" 
+                href="https://www.instagram.com/gruposouza/" 
                 className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a 
-                href="#" 
+                href="https://www.facebook.com/imobiliariagruposouza/" 
                 className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a 
-                href="#" 
+                href="https://www.youtube.com/@souzasouza3147" 
                 className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
                 aria-label="YouTube"
               >
