@@ -51,6 +51,7 @@ export function EspecialTable({
                             />
                         </TableHead>
                         <TableHead className="text-center py-5">Nome do Cliente</TableHead>
+                        <TableHead className="text-center py-5">URL</TableHead>
                         <TableHead className="text-center py-5">Corretor</TableHead>
                         <TableHead className="text-center py-5">Data</TableHead>
                         <TableHead className="text-center py-5">Status</TableHead>
@@ -72,7 +73,17 @@ export function EspecialTable({
                                 />
                             </TableCell>
                             <TableCell className="py-5 text-center">{item.nomeCliente}</TableCell>
-                            <TableCell className="py-5 text-center">{item.corretor?.name|| "-"}</TableCell>
+                            <TableCell className="py-5 text-center">
+                                <a
+                                    href={`/especial/${item.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium text-base bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors duration-200"
+                                >
+                                    Abrir URL
+                                </a>
+                            </TableCell>
+                            <TableCell className="py-5 text-center">{item.corretor?.name || "-"}</TableCell>
                             <TableCell className="py-5 text-center">
                                 {new Date(item.createdAt).toLocaleDateString("pt-BR")}
                             </TableCell>
