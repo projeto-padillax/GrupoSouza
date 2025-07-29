@@ -3,13 +3,16 @@ import { findEspecial } from "@/lib/actions/especiais";
 import { getCorretoresAtivosParaSelect } from "@/lib/actions/corretores";
 import EspecialForm from "@/components/admin/especialForm";
 
+interface EditEspecialPageProps {
+    params: Promise<{ id: string }>;
+}
+
 export default async function EditEspecialPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
-  const especial = await findEspecial(id);
+}: EditEspecialPageProps) {
+  const especialId = (await params).id;
+
+  const especial = await findEspecial(especialId);
 
   if (!especial) return notFound();
 
