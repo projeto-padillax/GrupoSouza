@@ -111,3 +111,12 @@ export async function deleteCorretores(ids: string[]) {
         validIds.map((id) => prisma.corretor.deleteMany({ where: { id } }))
     );
 }
+
+export async function getCorretoresAtivosParaSelect(): Promise<{ id: string; name: string }[]> {
+  const corretores = await prisma.corretor.findMany({
+    where: { status: true },
+    select: { id: true, name: true },
+  });
+
+  return corretores;
+}
