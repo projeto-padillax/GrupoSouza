@@ -13,7 +13,7 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <Header></Header>
-      <main className="flex-1 py-8">
+      <main className="flex-1 pb-8">
         <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
         <Footer></Footer>
         <div className="justify-self-center pt-4">
