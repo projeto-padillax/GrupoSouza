@@ -148,3 +148,22 @@ export async function deleteBanners(ids: number[]) {
     }),
   ]);
 }
+
+export async function getRandomBannerImage(): Promise<{
+  imagem: string;
+  titulo: string;
+  subtitulo: string;
+  url: string;
+}> {
+  const banners = await prisma.banners.findMany({
+    where: { status: true }, // Remova essa linha se quiser qualquer banner, ativo ou não
+    select: { imagem: true,
+      titulo: true,
+      subtitulo: true,
+      url: true,
+     },
+  });
+
+  const randomIndex = Math.floor(Math.random() * banners.length);
+  return banners[randomIndex];
+}
