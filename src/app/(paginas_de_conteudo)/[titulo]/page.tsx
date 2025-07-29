@@ -16,7 +16,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-8">
       <Header />
 
       <main className="flex-1 bg-gray-50 py-8">
