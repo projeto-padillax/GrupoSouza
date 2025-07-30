@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import { getPaginaByTitle } from "@/lib/actions/contentPages";
+import Link from "next/link";
 
 interface DynamicPageProps {
   params: Promise<{ titulo: string }>;
