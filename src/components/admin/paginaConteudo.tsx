@@ -79,7 +79,7 @@ export default function PaginaConteudo({ initialContentPages }: Props) {
   }, [pages]);
 
   function formatPageUrl(titulo: string) {
-    return `https://gruposouza.leadlink.com.br/${titulo.toLowerCase()}`;
+    return `http://localhost:3000/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
   }
 
   const formattedDate = (date: Date) => {
