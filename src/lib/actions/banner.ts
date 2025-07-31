@@ -72,8 +72,8 @@ export async function createBanner({
 }
 
 export async function updateBanner(banner: Omit<BannerORM, "createdAt">) {
-  const validId = idSchema.parse(banner.id);
   const { id, ...bannerWithoutId } = banner;
+  const validId = idSchema.parse(id);
   const validatedData = bannerServerSchema.parse(bannerWithoutId);
 
   const existingBanner = await prisma.banners.findUnique({ where: { id: validId } });
@@ -165,5 +165,6 @@ export async function getRandomBannerImage(): Promise<{
   });
 
   const randomIndex = Math.floor(Math.random() * banners.length);
+  console.log(randomIndex)
   return banners[randomIndex];
 }

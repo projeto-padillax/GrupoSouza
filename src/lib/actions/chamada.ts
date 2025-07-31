@@ -97,8 +97,8 @@ export async function createChamada({ titulo, subtitulo, ordem, imagem, url, sta
 
 export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
     try {
-        const validId = idSchema.parse(chamada.id);
         const { id, ...chamadaWithoutId } = chamada;
+        const validId = idSchema.parse(id);
 
         const validatedData = chamadaServerSchema.parse(chamadaWithoutId);
 

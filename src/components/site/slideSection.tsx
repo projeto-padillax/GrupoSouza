@@ -1,6 +1,4 @@
-"use client";
 import Link from "next/link";
-import { useEffect } from "react";
 
 interface SlideSectionProps {
   imageUrl?: string;
@@ -9,9 +7,6 @@ interface SlideSectionProps {
 }
 
 export default function SlideSection(slide: SlideSectionProps) {
-  useEffect(() => {
-    console.log(slide);
-  }, []);
   return (
     <section className="py-8">
       <div className="w-11/12 mx-auto max-w-6xl">

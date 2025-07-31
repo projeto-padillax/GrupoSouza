@@ -101,8 +101,8 @@ export async function createSlide({ titulo, ordem, imagem, url, status, publicId
 
 export async function updateSlide(slide: Omit<SlideORM, "createdAt">) {
     try {
-        const validId = idSchema.parse(slide.id);
         const { id, ...slideWithoutId } = slide;
+        const validId = idSchema.parse(id);
 
         const validatedData = slideServerSchema.parse(slideWithoutId);
 

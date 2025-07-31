@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { createPagina, updatePagina } from "@/lib/actions/contentPages";
 import { CldUploadWidget } from "next-cloudinary";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import Image from "next/image";
 
 const PaginaDeConteudo = z.object({
   status: z.boolean(),
@@ -113,7 +114,7 @@ export default function PaginaDeConteudoForm({
   };
 
   const handleBack = () => {
-    router.replace("/admin/paginas");
+    router.push("/admin/paginas");
   };
 
   return (
@@ -345,7 +346,9 @@ export default function PaginaDeConteudoForm({
                           (JPG/PNG 1920x750px)
                         </p>
                         {previewImage && (
-                          <img
+                          <Image
+                            width={300}
+                            height={200}
                             src={previewImage}
                             alt="Pré-visualização"
                             className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"

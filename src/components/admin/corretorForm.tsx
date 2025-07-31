@@ -77,7 +77,7 @@ export default function CorretorForm({ corretor }: CorretorFormProps) {
     };
 
     const handleBack = () => {
-        router.replace("/admin/corretores");
+        router.push("/admin/corretores");
     };
 
     return (
