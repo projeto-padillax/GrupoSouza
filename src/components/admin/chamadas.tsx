@@ -78,6 +78,11 @@ export default function ChamadasListClient({ initialChamadas }: Props) {
                   </span>
                 ),
               },
+                            {
+                header: "Ordem",
+                accessor: "ordem",
+                cell: (item) => <span className="text-gray-700 text-base">{item.ordem}</span>
+              },
               {
                 header: "Data",
                 accessor: "date",

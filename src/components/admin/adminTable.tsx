@@ -90,7 +90,7 @@ export function AdminTable<T extends Banners | Slides | Chamadas | MaisAcessado>
                                 />
                             </TableCell>
                             <TableCell className="py-5">
-                                <span className="text-gray-900 font-medium text-base">{item.titulo}</span>
+                                <span className="text-gray-900 font-medium text-base" dangerouslySetInnerHTML={{__html: item.titulo}}></span>
                             </TableCell>
                             <TableCell className="py-5">
                                 <a

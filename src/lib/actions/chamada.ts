@@ -40,7 +40,8 @@ export type chamadaSchema = z.infer<typeof chamadaServerSchema>
 export async function getAllChamadas(): Promise<ChamadaORM[]> {
     try {
         return await prisma.chamadas.findMany({
-            orderBy: { ordem: 'asc' }
+            orderBy: { ordem: 'asc' },
+            where: { status: true },
         })
     } catch (error) {
         console.error("Erro ao buscar chamadas:", error);
