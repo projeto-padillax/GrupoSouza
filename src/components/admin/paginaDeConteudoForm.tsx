@@ -76,7 +76,7 @@ export default function PaginaDeConteudoForm({
   const tipoPagina = form.watch("tipo");
 
   const formatPageUrl = (titulo: string) => {
-    return `https://gruposouza.leadlink.com.br/${titulo.toLowerCase()}`
+    return `http://localhost:3000/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
   };
 
   const onSubmit = (values: PaginaDeConteudoInput) => {
@@ -96,8 +96,9 @@ export default function PaginaDeConteudoForm({
           await updatePagina(paginaDeConteudo.id, dataToSubmit);
           toast.success("Página editada com sucesso!");
         } else {
+          console.log("URL que vai ser salva:", dataToSubmit.url);
           await createPagina(dataToSubmit);
-          toast.success("Página criada com sucesso!");
+          toast.success("Página criada com sucesso!" + dataToSubmit.url);
         }
 
         router.push("/admin/paginas");

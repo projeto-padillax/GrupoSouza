@@ -83,7 +83,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
         router.push(item.url);
       }
     } else if (item.tipo === "pagina" && item.titulo) {
-      router.push(`/${item.titulo}`);
+      router.push(`/pagina/${item.titulo}`);
     }
     setIsOpen(false);
   };
