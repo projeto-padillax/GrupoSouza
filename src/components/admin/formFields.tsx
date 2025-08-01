@@ -143,6 +143,8 @@ export function FormFields<T extends FieldValues>({
                 </p>
                 {previewImage && (
                   <Image
+                    width={300}
+                    height={200}
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"
