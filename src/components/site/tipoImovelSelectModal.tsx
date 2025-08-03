@@ -112,7 +112,7 @@ export function TypeSelectModal({
             <div className="space-y-4">
               {/* Residenciais */}
               <div>
-                <div className="flex items-center gap-2 mb-2 ml-3">
+                <div className="flex items-center gap-2 mb-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -130,7 +130,7 @@ export function TypeSelectModal({
                   {residenciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
                         selectedTypes.includes(type.id)
                           ? "border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -159,7 +159,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div>
-                <div className="flex items-center gap-2 mb-2 ml-3">
+                <div className="flex items-center gap-2 mb-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -177,7 +177,7 @@ export function TypeSelectModal({
                   {comerciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
                         selectedTypes.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -208,7 +208,7 @@ export function TypeSelectModal({
             <div className="grid grid-cols-2 gap-6">
               {/* Residenciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 border-b flex items-center gap-2 ml-3">
+                <div className="p-4 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -226,7 +226,7 @@ export function TypeSelectModal({
                   {residenciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 ${
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
                         selectedTypes.includes(type.id)
                           ? "border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -255,7 +255,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 border-b flex items-center gap-2 ml-3">
+                <div className="p-4 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -273,7 +273,7 @@ export function TypeSelectModal({
                   {comerciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 ${
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
                         selectedTypes.includes(type.id)
                           ? " border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
