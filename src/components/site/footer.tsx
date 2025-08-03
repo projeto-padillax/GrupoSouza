@@ -6,9 +6,9 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <>
-      <footer className="bg-[#001c40] text-white rounded-lg w-11/12 mx-auto max-w-6xl">
+      <footer className="text-white w-[90%] mx-auto max-w-7xl">
         {/* Container principal */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#001c40] rounded-lg">
           {/* Seção superior */}
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-center mb-8">
             {/* Logo */}

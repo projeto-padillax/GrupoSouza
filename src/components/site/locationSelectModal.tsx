@@ -1,24 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Search, MapPin, X } from "lucide-react"
+import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Search } from "lucide-react";
 
 interface LocationOption {
-  id: string
-  cidade: string
-  estado: string
-  bairros: string[]
+  cidade: string;
+  bairros: string[];
 }
 
 interface LocationSelectModalProps {
-  isOpen: boolean
-  onClose: () => void
-  selectedLocations: string[]
-  onSelectionChange: (locations: string[]) => void
+  isOpen: boolean;
+  onClose: () => void;
+  selectedLocations: string[];
+  onSelectionChange: (locations: string[]) => void;
 }
 
 export function LocationSelectModal({
@@ -27,164 +30,99 @@ export function LocationSelectModal({
   selectedLocations,
   onSelectionChange,
 }: LocationSelectModalProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [expandedCities, setExpandedCities] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedCities, setExpandedCities] = useState<string[]>([]);
+  const [cidades, setCidades] = useState<LocationOption[]>([]);
 
-  // Dados mockados de localização - em produção viriam do Firestore
-  const locationOptions: LocationOption[] = [
-    {
-      id: "sao-paulo",
-      cidade: "São Paulo",
-      estado: "SP",
-      bairros: [
-        "Vila Madalena",
-        "Pinheiros",
-        "Itaim Bibi",
-        "Moema",
-        "Vila Olímpia",
-        "Brooklin",
-        "Campo Belo",
-        "Santo Amaro",
-        "Morumbi",
-        "Jardins",
-        "Consolação",
-        "Liberdade",
-        "Bela Vista",
-        "República",
-        "Centro",
-      ],
-    },
-    {
-      id: "rio-de-janeiro",
-      cidade: "Rio de Janeiro",
-      estado: "RJ",
-      bairros: [
-        "Copacabana",
-        "Ipanema",
-        "Leblon",
-        "Barra da Tijuca",
-        "Botafogo",
-        "Flamengo",
-        "Lagoa",
-        "Tijuca",
-        "Vila Isabel",
-        "Maracanã",
-        "Centro",
-        "Santa Teresa",
-        "Lapa",
-      ],
-    },
-    {
-      id: "belo-horizonte",
-      cidade: "Belo Horizonte",
-      estado: "MG",
-      bairros: [
-        "Savassi",
-        "Funcionários",
-        "Lourdes",
-        "Belvedere",
-        "Buritis",
-        "Pampulha",
-        "Centro",
-        "Santa Efigênia",
-        "Cidade Nova",
-        "São Pedro",
-        "Mangabeiras",
-        "Serra",
-      ],
-    },
-    {
-      id: "brasilia",
-      cidade: "Brasília",
-      estado: "DF",
-      bairros: [
-        "Asa Sul",
-        "Asa Norte",
-        "Lago Sul",
-        "Lago Norte",
-        "Sudoeste",
-        "Noroeste",
-        "Águas Claras",
-        "Taguatinga",
-        "Ceilândia",
-        "Samambaia",
-        "Planaltina",
-        "Sobradinho",
-      ],
-    },
-    {
-      id: "salvador",
-      cidade: "Salvador",
-      estado: "BA",
-      bairros: [
-        "Barra",
-        "Ondina",
-        "Rio Vermelho",
-        "Pituba",
-        "Itaigara",
-        "Caminho das Árvores",
-        "Graça",
-        "Vitória",
-        "Campo Grande",
-        "Pelourinho",
-        "Centro",
-        "Federação",
-      ],
-    },
-  ]
+  useEffect(() => {
+    const fetchCidades = async () => {
+      try {
+        const res = await fetch("/api/vista/cidades");
+        if (!res.ok) throw new Error("Erro ao buscar cidades");
+        const data = await res.json();
 
-  const filteredLocations = locationOptions.filter(
+        const cidadesMapeadas = data.cidades.map(
+          (item: { cidade: string; bairros: string[] }) => ({
+            cidade:
+              item.cidade.charAt(0).toUpperCase() +
+              item.cidade.slice(1).toLowerCase(),
+            bairros: item.bairros,
+          })
+        );
+
+        const cidadesOrdenadas = cidadesMapeadas.sort(
+          (a: LocationOption, b: LocationOption) => {
+            if (a.cidade.toLowerCase() === "piracicaba") return -1;
+            if (b.cidade.toLowerCase() === "piracicaba") return 1;
+            return a.cidade.localeCompare(b.cidade);
+          }
+        );
+
+        setCidades(cidadesOrdenadas);
+        setExpandedCities(cidadesOrdenadas[0]); 
+      } catch (error) {
+        console.error("Erro ao carregar cidades:", error);
+      }
+    };
+
+    fetchCidades();
+  }, []);
+
+  const filteredLocations = cidades.filter(
     (location) =>
       location.cidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      location.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      location.bairros.some((bairro) => bairro.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+      location.bairros.some((bairro) =>
+        bairro.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+  );
 
-  const toggleCity = (cityId: string) => {
-    if (expandedCities.includes(cityId)) {
-      setExpandedCities(expandedCities.filter((id) => id !== cityId))
-    } else {
-      setExpandedCities([...expandedCities, cityId])
-    }
+const toggleCity = (cityId: string) => {
+  const isCurrentlyExpanded = expandedCities.includes(cityId);
+
+  if (isCurrentlyExpanded) {
+    setExpandedCities([]);
+    onSelectionChange([]);
+  } else {
+    setExpandedCities([cityId]);
+    onSelectionChange([]);
   }
+};
 
-  const handleLocationChange = (locationKey: string, checked: boolean) => {
+const handleLocationChange = (locationKey: string, checked: boolean) => {
+  const isCity = !locationKey.includes(":");
+
+  if (isCity) {
     if (checked) {
-      onSelectionChange([...selectedLocations, locationKey])
+      onSelectionChange([`${locationKey}:all`]); 
     } else {
-      onSelectionChange(selectedLocations.filter((loc) => loc !== locationKey))
+      onSelectionChange([]);
+    }
+  } else {
+    const [cidade] = locationKey.split(":");
+
+    if (selectedLocations.includes(`${cidade}:all`)) return;
+
+    if (checked) {
+      onSelectionChange([...selectedLocations, locationKey]);
+    } else {
+      onSelectionChange(selectedLocations.filter((loc) => loc !== locationKey));
     }
   }
-
-  const removeLocation = (locationKey: string) => {
-    onSelectionChange(selectedLocations.filter((loc) => loc !== locationKey))
-  }
-
-  const clearAll = () => {
-    onSelectionChange([])
-  }
+};
 
   const handleConfirm = () => {
-    onClose()
-  }
-
-  const getLocationLabel = (locationKey: string) => {
-    const [cityId, bairro] = locationKey.split(":")
-    const city = locationOptions.find((loc) => loc.id === cityId)
-    if (!city) return locationKey
-
-    if (bairro) {
-      return `${bairro}, ${city.cidade} - ${city.estado}`
-    }
-    return `${city.cidade} - ${city.estado}`
-  }
+    console.log("Selected Locations:", selectedLocations);
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col sm:w-full w-[90%]">
+      <DialogContent
+        className="sm:max-w-4xl max-w-4xl max-h-[80vh] overflow-hidden flex flex-col w-[80%]"
+        aria-describedby="Selecione uma localização"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
             Selecionar Localização
           </DialogTitle>
         </DialogHeader>
@@ -197,85 +135,71 @@ export function LocationSelectModal({
               placeholder="Buscar cidade ou bairro..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 focus-visible:ring-[0px]"
             />
           </div>
-
-          {/* Selected locations */}
-          {selectedLocations.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-blue-900">
-                  {selectedLocations.length} localização(ões) selecionada(s)
-                </span>
-                <Button variant="ghost" size="sm" onClick={clearAll} className="text-blue-600 h-auto p-1">
-                  Limpar todas
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {selectedLocations.map((locationKey) => (
-                  <span
-                    key={locationKey}
-                    className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                  >
-                    {getLocationLabel(locationKey)}
-                    <button
-                      onClick={() => removeLocation(locationKey)}
-                      className="hover:bg-blue-200 rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Location list */}
           <div className="flex-1 overflow-y-auto space-y-2">
             {filteredLocations.map((location) => (
-              <div key={location.id} className="border rounded-lg">
+              <div key={location.cidade} className="border rounded-lg">
                 {/* City header */}
                 <div
                   className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
-                  onClick={() => toggleCity(location.id)}
+                  onClick={() => toggleCity(location.cidade)}
                 >
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={selectedLocations.includes(location.id)}
-                      onCheckedChange={(checked) => handleLocationChange(location.id, checked as boolean)}
+                      checked={selectedLocations.includes(
+                        `${location.cidade}:all`
+                      )}
+                      onCheckedChange={(checked) =>
+                        handleLocationChange(
+                          location.cidade,
+                          checked as boolean
+                        )
+                      }
                       onClick={(e) => e.stopPropagation()}
                     />
                     <div>
-                      <span className="font-medium">
-                        {location.cidade} - {location.estado}
+                      <span className="font-medium">{location.cidade}</span>
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({location.bairros.length} bairros)
                       </span>
-                      <span className="text-sm text-gray-500 ml-2">({location.bairros.length} bairros)</span>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm" className="h-auto p-1">
-                    {expandedCities.includes(location.id) ? "−" : "+"}
+                    {expandedCities.includes(location.cidade) ? "−" : "+"}
                   </Button>
                 </div>
 
                 {/* Neighborhoods */}
-                {expandedCities.includes(location.id) && (
+                {expandedCities.includes(location.cidade) && (
                   <div className="border-t bg-gray-50 p-3">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                       {location.bairros.map((bairro) => {
-                        const locationKey = `${location.id}:${bairro}`
+                        const locationKey = `${location.cidade}:${bairro}`;
                         return (
                           <div key={bairro} className="flex items-center gap-2">
                             <Checkbox
                               id={locationKey}
                               checked={selectedLocations.includes(locationKey)}
-                              onCheckedChange={(checked) => handleLocationChange(locationKey, checked as boolean)}
+                              disabled={selectedLocations.includes(`${location.cidade}:all`)}
+                              onCheckedChange={(checked) =>
+                                handleLocationChange(
+                                  locationKey,
+                                  checked as boolean
+                                )
+                              }
                             />
-                            <label htmlFor={locationKey} className="text-sm cursor-pointer">
+                            <label
+                              htmlFor={locationKey}
+                              className="text-sm cursor-pointer"
+                            >
                               {bairro}
                             </label>
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   </div>
@@ -286,13 +210,10 @@ export function LocationSelectModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
+        <div className="flex justify-center pt-4 border-t">
           <Button onClick={handleConfirm}>Confirmar Seleção</Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

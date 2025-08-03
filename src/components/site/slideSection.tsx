@@ -9,7 +9,7 @@ interface SlideSectionProps {
 export default function SlideSection(slide: SlideSectionProps) {
   return (
     <section className="py-8">
-      <div className="w-11/12 mx-auto max-w-6xl">
+      <div className="w-[90%] mx-auto max-w-7xl">
         <div
           className="relative h-80 bg-center bg-cover rounded-lg overflow-hidden object-cover"
           style={{ backgroundImage: `url(${slide.imageUrl})` }}
@@ -27,7 +27,7 @@ export default function SlideSection(slide: SlideSectionProps) {
               dangerouslySetInnerHTML={{
                 __html: slide.titulo ?? "Slide não encontrado",
               }}
-              className="font-semibold text-lg text-white text-center max-w-2xl font-sans leading-[1.2]"
+              className="font-semibold text-lg text-white text-start max-w-2xl font-sans leading-[1.2]"
             ></h2>
           </div>
         </div>

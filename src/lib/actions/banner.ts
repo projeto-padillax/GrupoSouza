@@ -165,6 +165,5 @@ export async function getRandomBannerImage(): Promise<{
   });
 
   const randomIndex = Math.floor(Math.random() * banners.length);
-  console.log(randomIndex)
   return banners[randomIndex];
 }

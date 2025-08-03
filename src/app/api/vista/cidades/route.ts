@@ -37,7 +37,7 @@ export async function POST() {
     for (const cidade of cidades) {
       if (cidade.length == 0) continue;
 
-      console.log(cidade)
+      console.log(cidade);
       const pesquisa = {
         fields: ["Cidade", "Bairro"],
         filter: { Cidade: cidade },
@@ -62,13 +62,11 @@ export async function POST() {
 
       const data = await response.json();
 
-      const bairros: string[] = (
-        data?.Bairro ?? []
-      ).flatMap((b: string) =>
+      const bairros: string[] = (data?.Bairro ?? []).flatMap((b: string) =>
         b
           .split(",")
-          .map(nome => nome.trim())
-          .filter(nome => nome !== "")
+          .map((nome) => nome.trim())
+          .filter((nome) => nome !== "")
       );
 
       const cidadeId = cidade.replace(/[.#$\[\]/]/g, "_");
@@ -79,15 +77,18 @@ export async function POST() {
     }
 
     return new Response(
-      JSON.stringify({ message: "Cidades e bairros armazenados com sucesso", totalCidades: cidades.length }),
+      JSON.stringify({
+        message: "Cidades e bairros armazenados com sucesso",
+        totalCidades: cidades.length,
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Erro no POST:", error);
-    return new Response(
-      JSON.stringify({ error: "Erro interno no servidor" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Erro interno no servidor" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 
@@ -95,20 +96,33 @@ export async function GET() {
   try {
     const snapshot = await getDocs(collection(db, "cidades"));
 
-    const cidadesComBairros = snapshot.docs.map(doc => ({
-      cidadeId: doc.id,
-      bairros: doc.data().bairros ?? [],
-    }));
+    const cidadesMap = new Map<string, string[]>();
 
-    return new Response(
-      JSON.stringify({ cidades: cidadesComBairros }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    snapshot.docs.forEach((doc) => {
+      const cidadeId = doc.id.toLowerCase();
+      const bairros = doc.data().bairros ?? [];
+
+      if (!cidadesMap.has(cidadeId)) {
+        cidadesMap.set(cidadeId, bairros);
+      }
+    });
+
+    const cidadesComBairros = Array.from(cidadesMap.entries()).map(
+      ([cidadeId, bairros]) => ({
+        cidade: cidadeId,
+        bairros,
+      })
     );
+
+    return new Response(JSON.stringify({ cidades: cidadesComBairros }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Erro ao buscar cidades:", error);
-    return new Response(
-      JSON.stringify({ error: "Erro ao buscar cidades" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Erro ao buscar cidades" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
