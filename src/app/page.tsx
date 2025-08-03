@@ -26,7 +26,7 @@ export default async function Home() {
         <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
         <SlideSection imageUrl={slide?.imagem} titulo={slide?.titulo} url={slide?.url}></SlideSection>
         <ChamadasNaHomeSection ></ChamadasNaHomeSection>
-        {/* <DestaquesSection destaques={destaques} /> */}
+        <DestaquesSection destaques={destaques} />
         <Footer></Footer>
       </main>
     </div>
