@@ -219,8 +219,3 @@ export async function PUT() {
     );
   }
 }
-
-
-export function GET() {
-  return new Response("Method Not Allowed", { status: 405 });
-}
