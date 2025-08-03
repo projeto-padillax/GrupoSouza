@@ -10,7 +10,7 @@ export async function POST() {
         "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
         "Caracteristicas", "InfraEstrutura", "Aberturas", "FotoDestaque",
         "FotoDestaquePequena", "Latitude", "Longitude", "Status", "Finalidade",
-        "DataHoraAtualizacao", "Descricao", "Lancamento"
+        "DataHoraAtualizacao", "Descricao", "Lancamento", "Mobiliado"
       ],
       paginacao: {
         pagina: 1,
@@ -218,9 +218,4 @@ export async function PUT() {
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-}
-
-
-export function GET() {
-  return new Response("Method Not Allowed", { status: 405 });
 }
