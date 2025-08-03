@@ -86,7 +86,7 @@ export default function UserForm({ user }: UserFormProps) {
     };
 
     const handleBack = () => {
-        router.replace("/admin/usuarios");
+        router.push("/admin/usuarios");
     };
 
     return (

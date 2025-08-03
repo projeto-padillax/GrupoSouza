@@ -16,7 +16,7 @@ const paginaSchema = z.object({
   imagem: z.string().optional(),
   isOnMenu: z.boolean().default(true),
   status: z.boolean().default(true),
-  url: z.string().url("URL inválida").optional(),
+  url: z.url("URL inválida").optional(),
   tipo: z.enum(["pagina", "link"]),
   createdAt: z.date().optional(),
   publicId: z.string().optional(),
@@ -36,11 +36,9 @@ export async function createPagina(data: PaginaInput) {
     });
 
     revalidatePath('/admin/paginas');
-    console.log(`✅ Página criada:`, pagina.id);
     return pagina;
   } catch (error) {
     console.error('Erro ao criar página:', error);
-    
     throw new Error('Erro ao criar página');
   }
 }

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form"
 import { FieldValues, Path, PathValue, UseFormReturn } from "react-hook-form/dist/types"
 import { CldUploadWidget } from "next-cloudinary"
+import Image from "next/image"
 
 type FormFieldsProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -141,7 +142,9 @@ export function FormFields<T extends FieldValues>({
                   (JPG/PNG 1920x750px)
                 </p>
                 {previewImage && (
-                  <img
+                  <Image
+                    width={300}
+                    height={200}
                     src={previewImage}
                     alt="Pré-visualização"
                     className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"

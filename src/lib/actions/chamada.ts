@@ -40,7 +40,8 @@ export type chamadaSchema = z.infer<typeof chamadaServerSchema>
 export async function getAllChamadas(): Promise<ChamadaORM[]> {
     try {
         return await prisma.chamadas.findMany({
-            orderBy: { ordem: 'asc' }
+            orderBy: { ordem: 'asc' },
+            where: { status: true },
         })
     } catch (error) {
         console.error("Erro ao buscar chamadas:", error);
@@ -96,8 +97,8 @@ export async function createChamada({ titulo, subtitulo, ordem, imagem, url, sta
 
 export async function updateChamada(chamada: Omit<ChamadaORM, "createdAt">) {
     try {
-        const validId = idSchema.parse(chamada.id);
         const { id, ...chamadaWithoutId } = chamada;
+        const validId = idSchema.parse(id);
 
         const validatedData = chamadaServerSchema.parse(chamadaWithoutId);
 

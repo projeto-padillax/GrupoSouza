@@ -1,9 +1,18 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronDown, Search } from "lucide-react";
+import Link from "next/link";
+import { LocationSelectModal } from "@/components/site/locationSelectModal";
+import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
+import { useEffect, useRef, useState } from "react";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -12,66 +21,280 @@ interface HeroSectionProps {
   url: string;
 }
 
-export function HeroSection( banner : HeroSectionProps) {
+export function HeroSection(banner: HeroSectionProps) {
+  const [searchData, setSearchData] = useState({
+    action: "comprar",
+    tipos: [] as string[],
+    locations: [] as string[],
+    valueRange: { min: "", max: "" },
+  });
+  const [isSearching, setIsSearching] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [modals, setModals] = useState({
+    location: false,
+    type: false,
+    value: false,
+  });
+
+  useEffect(() => {
+    if (isSearching && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearching]);
+
+  const handleBlur = () => {
+    // Se sair do input e estiver vazio, volta para o botão
+    if (!codigo.trim()) {
+      setIsSearching(false);
+    }
+  };
+
+  const openModal = (modalType: "location" | "type" | "value") => {
+    setModals({ ...modals, [modalType]: true });
+  };
+
+  const closeModal = (modalType: "location" | "type" | "value") => {
+    setModals({ ...modals, [modalType]: false });
+  };
+
+  const getTypeDisplayText = () => {
+    if (searchData.tipos.length === 0) return "Tipo";
+    if (searchData.tipos.length === 1) {
+      // Mapear IDs para labels amigáveis
+      const typeLabels: { [key: string]: string } = {
+        apartamentos: "Apartamentos",
+        "areas-empresariais": "Áreas Empresariais",
+        chacaras: "Chácaras",
+        "condominios-fechados": "Condomínios Fechados",
+        "loteamentos-condominios": "Loteamentos em Condomínios",
+        residencias: "Residências",
+        "residencias-predios-comerciais": "Residências/Prédios Comerciais",
+        sitios: "Sítios",
+        barracoes: "Barracões",
+        comerciais: "Comerciais",
+        estacionamentos: "Estacionamentos",
+        "galpoes-areas-empresariais": "Galpões e Áreas Empresariais",
+        "pontos-comerciais": "Pontos Comerciais",
+        "predios-comerciais": "Prédios Comerciais",
+        "salas-comerciais": "Salas Comerciais",
+        saloes: "Salões",
+        terrenos: "Terrenos",
+        "vagas-garagem": "Vagas de Garagem",
+      };
+      return typeLabels[searchData.tipos[0]] || searchData.tipos[0];
+    }
+    return `${searchData.tipos.length} tipos`;
+  };
+
+  const handleSearch = () => {
+    console.log("Dados de busca:", searchData);
+  };
+
+  const handleSearchByCode = () => {
+    console.log("Buscando por código:", codigo);
+  };
 
   return (
-    <section className="relative h-[90vh] w-full bg-cover bg-center bg-repeat" style={{background: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 100%),url(${banner.imageUrl})`}}>
+    <section
+      className="relative h-[90vh] w-full bg-cover bg-center"
+      style={{
+        background: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 100%),url(${banner.imageUrl})`,
+      }}
+    >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-semibold text-white mb-4 leading-tight">
+      <div className="z-10 w-[90%] h-full flex flex-col justify-center mx-auto max-w-7xl">
+        <div className="">
+          <Link
+            href={banner.url}
+            className="text-4xl md:text-5xl font-semibold text-white mb-4 leading-tight font-[Montserrat, sans-serif]"
+          >
             {banner.titulo}
-          </h1>
+          </Link>
           <p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>
 
           {/* Search tabs */}
-          <div className="flex gap-4 mb-6">
-            <button className="px-4 py-2 bg-white text-gray-900 rounded-t-lg text-sm font-medium">Link opcional</button>
-            <button className="px-4 py-2 bg-white bg-opacity-20 text-white rounded-t-lg text-sm">link opcional</button>
-            <button className="px-4 py-2 bg-white bg-opacity-20 text-white rounded-t-lg text-sm">link opcional</button>
+          <div className="flex gap-8">
+            <Link
+              href="#"
+              className="pt-2 text-white bg-transparent text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+            >
+              Lançamentos
+            </Link>
+            <Link
+              href="#"
+              className="pt-2 bg-transparent text-white text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+            >
+              Portugal
+            </Link>
+            <Link
+              href="#"
+              className="pt-2 bg-transparent text-white text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+            >
+              Litoral
+            </Link>
           </div>
 
           {/* Search form */}
-          <div className="bg-white rounded-lg p-4 shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Comprar" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="comprar">Comprar</SelectItem>
-                  <SelectItem value="alugar">Alugar</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="bg-white rounded-lg p-4 shadow-lg w-[full] lg:max-w-4xl mt-4 lg:w-fit">
+            <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
+              <div className=" flex flex-col gap-y-4 w-full md:grid md:grid-cols-5 md:gap-2">
+                <Select
+                  value={searchData.action}
+                  onValueChange={(value) =>
+                    setSearchData({ ...searchData, action: value })
+                  }
+                >
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                    <SelectValue placeholder="Comprar" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="comprar">Comprar</SelectItem>
+                    <SelectItem value="alugar">Alugar</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="apartamento">Apartamento</SelectItem>
-                  <SelectItem value="casa">Casa</SelectItem>
-                  <SelectItem value="terreno">Terreno</SelectItem>
-                </SelectContent>
-              </Select>
+                <Button
+                  variant="outline"
+                  onClick={() => openModal("type")}
+                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        searchData.tipos.length === 0
+                          ? "text-gray-500"
+                          : "text-gray-900"
+                      }
+                    >
+                      {getTypeDisplayText()}
+                    </span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </Button>
 
-              <Input placeholder="Localização" />
-              <Input placeholder="Valor" />
-            </div>
+                {/* Localização - Modal Select */}
+                <Button
+                  variant="outline"
+                  onClick={() => openModal("location")}
+                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        searchData.locations.length === 0
+                          ? "text-gray-500"
+                          : "text-gray-900"
+                      }
+                    >
+                      Localização
+                    </span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </Button>
 
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex gap-4 text-sm">
-                <button className="text-blue-600 hover:underline">Busca avançada</button>
-                <button className="text-blue-600 hover:underline">Buscar por código</button>
+                <Select
+                  value={searchData.valueRange.min}
+                  onValueChange={(value) =>
+                    setSearchData({
+                      ...searchData,
+                      valueRange: { ...searchData.valueRange, min: value },
+                    })
+                  }
+                >
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                    <SelectValue placeholder="Valor de" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">R$ 0</SelectItem>
+                    <SelectItem value="50000">R$ 50 mil</SelectItem>
+                    <SelectItem value="100000">R$ 100 mil</SelectItem>
+                    <SelectItem value="200000">R$ 200 mil</SelectItem>
+                    <SelectItem value="500000">R$ 500 mil</SelectItem>
+                    <SelectItem value="1000000">R$ 1 milhão</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={searchData.valueRange.max}
+                  onValueChange={(value) =>
+                    setSearchData({
+                      ...searchData,
+                      valueRange: { ...searchData.valueRange, max: value },
+                    })
+                  }
+                >
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                    <SelectValue placeholder="Valor até" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="100000">R$ 100 mil</SelectItem>
+                    <SelectItem value="200000">R$ 200 mil</SelectItem>
+                    <SelectItem value="500000">R$ 500 mil</SelectItem>
+                    <SelectItem value="1000000">R$ 1 milhão</SelectItem>
+                    <SelectItem value="2000000">R$ 2 milhões</SelectItem>
+                    <SelectItem value="999999999">Sem limite</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Search className="h-4 w-4" />
+              <Button
+                onClick={handleSearch}
+                className="bg-[#001c40] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4"
+              >
+                <Search className="h-6 w-6" />
               </Button>
             </div>
           </div>
+          <div className="flex justify-start items-center text-white mt-2 bg-transparent">
+            {!isSearching ? (
+              <Button
+                onClick={() => setIsSearching(true)}
+                className="text-xs w-[152px] font-semibold flex items-center border border-transparent gap-1 bg-transparent hover:bg-transparent focus:ring-2 focus:ring-white has-[>svg]:px-0"
+              >
+                BUSCA POR CÓDIGO <Search className="h-4 w-5" />
+              </Button>
+            ) : (
+              <div className="flex h-[36px] items-center border border-white rounded-md overflow-hidden">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                  onBlur={handleBlur}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearchByCode();
+                  }}
+                  className="w-[132px] px-2 text-sm text-white outline-none"
+                />
+                <Button
+                  onClick={handleSearchByCode}
+                  className="bg-transparent hover:cursor-pointer text-white hover:bg-transparent has-[>svg]:px-0 has-[>svg]:pr-1"
+                >
+                  <Search className="h-4 w-5" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      {/* Modals */}
+      <LocationSelectModal
+        isOpen={modals.location}
+        onClose={() => closeModal("location")}
+        selectedLocations={searchData.locations}
+        onSelectionChange={(locations) =>
+          setSearchData({ ...searchData, locations })
+        }
+      />
+
+      <TypeSelectModal
+        isOpen={modals.type}
+        onClose={() => closeModal("type")}
+        selectedTypes={searchData.tipos}
+        onSelectionChange={(tipos) => setSearchData({ ...searchData, tipos })}
+      />
     </section>
-  )
+  );
 }

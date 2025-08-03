@@ -1,17 +1,22 @@
 // import { db } from "@/lib/firebase/clientApp"
 // import { getDocs, collection } from "firebase/firestore"
 
+import ChamadasNaHomeSection from "@/components/site/chamadasNaHomeSection";
 import Footer from "@/components/site/footer";
 import Header from "@/components/site/header";
 import { HeroSection } from "@/components/site/heroSection";
+import SlideSection from "@/components/site/slideSection";
 import { getRandomBannerImage } from "@/lib/actions/banner";
-import { DestaquesSection } from "@/components/site/destaquesSection";
 import { getDestaques } from "@/lib/firebase/imoveis/destaques";
+import { getFirstSlides } from "@/lib/actions/slide";
+import { DestaquesSection } from "@/components/site/destaquesSection";
 
 export default async function Home() {
-  const imageHero = await getRandomBannerImage();
-  const destaques = await getDestaques();
-  console.log(destaques)
+  const [imageHero, slide, destaques] = await Promise.all([
+    getRandomBannerImage(),
+    getFirstSlides(),
+    getDestaques(),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -19,7 +24,9 @@ export default async function Home() {
       <Header></Header>
       <main className="flex-1 pb-8">
         <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
-        <DestaquesSection destaques={destaques} />
+        <SlideSection imageUrl={slide?.imagem} titulo={slide?.titulo} url={slide?.url}></SlideSection>
+        <ChamadasNaHomeSection ></ChamadasNaHomeSection>
+        {/* <DestaquesSection destaques={destaques} /> */}
         <Footer></Footer>
       </main>
     </div>

@@ -90,7 +90,7 @@ export default function BannerForm({ banner, mode }: BannerFormProps) {
     };
 
     const handleBack = () => {
-        router.replace("/admin/banners");
+        router.push("/admin/banners");
     };
 
     return (

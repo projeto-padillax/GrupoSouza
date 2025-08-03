@@ -96,7 +96,7 @@ export default function ChamadaForm({ chamada, mode }: ChamadaFormProps) {
     };
 
     const handleBack = () => {
-        router.replace("/admin/chamadas");
+        router.push("/admin/chamadas");
     };
 
     return (

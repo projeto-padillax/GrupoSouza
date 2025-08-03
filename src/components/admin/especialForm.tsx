@@ -80,7 +80,7 @@ export default function EspecialForm({ especial, corretores }: EspecialFormProps
 };
 
   const handleBack = () => {
-    router.replace("/admin/especiais");
+    router.push("/admin/especiais");
   };
 
   return (

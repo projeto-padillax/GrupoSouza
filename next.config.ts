@@ -6,11 +6,15 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'www.gruposouza.com.br',
-        port: '',
         pathname: '/vista.imobi/fotos/**',
-        search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '**',
       },
     ],
   },
 };
+
 export default nextConfig;

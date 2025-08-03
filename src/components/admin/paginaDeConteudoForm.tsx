@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { createPagina, updatePagina } from "@/lib/actions/contentPages";
 import { CldUploadWidget } from "next-cloudinary";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import Image from "next/image";
 
 const PaginaDeConteudo = z.object({
   status: z.boolean(),
@@ -76,7 +77,7 @@ export default function PaginaDeConteudoForm({
   const tipoPagina = form.watch("tipo");
 
   const formatPageUrl = (titulo: string) => {
-    return `https://gruposouza.leadlink.com.br/${titulo.toLowerCase()}`
+    return `http://localhost:3000/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
   };
 
   const onSubmit = (values: PaginaDeConteudoInput) => {
@@ -96,8 +97,9 @@ export default function PaginaDeConteudoForm({
           await updatePagina(paginaDeConteudo.id, dataToSubmit);
           toast.success("Página editada com sucesso!");
         } else {
+          console.log("URL que vai ser salva:", dataToSubmit.url);
           await createPagina(dataToSubmit);
-          toast.success("Página criada com sucesso!");
+          toast.success("Página criada com sucesso!" + dataToSubmit.url);
         }
 
         router.push("/admin/paginas");
@@ -113,7 +115,7 @@ export default function PaginaDeConteudoForm({
   };
 
   const handleBack = () => {
-    router.replace("/admin/paginas");
+    router.push("/admin/paginas");
   };
 
   return (
@@ -345,7 +347,9 @@ export default function PaginaDeConteudoForm({
                           (JPG/PNG 1920x750px)
                         </p>
                         {previewImage && (
-                          <img
+                          <Image
+                            width={300}
+                            height={200}
                             src={previewImage}
                             alt="Pré-visualização"
                             className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"

@@ -44,6 +44,17 @@ export async function getAllSlides(): Promise<SlideORM[]> {
     }
 }
 
+export async function getFirstSlides(): Promise<SlideORM|null> {
+    try {
+        return await prisma.slides.findFirst({
+            orderBy: { ordem: 'asc' }
+        })
+    } catch (error) {
+        console.error("Erro ao buscar slides:", error);
+        throw new Error("Erro ao buscar slides");
+    }
+}
+
 export async function findSlide(id: number): Promise<SlideORM | null> {
     try {
         const validId = idSchema.parse(id);
@@ -90,8 +101,8 @@ export async function createSlide({ titulo, ordem, imagem, url, status, publicId
 
 export async function updateSlide(slide: Omit<SlideORM, "createdAt">) {
     try {
-        const validId = idSchema.parse(slide.id);
         const { id, ...slideWithoutId } = slide;
+        const validId = idSchema.parse(id);
 
         const validatedData = slideServerSchema.parse(slideWithoutId);
 

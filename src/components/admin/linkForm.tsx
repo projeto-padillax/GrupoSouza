@@ -93,7 +93,7 @@ export default function MaisAcessadoForm({
   };
 
   const handleBack = () => {
-    router.replace("/admin/links");
+    router.push("/admin/links");
   };
 
   return (
