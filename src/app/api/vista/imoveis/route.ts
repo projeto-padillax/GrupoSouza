@@ -10,7 +10,7 @@ export async function POST() {
         "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
         "Caracteristicas", "InfraEstrutura", "Aberturas", "FotoDestaque",
         "FotoDestaquePequena", "Latitude", "Longitude", "Status", "Finalidade",
-        "DataHoraAtualizacao", "Descricao", "Lancamento"
+        "DataHoraAtualizacao", "Descricao", "Lancamento", "Mobiliado"
       ],
       paginacao: {
         pagina: 1,
