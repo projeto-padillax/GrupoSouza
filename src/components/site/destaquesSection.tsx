@@ -27,6 +27,7 @@ interface DestaquesSectionProps {
 export function DestaquesSection({ destaques }: DestaquesSectionProps) {
   const [activeTab, setActiveTab] = useState<string>("Alugar")
   const [todosImoveis, setTodosImoveis] = useState(destaques)
+  console.log(destaques)
 
   useEffect(() => {
     let filtrados: Destaque[] = [];
@@ -100,7 +101,9 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
               <div className="flex justify-between">
                 <FavoriteButton propertyId={`imovel-${imovel.id}`} />
                 <p className="text-sm text-gray-700 font-bold">
-                  R${(imovel.ValorVenda !== "0" ? imovel.ValorVenda : imovel.ValorLocacao)}
+                  {(imovel.ValorLocacao === "" || imovel.ValorLocacao === "0") && (imovel.ValorVenda === "" || imovel.ValorVenda == "0")
+                    ? "Consulte"
+                    : `R$${activeTab === "Alugar" ? imovel.ValorLocacao : imovel.ValorVenda}`}
                 </p>
               </div>
 
