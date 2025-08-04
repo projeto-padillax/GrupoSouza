@@ -1,10 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import { Heart } from "lucide-react";
 import Image from "next/image";
+import FavoriteButton from "./favoritosButton";
+import { CodigoImobiliariaIcon } from "../ui/codigoImobiliariaIcon";
 
 export interface Destaque {
   id: string;
@@ -66,88 +65,49 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
         </div>
       </div>
 
-     <div className="w-full flex flex-wrap justify-center gap-5 mb-10">
-      <div className="w-full max-w-sm overflow-hidden rounded-xl shadow-md bg-white">
-        <div className="relative w-full h-48">
-          <Image
-            src="https://res.cloudinary.com/duxuczb9e/image/upload/v1753828702/psj6udfomdwh99o5qyiv.jpg"
-            alt="teste"
-            fill
-            className="object-cover rounded-t-xl"
-          />
-          <div className="absolute inset-0 bg-black/20" />
-          <h3 className="absolute bottom-4 left-4 text-white text-xl font-bold">
-            teste
-          </h3>
-        </div>
-
-        <div className="p-5 flex flex-col gap-4">
-          <div className="flex justify-between border-b border-gray-300 pb-2">
-            <p className="text-sm text-gray-700">teste</p>
-            <p className="text-sm text-gray-700">teste</p>
-          </div>
-          <div className="flex justify-between border-b border-gray-300 pb-2">
-            <p className="text-sm text-gray-700">teste</p>
-            <p className="text-sm text-gray-700">teste</p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm text-gray-700">teste</p>
-            <p className="text-sm text-gray-700">teste</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Placeholder blue boxes */}
-      <div className="bg-blue-500 w-full max-w-sm h-[100px] rounded-xl shadow" />
-      <div className="bg-blue-500 w-full max-w-sm h-[100px] rounded-xl shadow" />
-      <div className="bg-blue-500 w-full max-w-sm h-[100px] rounded-xl shadow" />
-    </div>
-
-      {/* Property Grid */}
-      {/* <div className="w-full sm:w-1/2 lg:w-1/4 mb-3 px-2">
-        {todosImoveis.map((imoveis) => (
-          <Card
-            key={imoveis.id}
-            className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 w-full sm:w-1/2 lg:w-1/4 mb-3"
+      <div className="w-full flex  justify-center gap-5 mb-10">
+        {todosImoveis.map((imovel: Destaque) => (
+          <div
+            key={imovel.id}
+            className="w-full max-w-xs overflow-hidden rounded-xl shadow-md bg-white"
           >
-            <div>
+            <div className="relative w-full h-48">
               <Image
-                src={imoveis.FotoDestaque}
-                alt={imoveis.Bairro}
-                width={300}
-                height={200}
-                className="w-full h-48 object-cover relative"
+                src={imovel.FotoDestaque}
+                alt={imovel.Bairro}
+                fill
+                className="object-cover rounded-t-xl"
               />
-              <div className="relative inset-0 bg-black bg-opacity-20" />
-              <h3 className="relative bottom-4 left-4 text-white text-xl font-bold">{imoveis.Bairro}</h3>
+              <div className="absolute inset-0 bg-black/20" />
+              <h3 className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold px-2">
+                {imovel.Bairro}
+              </h3>
             </div>
 
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">{imoveis.Categoria}</p>
-                  <p className="text-xs text-gray-500">#{imoveis.CodigoImobiliaria}</p>
-                </div>
+            <div className="p-5 flex flex-col gap-4">
+              <div className="flex justify-between border-b border-gray-300 pb-2">
+                <p className="text-sm text-gray-700">{imovel.Categoria.toLocaleLowerCase()}</p>
+                <p className="text-sm text-gray-700 flex items-center gap-1">
+                  <CodigoImobiliariaIcon className="w-3 h-3 text-gray-400" />
+                  {imovel.CodigoImobiliaria}
+                </p>
+              </div>
+              <div className="flex justify-between border-b border-gray-300 pb-2">
+                <p className="text-sm text-gray-700">{imovel.AreaTotal}m²</p>
+                <p className="text-sm text-gray-700">{imovel.Dormitorios} quartos </p>
+                <p className="text-sm text-gray-700">{imovel.Vagas} vagas </p>
+              </div>
+              <div className="flex justify-between">
+                <FavoriteButton propertyId={`imovel-${imovel.id}`} />
+                <p className="text-sm text-gray-700 font-bold">
+                  R${(imovel.ValorVenda !== "0" ? imovel.ValorVenda : imovel.ValorLocacao)}
+                </p>
               </div>
 
-              <div className="space-y-1 mb-4">
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{imoveis.AreaTotal}</span>
-                  {imoveis.Dormitorios && <span>{imoveis.Dormitorios}</span>}
-                  {imoveis.Vagas && <span>{imoveis.Vagas}</span>}
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <Heart className="w-5 h-5 text-blue-600" />
-                </Button>
-                <span className="text-lg font-bold text-gray-800">{imoveis.ValorLocacao}</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
-      </div> */}
+      </div>
     </section>
   );
 }
