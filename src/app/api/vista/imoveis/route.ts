@@ -6,11 +6,12 @@ export async function POST() {
   try {
     const basePesquisa = {
       fields: [
-        "Codigo", "Categoria", "Bairro", "Cidade", "ValorVenda", "ValorLocacao",
-        "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
-        "Caracteristicas", "InfraEstrutura", "Aberturas", "FotoDestaque",
-        "FotoDestaquePequena", "Latitude", "Longitude", "Status", "Finalidade",
-        "DataHoraAtualizacao", "Descricao", "Lancamento", "Mobiliado"
+        "Codigo", "ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda", 
+        "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
+        "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa", 
+        "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento", "Codigo", 
+        "Descricao", "DescricaoWeb", "Finalidade", "Status", "Empreendimento", "Endereco", 
+        "Numero", "Complemento", "UF", "CEP", "DestaqueWeb"
       ],
       paginacao: {
         pagina: 1,
