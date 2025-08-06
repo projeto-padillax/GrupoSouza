@@ -20,9 +20,9 @@ export default function FavoriteButton({ propertyId }: Props) {
   return (
     <button onClick={toggleFavorite} aria-label="Favoritar">
       <Heart
-        size={16}
+        size={24}
         className={`transition-colors duration-200 ${
-          isFav ? "text-red-500 fill-red-500" : "text-gray-400"
+          isFav ? "text-blue-500 fill-blue-500" : "text-gray-400"
         }`}
       />
     </button>

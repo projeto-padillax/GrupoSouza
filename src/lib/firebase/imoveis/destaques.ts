@@ -14,27 +14,40 @@ export interface Destaque {
   Vagas: string;
   ValorLocacao: string;
   ValorVenda: string;
+  DestaqueWeb: string;
 }
 
 export async function getDestaques() {
   const snapshot = await getDocs(collection(db, "imoveis"));
   const allDocs: Destaque[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Destaque);
 
-  const lancamentos = allDocs
-    .filter((doc) => doc.Lancamento === 'Sim')
-    .slice(0, 4);
+  const usedIds = new Set<string>();
+  const destaques = {
+    lancamentos: [] as Destaque[],
+    venda: [] as Destaque[],
+    aluguel: [] as Destaque[],
+  };
 
-  const venda = allDocs
-    .filter((doc) => doc.Status === 'VENDA')
-    .slice(0, 4);
+  for (const doc of allDocs) {
+    if (doc.DestaqueWeb !== "Sim" || usedIds.has(doc.id)) continue;
 
-  const aluguel = allDocs
-    .filter((doc) => doc.Status === 'ALUGUEL')
-    .slice(0, 4);
+    if (doc.Lancamento === "Sim" && destaques.lancamentos.length < 4) {
+      destaques.lancamentos.push(doc);
+    } else if (doc.Lancamento === "Nao" && doc.Status === "VENDA" && destaques.venda.length < 4) {
+      destaques.venda.push(doc);
+    } else if (doc.Lancamento === "Nao" && doc.Status === "ALUGUEL" && destaques.aluguel.length < 4) {
+      destaques.aluguel.push(doc);
+    }
 
-    console.log(lancamentos.length)
-    console.log(venda.length)
-    console.log(aluguel.length)
+    usedIds.add(doc.id);
 
-  return [...lancamentos, ...venda, ...aluguel];
+    if (
+      destaques.lancamentos.length === 4 &&
+      destaques.venda.length === 4 &&
+      destaques.aluguel.length === 4
+    ) break;
+  }
+
+  return destaques;
 }
+

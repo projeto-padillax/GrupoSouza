@@ -1,9 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import FavoriteButton from "./favoritosButton";
-import { CodigoImobiliariaIcon } from "../ui/codigoImobiliariaIcon";
+
+import { ImovelCard } from "./imovelcard";
 
 export interface Destaque {
   id: string;
@@ -18,29 +17,37 @@ export interface Destaque {
   Vagas: string;
   ValorLocacao: string;
   ValorVenda: string;
+  Codigo: string;
 }
 
 interface DestaquesSectionProps {
-  destaques: Destaque[]
+  destaques: {
+    lancamentos: Destaque[];
+    venda: Destaque[];
+    aluguel: Destaque[];
+  };
 }
 
 export function DestaquesSection({ destaques }: DestaquesSectionProps) {
-  const [activeTab, setActiveTab] = useState<string>("Alugar")
-  const [todosImoveis, setTodosImoveis] = useState(destaques)
-  console.log(destaques)
+  const [activeTab, setActiveTab] = useState<string>("Alugar");
+  const [todosImoveis, setTodosImoveis] = useState<Destaque[]>(
+    [...destaques.lancamentos, ...destaques.venda, ...destaques.aluguel]
+  );
 
   useEffect(() => {
-    let filtrados: Destaque[] = [];
-
-    if (activeTab === "Alugar") {
-      filtrados = destaques.filter((d) => d.Status === "ALUGUEL");
-    } else if (activeTab === "Comprar") {
-      filtrados = destaques.filter((d) => d.Status === "VENDA");
-    } else if (activeTab === "Lançamentos") {
-      filtrados = destaques.filter((d) => d.Lancamento === "Sim");
+    switch (activeTab) {
+      case "Alugar":
+        setTodosImoveis(destaques.aluguel);
+        break;
+      case "Comprar":
+        setTodosImoveis(destaques.venda);
+        break;
+      case "Lançamentos":
+        setTodosImoveis(destaques.lancamentos);
+        break;
+      default:
+        setTodosImoveis([]);
     }
-
-    setTodosImoveis(filtrados.slice(0, 4));
   }, [activeTab, destaques]);
 
   return (
@@ -66,49 +73,9 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
         </div>
       </div>
 
-      <div className="w-full flex  justify-center gap-5 mb-10">
+      <div className="w-full flex justify-center gap-5 mb-10">
         {todosImoveis.map((imovel: Destaque) => (
-          <div
-            key={imovel.id}
-            className="w-full max-w-xs overflow-hidden rounded-xl shadow-md bg-white"
-          >
-            <div className="relative w-full h-48">
-              <Image
-                src={imovel.FotoDestaque}
-                alt={imovel.Bairro}
-                fill
-                className="object-cover rounded-t-xl"
-              />
-              <div className="absolute inset-0 bg-black/20" />
-              <h3 className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold px-2">
-                {imovel.Bairro}
-              </h3>
-            </div>
-
-            <div className="p-5 flex flex-col gap-4">
-              <div className="flex justify-between border-b border-gray-300 pb-2">
-                <p className="text-sm text-gray-700">{imovel.Categoria.toLocaleLowerCase()}</p>
-                <p className="text-sm text-gray-700 flex items-center gap-1">
-                  <CodigoImobiliariaIcon className="w-3 h-3 text-gray-400" />
-                  {imovel.CodigoImobiliaria}
-                </p>
-              </div>
-              <div className="flex justify-between border-b border-gray-300 pb-2">
-                <p className="text-sm text-gray-700">{imovel.AreaTotal}m²</p>
-                <p className="text-sm text-gray-700">{imovel.Dormitorios} quartos </p>
-                <p className="text-sm text-gray-700">{imovel.Vagas} vagas </p>
-              </div>
-              <div className="flex justify-between">
-                <FavoriteButton propertyId={`imovel-${imovel.id}`} />
-                <p className="text-sm text-gray-700 font-bold">
-                  {(imovel.ValorLocacao === "" || imovel.ValorLocacao === "0") && (imovel.ValorVenda === "" || imovel.ValorVenda == "0")
-                    ? "Consulte"
-                    : `R$${activeTab === "Alugar" ? imovel.ValorLocacao : imovel.ValorVenda}`}
-                </p>
-              </div>
-
-            </div>
-          </div>
+          <ImovelCard key={imovel.id} imovel={imovel} activeTab={activeTab}></ImovelCard>
         ))}
       </div>
     </section>
