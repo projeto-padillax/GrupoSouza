@@ -3,6 +3,8 @@ import Link from 'next/link';
 // import  { useSidebar } from './sidebar';
 import SidebarWrapper from './sideBarWrapper';
 import Image from 'next/image';
+import FavoriteIcon from './favoritosIcon';
+import FavoriteButton from './favoritosButton';
 
 export default function Header() {
   // const { isOpen, openSidebar, closeSidebar } = useSidebar();
@@ -17,9 +19,9 @@ export default function Header() {
                 <Image src={"/logoGrupoSouza.png"} alt={'Logo do Site'} width={200} height={69}></Image>
               </Link>
             </div>
-
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-4 text-sm text-gray-600">
+                <FavoriteIcon />
                 <div className="flex items-center">
                   <Phone className="h-4 w-4 mr-1" />
                   <span>(19) 3417-8190</span>
@@ -29,8 +31,7 @@ export default function Header() {
                   <span>(19) 99243-0041</span>
                 </div>
               </div>
-
-                <SidebarWrapper/>
+              <SidebarWrapper />
             </div>
           </div>
         </div>

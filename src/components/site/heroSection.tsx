@@ -147,7 +147,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     setSearchData({ ...searchData, action: value })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
                     <SelectValue placeholder="Comprar" />
                   </SelectTrigger>
                   <SelectContent>
@@ -159,7 +159,7 @@ export function HeroSection(banner: HeroSectionProps) {
                 <Button
                   variant="outline"
                   onClick={() => openModal("type")}
-                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none"
+                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <span
@@ -179,7 +179,7 @@ export function HeroSection(banner: HeroSectionProps) {
                 <Button
                   variant="outline"
                   onClick={() => openModal("location")}
-                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none"
+                  className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <span
@@ -204,7 +204,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
                     <SelectValue placeholder="Valor de" />
                   </SelectTrigger>
                   <SelectContent>
@@ -226,7 +226,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
                     <SelectValue placeholder="Valor até" />
                   </SelectTrigger>
                   <SelectContent>
@@ -241,7 +241,7 @@ export function HeroSection(banner: HeroSectionProps) {
               </div>
               <Button
                 onClick={handleSearch}
-                className="bg-[#4F7DC3] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4"
+                className="bg-[#001c40] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4 cursor-pointer"
               >
                 <Search className="h-6 w-6" />
               </Button>
@@ -251,7 +251,7 @@ export function HeroSection(banner: HeroSectionProps) {
             {!isSearching ? (
               <Button
                 onClick={() => setIsSearching(true)}
-                className="text-xs w-[152px] font-semibold flex items-center border border-transparent gap-1 bg-transparent hover:bg-transparent focus:ring-2 focus:ring-white has-[>svg]:px-0"
+                className="text-xs w-[152px] font-semibold flex items-center border border-transparent gap-1 bg-transparent hover:bg-transparent focus:ring-2 focus:ring-white has-[>svg]:px-0 cursor-pointer"
               >
                 BUSCA POR CÓDIGO <Search className="h-4 w-5" />
               </Button>
