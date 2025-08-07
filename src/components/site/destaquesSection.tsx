@@ -73,7 +73,7 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
         </div>
       </div>
 
-      <div className="w-full flex justify-center gap-5 mb-10">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5 mb-10">
         {todosImoveis.map((imovel: Destaque) => (
           <ImovelCard key={imovel.id} imovel={imovel} activeTab={activeTab}></ImovelCard>
         ))}
