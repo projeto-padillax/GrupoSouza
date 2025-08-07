@@ -5,6 +5,7 @@ import ChamadasNaHomeSection from "@/components/site/chamadasNaHomeSection";
 import Footer from "@/components/site/footer";
 import Header from "@/components/site/header";
 import { HeroSection } from "@/components/site/heroSection";
+import { MostSearched } from "@/components/site/mostSearched";
 import SlideSection from "@/components/site/slideSection";
 import { getRandomBannerImage } from "@/lib/actions/banner";
 import { getAllSlides } from "@/lib/actions/slide";
@@ -20,6 +21,7 @@ export default async function Home() {
         <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
         <SlideSection slides={slides}></SlideSection>
         <ChamadasNaHomeSection ></ChamadasNaHomeSection>
+        <MostSearched></MostSearched>
         <Footer></Footer>
       </main>
     </div>
