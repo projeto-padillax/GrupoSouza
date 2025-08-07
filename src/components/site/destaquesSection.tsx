@@ -52,9 +52,9 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
 
   return (
     <section className="w-[90%] mx-auto max-w-7xl">
-      <div className="w-full mt-3 mb-5 flex flex-wrap items-center justify-center gap-[35px]">
-        <h2 className="text-[min(max(2rem,4vw),4rem)] font-semibold text-[#333] mb-5"> Destaques </h2>
-        <div className="flex justify-center items-center gap-4 pl-[35px] border-l border-[#d0d0d0] text-[1.2rem] py-2">
+      <div className="w-full mt-3 mb-12 flex flex-wrap items-center justify-center md:gap-[35px]">
+        <h2 className="text-[min(max(2rem,4vw),4rem)] font-semibold text-[#333]"> Destaques </h2>
+        <div className="flex justify-center items-center gap-4 pl-[35px] md:border-l border-[#d0d0d0] text-[1.2rem] py-2">
           {["Alugar", "Comprar", "Lançamentos"].map((tab) => (
             <button
               key={tab}
