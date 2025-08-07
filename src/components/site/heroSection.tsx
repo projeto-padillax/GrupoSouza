@@ -13,6 +13,7 @@ import Link from "next/link";
 import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
 import { useEffect, useRef, useState } from "react";
+import {useRouter} from "next/navigation";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -31,7 +32,7 @@ export function HeroSection(banner: HeroSectionProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [codigo, setCodigo] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   const [modals, setModals] = useState({
     location: false,
     type: false,
@@ -90,6 +91,7 @@ export function HeroSection(banner: HeroSectionProps) {
 
   const handleSearch = () => {
     console.log("Dados de busca:", searchData);
+    router.push(`busca/${searchData.action}/${searchData.tipos.join("_")}/${searchData.locations.join("_")}/${searchData.valueRange.min}/${searchData.valueRange.max}/1`);
   };
 
   const handleSearchByCode = () => {
