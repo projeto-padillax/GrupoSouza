@@ -98,14 +98,14 @@ export function HeroSection(banner: HeroSectionProps) {
 
   return (
     <section
-      className="relative h-[90vh] w-full bg-cover bg-center"
+      className="relative h-[90vh] w-dvw overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
       style={{
-        background: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 100%),url(${banner.imageUrl})`,
+        backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 100%),url(${banner.imageUrl})`,
       }}
     >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className="z-10 w-[90%] h-full flex flex-col justify-center mx-auto max-w-7xl">
+      <div className="z-10 w-[90%] h-full flex flex-col justify-center max-w-7xl">
         <div className="">
           <Link
             href={banner.url}

@@ -8,14 +8,14 @@ import { HeroSection } from "@/components/site/heroSection";
 import SlideSection from "@/components/site/slideSection";
 import { getRandomBannerImage } from "@/lib/actions/banner";
 import { getDestaques } from "@/lib/firebase/imoveis/destaques";
-import { getFirstSlides } from "@/lib/actions/slide";
+import { getAllSlides } from "@/lib/actions/slide";
 import { DestaquesSection } from "@/components/site/destaquesSection";
 import ClientLayout from "@/components/client-layout";
 
 export default async function Home() {
-  const [imageHero, slide, destaques] = await Promise.all([
+  const [imageHero, slides, destaques] = await Promise.all([
     getRandomBannerImage(),
-    getFirstSlides(),
+    getAllSlides(),
     getDestaques(),
   ]);
 
@@ -26,13 +26,12 @@ export default async function Home() {
         <Header></Header>
         <main className="flex-1 pb-8">
           <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
-          <SlideSection imageUrl={slide?.imagem} titulo={slide?.titulo} url={slide?.url}></SlideSection>
+          <SlideSection slides={slides}></SlideSection>
           <ChamadasNaHomeSection ></ChamadasNaHomeSection>
           <DestaquesSection destaques={destaques} />
           <Footer></Footer>
         </main>
       </div>
     </ClientLayout>
-
   );
 }

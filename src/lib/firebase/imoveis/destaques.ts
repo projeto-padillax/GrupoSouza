@@ -1,21 +1,6 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../clientApp";
-
-export interface Destaque {
-  id: string;
-  AreaTotal: string;
-  Bairro: string;
-  Categoria: string;
-  CodigoImobiliaria: string;
-  Dormitorios: string;
-  FotoDestaque: string;
-  Lancamento: string;
-  Status: string;
-  Vagas: string;
-  ValorLocacao: string;
-  ValorVenda: string;
-  DestaqueWeb: string;
-}
+import { Destaque } from "@/lib/types/destaque";
 
 export async function getDestaques() {
   const snapshot = await getDocs(collection(db, "imoveis"));
