@@ -2,7 +2,6 @@ import { db } from "@/lib/firebase/clientApp";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-// GET /api/imovel/[codigo]
 export async function GET(_: Request, { params }: { params: { codigo: string } }) {
   try {
     const codigo = (await params).codigo
