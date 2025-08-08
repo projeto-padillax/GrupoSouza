@@ -84,7 +84,6 @@ export async function GET(req: Request, { params }: { params: { codigo: string }
       col,
       where("Cidade", "==", cidade),
       where("Finalidade", "==", finalidade),
-      where("Categoria", "==", categoria),
       where("Status", "in", statusCompat as unknown as string[]),
       limit(100)
     );
