@@ -2,7 +2,18 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["res.cloudinary.com", "www.gruposouza.com.br"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.gruposouza.com.br',
+        pathname: '/vista.imobi/fotos/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '**',
+      },
+    ],
   },
 };
 
