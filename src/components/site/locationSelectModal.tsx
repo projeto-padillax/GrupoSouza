@@ -59,7 +59,7 @@ export function LocationSelectModal({
         );
 
         setCidades(cidadesOrdenadas);
-setExpandedCities([cidadesOrdenadas[0].cidade]);
+        setExpandedCities([cidadesOrdenadas[0].cidade]);
       } catch (error) {
         console.error("Erro ao carregar cidades:", error);
       }
