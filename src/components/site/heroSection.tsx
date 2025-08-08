@@ -98,7 +98,7 @@ export function HeroSection(banner: HeroSectionProps) {
 
   return (
     <section
-      className="relative h-[90vh] w-dvw overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
+      className="relative h-[90vh] w-[100%] overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
       style={{
         backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${banner.imageUrl})`,
       }}

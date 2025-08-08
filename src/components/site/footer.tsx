@@ -100,8 +100,8 @@ export default async function Footer() {
                   <h3 className="font-bold text-[#4F7DC3] mb-2">
                     Sede {index + 1}
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 items-center text-black gap-4">
-                    <span>{endereco.rua}</span>
+                  <div className="flex flex-row flex-wrap items-center text-black gap-4">
+                    <span className="w-max">{endereco.rua}</span>
                     {endereco.telefone1 && (
                       <Link
                         href={
@@ -109,7 +109,7 @@ export default async function Footer() {
                             ? `https://wa.me/55${endereco.telefone1}`
                             : ""
                         }
-                        className="flex items-center md:justify-center justify-start"
+                        className="flex items-center justify-start w-max"
                       >
                         <span className="lg:ml-2">
                           {endereco.tituloTelefone1 != "" ? (
@@ -130,7 +130,7 @@ export default async function Footer() {
                             ? `https://wa.me/55${endereco.telefone2}`
                             : ""
                         }
-                        className="flex items-center md:justify-center justify-start"
+                        className="flex items-center justify-start w-max"
                       >
                         <span className="lg:ml-2">
                           {endereco.tituloTelefone2 != "" ? (
@@ -151,7 +151,7 @@ export default async function Footer() {
                             ? `https://wa.me/55${endereco.telefone3}`
                             : "#"
                         }
-                        className="flex items-center md:justify-center justify-start"
+                        className="flex items-center justify-start w-max"
                       >
                         <span className="lg:ml-2">
                           {endereco.tituloTelefone3 != "" ? (
