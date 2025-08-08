@@ -8,11 +8,12 @@ import GaleriaModal from "./galeriaModal";
 interface GaleriaImagensProps {
   imagens: { Foto: string }[];
   principal: string;
-  video?: { url: string }[];
+  video: { url: string }[];
 }
 
 export default function GaleriaImagens({ imagens, principal, video }: GaleriaImagensProps) {
   const [modalAberta, setModalAberta] = useState(false);
+  const temVideo = Array.isArray(video) && video.length > 0;
 
   return (
     <>
@@ -29,9 +30,9 @@ export default function GaleriaImagens({ imagens, principal, video }: GaleriaIma
             sizes="(max-width: 768px) 100vw, 60vw"
             priority
           />
-          {(video || imagens.length > 4) && (
+          {(temVideo || imagens.length > 4) && (
             <div className="absolute bottom-6 left-6 flex gap-2">
-              {video && (
+              {temVideo && (
                 <div className="bg-white/80 text-sm text-gray-800 px-2 py-1 rounded-md flex items-center gap-1 shadow">
                   <Video size={16} className="text-gray-600" />
                   <span>Vídeo</span>

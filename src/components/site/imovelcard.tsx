@@ -16,6 +16,8 @@ export interface Destaque {
   ValorLocacao: string
   ValorVenda: string
   Codigo: string
+  TituloSite: string
+  Descricao: string
 }
 
 interface PropertyCardProps {

@@ -7,11 +7,12 @@ import { notFound } from "next/navigation";
 import AgendamentoForm from "@/components/site/agendamentoForm";
 import EmpreendimentoBox from "@/components/site/empreendimentoBox";
 import MidiaBox from "@/components/site/midiaBox";
+import SemelhantesSection from "@/components/site/semelhantesSection";
 
 export default async function ImovelPage({
     params,
 }: {
-    params: { codigo: string; descricao: string };
+    params: { codigo: string; tituloSite: string };
 }) {
     const res = await fetch(`http://localhost:3000/api/vista/imoveis/${params.codigo}`, {
         cache: "no-store",
@@ -48,11 +49,10 @@ export default async function ImovelPage({
                                 { Foto: imovel.FotoDestaque },
                             ]}
                             principal={imovel.FotoDestaque}
-                            video={[
-                                {
-                                    url: "https://www.youtube.com/watch?v=exemplo",
-                                },
-                            ]}
+                            video={imovel.VideoDestaque && imovel.VideoDestaque.trim() !== ""
+                                ? [imovel.VideoDestaque]
+                                : []
+                            }
                         />
                     </section>
 
@@ -61,14 +61,14 @@ export default async function ImovelPage({
                             <div className="space-y-8">
                                 <div className="space-y-4">
                                     <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                                        {imovel.Descricao}
+                                        {imovel.TituloSite || imovel.Descricao} 
                                     </h1>
 
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
                                         <div className="flex gap-2 flex-wrap">
                                             {[
                                                 imovel.Lancamento === "Sim" && "LANÇAMENTO",
-                                                imovel.Estudadação === "Sim" && "ESTUDADAÇÃO",
+                                                imovel.Estudadação === "Sim" && "ESTUDA DAÇÃO",
                                                 imovel.Etiqueta === "Sim" && "ETIQUETA",
                                             ]
                                                 .filter(Boolean)
@@ -212,12 +212,10 @@ export default async function ImovelPage({
                                         { Foto: imovel.FotoDestaque },
                                         { Foto: imovel.FotoDestaque },
                                     ]}
-                                    videos={[
-                                        {
-                                            url: "https://www.youtube.com/watch?v=exemplo",
-                                            thumb: "/videos/thumb1.jpg",
-                                        },
-                                    ]}
+                                    videos={imovel.VideoDestaque && imovel.VideoDestaque.trim() !== ""
+                                        ? [imovel.VideoDestaque]
+                                        : []
+                                    }
                                 />
 
                                 <div>
@@ -246,6 +244,11 @@ export default async function ImovelPage({
                             />
 
                         </div>
+
+                        <div>
+                            <SemelhantesSection codigo={imovel.Codigo} />
+                        </div>
+
                     </section>
                 </div>
             </main>

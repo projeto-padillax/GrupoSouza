@@ -101,6 +101,7 @@ export default function ImovelContatoBox({
                                     "
                     >
                         <CalendarClock size={18} />
+                        <span> Agendar Visita</span>
                     </button>
                 </div>
             </div>
