@@ -5,7 +5,9 @@ import { MaisAcessado as MaisAcessadoORM } from "@prisma/client";
 // import { MaisAcessadoInput } from "@/app/admin/maisAcessados/novo/page";
 
 export async function getAllMaisAcessados(): Promise<MaisAcessadoORM[]> {
-  return await prisma.maisAcessado.findMany()
+  return await prisma.maisAcessado.findMany({
+    where: { status: true }
+  });
 }
 
 export async function findMaisAcessado(id: number): Promise<MaisAcessadoORM | null> {

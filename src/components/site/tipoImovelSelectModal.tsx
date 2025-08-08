@@ -307,7 +307,7 @@ export function TypeSelectModal({
           <div className="justify-self-center">
             <Button
               onClick={handleConfirm}
-              className="order-1 sm:order-2 bg-[#001c40] hover:bg-[#0084d7]"
+              className="order-1 sm:order-2 bg-[#4F7DC3] hover:bg-[#0084d7]"
             >
               Confirmar Seleção
             </Button>

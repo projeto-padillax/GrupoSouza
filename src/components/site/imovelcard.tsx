@@ -64,16 +64,16 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
   }
 
   return (
-    <div className="w-full overflow-hidden shadow-lg bg-white rounded-xl">
+    <div className="w-full overflow-hidden shadow-lg bg-white rounded-md">
       <div className="relative w-full h-48">
         <Image
           src={imovel.FotoDestaque || "/placeholder.svg"}
           alt={imovel.Bairro}
           fill
-          className="object-cover rounded-t-xl"
+          className="object-cover rounded-t-xl rounded-b-xl"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent rounded-t-xl" />
-        <div className="absolute inset-0 shadow-inner rounded-t-xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent rounded-t-xl rounded-b-xl" />
+        <div className="absolute inset-0 shadow-inner rounded-t-xl rounded-b-xl" />
         <h3 className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold px-4">
           {imovel.Bairro}
         </h3>
@@ -85,7 +85,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           <p className="text-sm text-gray-600 font-medium">
             {capitalizeCategory(imovel.Categoria)}
           </p>
-          <p className="text-sm text-gray-600 flex items-center gap-1 font-bold">
+          <p className="text-sm text-gray-600 flex items-center gap-1">
             <CodigoImobiliariaIcon className="w-3 h-3 text-gray-400" />
             {imovel.Codigo}
           </p>
@@ -120,7 +120,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         {/* Favoritos e Preço - sempre na parte inferior */}
         <div className="flex justify-between items-center mt-auto">
           <FavoriteButton propertyId={`imovel-${imovel.id}`} />
-          <p className="text-lg font-bold text-gray-800">
+          <p className="text-lg text-gray-800">
             {formatPrice()}
           </p>
         </div>

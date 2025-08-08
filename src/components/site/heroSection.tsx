@@ -98,22 +98,22 @@ export function HeroSection(banner: HeroSectionProps) {
 
   return (
     <section
-      className="relative h-[90vh] w-dvw overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
+      className="relative h-[90vh] w-[100%] overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
       style={{
-        backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 100%),url(${banner.imageUrl})`,
+        backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${banner.imageUrl})`,
       }}
     >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className="z-10 w-[90%] h-full flex flex-col justify-center max-w-7xl">
+      <div className={`z-10 w-[90%] h-full flex flex-col max-w-7xl justify-center ${!banner.subtitulo ? "items-center" : ""}`}>
         <div className="">
           <Link
             href={banner.url}
             className="text-4xl md:text-5xl font-semibold text-white mb-4 leading-tight font-[Montserrat, sans-serif]"
           >
-            {banner.titulo}
+            {banner.titulo && null}
           </Link>
-          <p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>
+          {banner.subtitulo && (<p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>)}
 
           {/* Search tabs */}
           <div className="flex gap-8">

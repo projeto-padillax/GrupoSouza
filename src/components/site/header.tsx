@@ -5,6 +5,8 @@ import SidebarWrapper from './sideBarWrapper';
 import Image from 'next/image';
 import FavoriteIcon from './favoritosIcon';
 import FavoriteButton from './favoritosButton';
+import { FaWhatsapp } from "react-icons/fa";
+
 
 export default function Header() {
   // const { isOpen, openSidebar, closeSidebar } = useSidebar();
@@ -12,7 +14,7 @@ export default function Header() {
   return (
     <>
       <header className="bg-whit h-28 content-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">
@@ -26,10 +28,9 @@ export default function Header() {
                   <Phone className="h-4 w-4 mr-1" />
                   <span>(19) 3417-8190</span>
                 </div>
-                <div className="flex items-center">
-                  <Phone className="h-4 w-4 mr-1" />
-                  <span>(19) 99243-0041</span>
-                </div>
+                <Link href='https://wa.me/5519992430041' className="flex items-center">
+                  <FaWhatsapp className='h-8 w-8'></FaWhatsapp>
+                </Link>
               </div>
               <SidebarWrapper />
             </div>
