@@ -13,7 +13,7 @@ export async function POST() {
         "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento", "Codigo", 
         "Descricao", "DescricaoWeb", "Finalidade", "Status", "Empreendimento", "Endereco", 
         "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
-        "TituloSite", "Empreendimento", "FotoDestaqueEmpreendimento", "VideoDestaque"
+        "TituloSite", "Empreendimento", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado"
       ],
       paginacao: {
         pagina: 1,
