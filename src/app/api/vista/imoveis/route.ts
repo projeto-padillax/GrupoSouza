@@ -269,17 +269,17 @@ export async function GET(request: NextRequest) {
 
     const imoveisRef = collection(db, "imoveis");
 
-    // 🔹 Query base para Firestore (apenas Status)
+    // Query base para Firestore (apenas Status)
     const baseQuery = query(
       imoveisRef,
       where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA")
     );
 
-    // 🔹 Contagem total antes da paginação
+    // Contagem total antes da paginação
     const totalSnap = await getCountFromServer(baseQuery);
     const totalImoveis = totalSnap.data().count;
 
-    // 🔹 Query paginada
+    // Query paginada
     let constraints: any[] = [
       where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA"),
       orderBy(valorField),
@@ -303,9 +303,13 @@ export async function GET(request: NextRequest) {
     if (cidade) {
       data = data.filter((item) => item.Cidade?.toLowerCase() === cidade.toLowerCase());
     }
-    // if (tipos.length) {
-    //   data = data.filter((item) => tipos.includes(item.Categoria));
-    // }
+    if (tipos.length) {
+      data = data.filter((item) =>
+        tipos.some(
+          (tipo) => item.Categoria?.toLowerCase() === tipo.toLowerCase()
+        )
+      );
+    }
     if (bairros.length) {
       data = data.filter((item) =>
         bairros.some(
@@ -336,30 +340,38 @@ export async function GET(request: NextRequest) {
     }
     if (lancamentos !== null) {
       data = data.filter(
-        (item) => item.Lancamento?.toLowerCase() === (lancamentos === "true" ? "sim" : "nao")
+        (item) => item.Lancamento?.toLowerCase() === lancamentos
       );
     }
     if (mobiliado !== null) {
       data = data.filter(
-        (item) => item.Mobiliado?.toLowerCase() === (mobiliado === "true" ? "sim" : "nao")
+        (item) => item.Mobiliado?.toLowerCase() === mobiliado
       );
     }
-    if (caracteristicas.length) {
-      data = data.filter((item) =>
-        caracteristicas.every((carac) =>
-          item.Caracteristicas?.some(
-            (c) => c.toLowerCase() === carac.toLowerCase()
-          )
-        )
+  if (caracteristicas.length) {
+  data = data.filter((item) => {
+    const caracObj: Record<string, any> = item.Caracteristicas || {};
+
+    return caracteristicas.every((carac) => {
+      const keyLower = carac.toLowerCase();
+      // Procura de forma case-insensitive
+      const foundKey = Object.keys(caracObj).find(
+        (k) => k.toLowerCase() === keyLower
       );
-    }
+
+      return foundKey
+        ? String(caracObj[foundKey]).toLowerCase() === "sim"
+        : false;
+    });
+  });
+}
 
     // Próximo cursor
     const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
     const nextCursor = lastVisible ? lastVisible.id : null;
 
     return NextResponse.json({
-      total: totalImoveis, // 🔹 Total real de imóveis encontrados
+      total: totalImoveis, // Total real de imóveis encontrados
       nextCursor,
       imoveis: data,
     });
