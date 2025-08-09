@@ -11,7 +11,8 @@ export async function POST() {
         "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa", 
         "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento", "Codigo", 
         "Descricao", "DescricaoWeb", "Finalidade", "Status", "Empreendimento", "Endereco", 
-        "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque"
+        "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
+        "TituloSite", "Empreendimento", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado"
       ],
       paginacao: {
         pagina: 1,
