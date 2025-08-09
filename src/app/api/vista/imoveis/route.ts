@@ -230,7 +230,7 @@ export async function PUT() {
     ValorLocacao?: number;
     Status?: string;
     Categoria?: string;
-    Bairro: string[];
+    Bairro?: string;
     Dormitorios?: string;
     Codigo?: string;
     AreaTotal?: number;
@@ -306,9 +306,13 @@ export async function GET(request: NextRequest) {
     // if (tipos.length) {
     //   data = data.filter((item) => tipos.includes(item.Categoria));
     // }
-    // if (bairros.length) {
-    //   data = data.filter((item) => bairros.includes(item.Bairro));
-    // }
+    if (bairros.length) {
+      data = data.filter((item) =>
+        bairros.some(
+          (bairro) => item.Bairro?.toLowerCase() === bairro.toLowerCase()
+        )
+      );
+    }
     if (valorMin !== null) {
       data = data.filter((item) => Number(item[valorField] || 0) >= valorMin);
     }
