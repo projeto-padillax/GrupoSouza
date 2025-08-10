@@ -13,7 +13,7 @@ import Link from "next/link";
 import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
 import { useEffect, useRef, useState } from "react";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -90,8 +90,31 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const handleSearch = () => {
-    console.log("Dados de busca:", searchData);
-    router.push(`busca/${searchData.action}/${searchData.tipos.join("_")}/${searchData.locations.join("_")}/${searchData.valueRange.min}/${searchData.valueRange.max}/1`);
+    const parts = ["busca"];
+
+    if (searchData.action) {
+      parts.push(searchData.action);
+    }
+
+    if (searchData.tipos?.length) {
+      parts.push(`tipo-${searchData.tipos.join("_")}`);
+    }
+
+    if (searchData.locations?.length) {
+      parts.push(`cidade-${searchData.locations.join("_")}`);
+    }
+
+    if (searchData.valueRange?.min) {
+      parts.push(`valorMin-${searchData.valueRange.min}`);
+    }
+
+    if (searchData.valueRange?.max) {
+      parts.push(`valorMax-${searchData.valueRange.max}`);
+    }
+
+    parts.push("1");
+
+    router.push(parts.filter(Boolean).join("/"));
   };
 
   const handleSearchByCode = () => {
