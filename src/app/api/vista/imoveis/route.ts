@@ -259,7 +259,7 @@ export async function PUT() {
   }
 }
 
-interface Imovel {
+export interface Imovel {
   id: string;
   Cidade: string;
   ValorVenda?: number;
@@ -282,10 +282,10 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
 
-    const action = searchParams.get("action") ?? "alugar";
+    const action = searchParams.get("action") ?? "comprar";
     const tipos = searchParams.get("tipos")?.split(",").filter(Boolean) || [];
-    const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || [];
-    const cidade = searchParams.get("cidade") ?? "";
+    const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || ["all"];
+    const cidade = searchParams.get("cidade") ?? "piracicaba";
     const valorMin = searchParams.get("valorMin") ? Number(searchParams.get("valorMin")) : null;
     const valorMax = searchParams.get("valorMax") ? Number(searchParams.get("valorMax")) : null;
     const quartos = searchParams.get("quartos") || null;
@@ -346,7 +346,7 @@ export async function GET(request: NextRequest) {
         )
       );
     }
-    if (bairros.length) {
+    if (bairros.length && !bairros.includes("all")) {
       data = data.filter((item) =>
         bairros.some(
           (bairro) => item.Bairro?.toLowerCase() === bairro.toLowerCase()

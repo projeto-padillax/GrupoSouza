@@ -22,28 +22,33 @@ import { Checkbox } from "../ui/checkbox";
 import ca from "zod/v4/locales/ca.cjs";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
+import { Imovel } from "@/app/api/vista/imoveis/route";
+import { Destaque, ImovelCard } from "./imovelcard";
 
-const caracteristicasDisponiveis = [
-  { id: "suite", label: "Suíte" },
-  { id: "garagem", label: "Garagem" },
-  { id: "churrasqueira", label: "Churrasqueira" },
-  { id: "piscina", label: "Piscina" },
-];
-
-export default function imoveisPage({ filtros }: { filtros: Filtros }) {
+export default function imoveisPage({
+  filtros,
+  imoveis,
+  nextCursor,
+  totalImoveis,
+}: {
+  filtros: Filtros;
+  imoveis: Destaque[];
+  nextCursor?: string;
+  totalImoveis?: number;
+}) {
   const [showFilters, setShowFilters] = useState(false);
   const [searchData, setSearchData] = useState({
-    action: "comprar",
-    tipos: [] as string[],
+    action: filtros.action ?? "comprar",
+    tipos: filtros.tipo ?? ([] as string[]),
     locations: [] as string[],
-    valueRange: { min: "", max: "" },
-    quartos: "0",
-    area: "",
-    suites: "0",
-    vagas: "0",
-    caracteristicas: [] as string[],
-    lancamentos: "",
-    mobiliado: "",
+    valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
+    quartos: filtros.quartos ?? "0",
+    area: filtros.areaMinima ?? "0",
+    suites: filtros.suites ?? "0",
+    vagas: filtros.vagas ?? "0",
+    caracteristicas: filtros.caracteristicas ?? ([] as string[]),
+    lancamentos: filtros.lancamentos ?? "",
+    mobiliado: filtros.mobiliado ?? "",
   });
   const [codigo, setCodigo] = useState("");
   const [modals, setModals] = useState({
@@ -61,6 +66,88 @@ export default function imoveisPage({ filtros }: { filtros: Filtros }) {
     { id: "sacada", label: "Sacada" },
     { id: "saloa", label: "Salão de festa" },
   ];
+
+  function gerarTitulo(totalImoveis: number) {
+    if (totalImoveis === 0) {
+      return "";
+    }
+
+    let titulo = `${totalImoveis} `;
+
+    // Tipo de ação
+    titulo +=
+      searchData.action === "comprar"
+        ? "imóveis à venda"
+        : "imóveis para alugar";
+
+    // Tipos de imóvel
+    if (searchData.tipos.length > 0) {
+      titulo += ` (${searchData.tipos.join(", ")})`;
+    }
+
+    // Quartos
+    if (searchData.quartos !== "0") {
+      titulo += `, com ${searchData.quartos}+ quarto${
+        searchData.quartos !== "1" ? "s" : ""
+      }`;
+    }
+
+    // Suítes
+    if (searchData.suites !== "0") {
+      titulo += `, com ${searchData.suites}+ suíte${
+        searchData.suites !== "1" ? "s" : ""
+      }`;
+    }
+
+    // Vagas
+    if (searchData.vagas !== "0") {
+      titulo += `, com ${searchData.vagas}+ vaga${
+        searchData.vagas !== "1" ? "s" : ""
+      }`;
+    }
+
+    // Área mínima
+    if (searchData.area !== "0") {
+      titulo += `, com área mínima de ${searchData.area}m²`;
+    }
+
+    // Características
+    if (searchData.caracteristicas.length > 0) {
+      titulo += `, com ${searchData.caracteristicas.join(", ")}`;
+    }
+
+    // Lançamentos
+    if (searchData.lancamentos === "s") {
+      titulo += `, lançamento`;
+    }
+
+    // Mobiliado
+    if (searchData.mobiliado === "sim") {
+      titulo += `, mobiliado`;
+    }
+
+    // Localizações
+    if (searchData.locations.length > 0) {
+      titulo += ` em ${searchData.locations.join(", ")}`;
+    }
+
+    // Faixa de preço
+    const min = searchData.valueRange.min;
+    const max = searchData.valueRange.max;
+    if (min || max) {
+      if (min && max) {
+        titulo += `, entre R$ ${Number(min).toLocaleString()} e R$ ${Number(
+          max
+        ).toLocaleString()}`;
+      } else if (min) {
+        titulo += `, a partir de R$ ${Number(min).toLocaleString()}`;
+      } else if (max) {
+        titulo += `, até R$ ${Number(max).toLocaleString()}`;
+      }
+    }
+
+    return titulo;
+  }
 
   const openModal = (modalType: "location" | "type") => {
     setModals({ ...modals, [modalType]: true });
@@ -363,12 +450,12 @@ export default function imoveisPage({ filtros }: { filtros: Filtros }) {
                   checked={
                     searchData.mobiliado == ""
                       ? false
-                      : searchData.mobiliado === "s"
+                      : searchData.mobiliado === "sim"
                   }
                   onCheckedChange={(checked) =>
                     setSearchData({
                       ...searchData,
-                      mobiliado: checked ? "s" : "n",
+                      mobiliado: checked ? "sim" : "nao",
                     })
                   }
                 />
@@ -383,6 +470,46 @@ export default function imoveisPage({ filtros }: { filtros: Filtros }) {
             <div className="h-6 bg-gray-100 rounded-sm select-none">
               Espaço reservado para Breadcrumb
             </div>
+          </div>
+        </div>
+        <div className="w-full py-4">
+          <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
+            <div className="h-6  rounded-sm">
+              <h1 className="text-2xl font-bold text-[#4d4d4d]">
+                {gerarTitulo(totalImoveis ?? 0)}
+              </h1>
+            </div>
+            <div>
+              <Select
+                value={searchData.valueRange.max}
+                onValueChange={(value) =>
+                  setSearchData({
+                    ...searchData,
+                    valueRange: { ...searchData.valueRange, max: value },
+                  })
+                }
+              >
+                <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">
+                  <SelectValue placeholder="Valor até" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="dataDesc">R$ 100 mil</SelectItem>
+                  <SelectItem value="asc">R$ 200 mil</SelectItem>
+                  <SelectItem value="desc">R$ 500 mil</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+        <div className="w-full py-4">
+          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-center gap-5">
+            {imoveis.map((imovel: Destaque) => (
+              <ImovelCard
+                key={imovel.id}
+                imovel={imovel}
+                activeTab={searchData.action}
+              ></ImovelCard>
+            ))}
           </div>
         </div>
       </main>
