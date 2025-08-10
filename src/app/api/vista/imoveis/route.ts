@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { makeUrlCadastraDetalhes } from "@/lib/actions/imovel";
 import { db } from "@/lib/firebase/clientApp";
-import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, setDoc, startAfter, where, getCountFromServer, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, setDoc, startAfter, where, getCountFromServer, updateDoc, getDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 const basePesquisaFields: string[] = [
@@ -50,7 +51,26 @@ export async function POST() {
       return imoveis;
     };
 
-    // Pega a primeira página para saber total de páginas
+    // Busca e adiciona detalhes ao documento existente
+    const cadastraDetalhes = async (codigo: string) => {
+      const response = await fetch(makeUrlCadastraDetalhes(codigo), {
+        method: "GET",
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        console.warn(`Falha ao obter detalhes do imóvel ${codigo}`);
+        return;
+      }
+
+      const detalhes = await response.json();
+      const foto = detalhes.Foto;
+
+      // Faz merge no documento existente
+      await setDoc(doc(db, "imoveis", codigo), { Foto: foto }, { merge: true });
+    };
+
+    // Pega a primeira página
     const firstResponse = await fetch(makeUrl(1), {
       method: "GET",
       headers: { Accept: "application/json" }
@@ -59,12 +79,10 @@ export async function POST() {
     if (!firstResponse.ok) throw new Error("Falha ao obter página 1");
 
     const firstData = await firstResponse.json();
-
     const totalPaginas = Number(firstData.paginas) || 1;
-
     let todosImoveis: Record<string, any> = extrairImoveis(firstData);
 
-    // Pega as demais páginas e junta os imóveis
+    // Demais páginas
     for (let pagina = 2; pagina <= totalPaginas; pagina++) {
       const response = await fetch(makeUrl(pagina), {
         method: "GET",
@@ -78,19 +96,22 @@ export async function POST() {
 
       const data = await response.json();
       const imoveisPagina = extrairImoveis(data);
-
       todosImoveis = { ...todosImoveis, ...imoveisPagina };
     }
 
-    // Grava todos imóveis em documentos separados no Firestore
+    // Salva imóveis + adiciona detalhes
     await Promise.all(
-      Object.entries(todosImoveis).map(([codigo, imovel]) =>
-        setDoc(doc(db, "imoveis", codigo), imovel)
-      )
+      Object.entries(todosImoveis).map(async ([codigo, imovel]) => {
+        await setDoc(doc(db, "imoveis", codigo), imovel); // cadastra básico
+        await cadastraDetalhes(codigo); // faz merge dos detalhes
+      })
     );
 
     return new Response(
-      JSON.stringify({ message: "Imóveis armazenados com sucesso", total: Object.keys(todosImoveis).length }),
+      JSON.stringify({
+        message: "Imóveis e detalhes armazenados com sucesso",
+        total: Object.keys(todosImoveis).length
+      }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
@@ -100,46 +121,6 @@ export async function POST() {
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-}
-
-export async function cadastraDetalhes(codigo: string) {
-  const fields = [
-    ...basePesquisaFields,
-    { Foto: ["Foto", "FotoPequena", "Destaque"] }
-  ];
-
-  const basePesquisa = {
-    fields,
-    imovel: codigo
-  };
-
-  const baseParams = {
-    key: process.env.VISTA_KEY!,
-    showtotal: "1"
-  };
-
-  const makeUrl = () => {
-    const params = new URLSearchParams({
-      ...baseParams,
-      pesquisa: JSON.stringify(basePesquisa)
-    });
-    return `https://gruposou-rest.vistahost.com.br/imoveis/detalhes?${params}`;
-  };
-
-  // Pega primeira página
-  const response = await fetch(makeUrl(), {
-    method: "GET",
-    headers: { Accept: "application/json" }
-  });
-
-  if (!response.ok) throw new Error("Falha ao obter detalhes 1");
-
-  const data = await response.json();
-
-  const foto = data.Foto;
-
-  // Atualiza apenas o campo Foto no Firestore
-  await updateDoc(doc(db, "imoveis", codigo), { Foto: foto });
 }
 
 export async function PUT() {
@@ -277,7 +258,6 @@ export interface Imovel {
   Caracteristicas?: string[];
 }
 
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -305,34 +285,36 @@ export async function GET(request: NextRequest) {
 
     const imoveisRef = collection(db, "imoveis");
 
-    // Query base para Firestore (apenas Status)
-    const baseQuery = query(
-      imoveisRef,
-      where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA")
+    // Contagem total
+    const totalSnap = await getCountFromServer(
+      query(imoveisRef, where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA"))
     );
-
-    // Contagem total antes da paginação
-    const totalSnap = await getCountFromServer(baseQuery);
     const totalImoveis = totalSnap.data().count;
 
-    // Query paginada
+    // Query base com paginação
     let constraints: any[] = [
       where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA"),
       orderBy(valorField),
       limit(pageSize)
     ];
 
+    // Correção do cursor
     if (cursor) {
-      const lastDocSnap = await getDocs(query(imoveisRef, orderBy(valorField), limit(1)));
-      const lastDoc = lastDocSnap.docs.find((doc) => doc.id === cursor);
-      if (lastDoc) constraints.push(startAfter(lastDoc));
+      const lastDocRef = doc(imoveisRef, cursor);
+      const lastDocSnap = await getDoc(lastDocRef);
+
+      if (lastDocSnap.exists()) {
+        constraints.push(startAfter(lastDocSnap));
+      } else {
+        console.warn(`Cursor ${cursor} não encontrado. Retornando primeira página.`);
+      }
     }
 
     const snapshot = await getDocs(query(imoveisRef, ...constraints));
 
-    let data: Imovel[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<Imovel, "id">),
+    let data: Imovel[] = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...(docSnap.data() as Omit<Imovel, "id">),
     }));
 
     // --- FILTROS EM MEMÓRIA ---
@@ -340,11 +322,7 @@ export async function GET(request: NextRequest) {
       data = data.filter((item) => item.Cidade?.toLowerCase() === cidade.toLowerCase());
     }
     if (tipos.length) {
-      data = data.filter((item) =>
-        tipos.some(
-          (tipo) => item.Categoria?.toLowerCase() === tipo.toLowerCase()
-        )
-      );
+      data = data.filter((item) => tipos.some((tipo) => item.Categoria?.toLowerCase() === tipo.toLowerCase()));
     }
     if (bairros.length && !bairros.includes("all")) {
       data = data.filter((item) =>
@@ -375,29 +353,18 @@ export async function GET(request: NextRequest) {
       data = data.filter((item) => String(item.Vagas) === String(vagas));
     }
     if (lancamentos !== null) {
-      data = data.filter(
-        (item) => item.Lancamento?.toLowerCase() === lancamentos
-      );
+      data = data.filter((item) => item.Lancamento?.toLowerCase() === lancamentos);
     }
     if (mobiliado !== null) {
-      data = data.filter(
-        (item) => item.Mobiliado?.toLowerCase() === mobiliado
-      );
+      data = data.filter((item) => item.Mobiliado?.toLowerCase() === mobiliado);
     }
     if (caracteristicas.length) {
       data = data.filter((item) => {
         const caracObj: Record<string, any> = item.Caracteristicas || {};
-
         return caracteristicas.every((carac) => {
           const keyLower = carac.toLowerCase();
-          // Procura de forma case-insensitive
-          const foundKey = Object.keys(caracObj).find(
-            (k) => k.toLowerCase() === keyLower
-          );
-
-          return foundKey
-            ? String(caracObj[foundKey]).toLowerCase() === "sim"
-            : false;
+          const foundKey = Object.keys(caracObj).find((k) => k.toLowerCase() === keyLower);
+          return foundKey ? String(caracObj[foundKey]).toLowerCase() === "sim" : false;
         });
       });
     }
@@ -407,7 +374,7 @@ export async function GET(request: NextRequest) {
     const nextCursor = lastVisible ? lastVisible.id : null;
 
     return NextResponse.json({
-      total: totalImoveis, // Total real de imóveis encontrados
+      total: totalImoveis,
       nextCursor,
       imoveis: data,
     });
@@ -417,6 +384,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Erro ao buscar imóveis" }, { status: 500 });
   }
 }
+
 export async function DELETE() {
   try {
     const imoveisRef = collection(db, "imoveis");
