@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/lib/firebase/clientApp";
-import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, setDoc, startAfter, where, getCountFromServer } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, setDoc, startAfter, where, getCountFromServer, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
+
+const basePesquisaFields: string[] = [
+  "Codigo", "ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda",
+  "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
+  "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
+  "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento", "Codigo",
+  "Descricao", "DescricaoWeb", "Finalidade", "Status", "Empreendimento", "Endereco",
+  "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
+  "TituloSite", "Empreendimento", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado"
+]
 
 export async function POST() {
   try {
     const basePesquisa = {
-      fields: [
-        "Codigo", "ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda", 
-        "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
-        "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa", 
-        "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento", "Codigo", 
-        "Descricao", "DescricaoWeb", "Finalidade", "Status", "Empreendimento", "Endereco", 
-        "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
-        "TituloSite", "Empreendimento", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado"
-      ],
+      fields: basePesquisaFields,
       paginacao: {
         pagina: 1,
         quantidade: 50
@@ -100,6 +102,46 @@ export async function POST() {
   }
 }
 
+export async function cadastraDetalhes(codigo: string) {
+  const fields = [
+    ...basePesquisaFields,
+    { Foto: ["Foto", "FotoPequena", "Destaque"] }
+  ];
+
+  const basePesquisa = {
+    fields,
+    imovel: codigo
+  };
+
+  const baseParams = {
+    key: process.env.VISTA_KEY!,
+    showtotal: "1"
+  };
+
+  const makeUrl = () => {
+    const params = new URLSearchParams({
+      ...baseParams,
+      pesquisa: JSON.stringify(basePesquisa)
+    });
+    return `https://gruposou-rest.vistahost.com.br/imoveis/detalhes?${params}`;
+  };
+
+  // Pega primeira página
+  const response = await fetch(makeUrl(), {
+    method: "GET",
+    headers: { Accept: "application/json" }
+  });
+
+  if (!response.ok) throw new Error("Falha ao obter detalhes 1");
+
+  const data = await response.json();
+
+  const foto = data.Foto;
+
+  // Atualiza apenas o campo Foto no Firestore
+  await updateDoc(doc(db, "imoveis", codigo), { Foto: foto });
+}
+
 export async function PUT() {
   try {
     const imoveisParaAtualizar: Record<string, any> = {}
@@ -107,13 +149,7 @@ export async function PUT() {
     today.setHours(0, 0, 0, 0); // Normaliza para comparar só a data
 
     const basePesquisa = {
-      fields: [
-        "Codigo", "Categoria", "Bairro", "Cidade", "ValorVenda", "ValorLocacao",
-        "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
-        "Caracteristicas", "InfraEstrutura", "Aberturas", "FotoDestaque",
-        "FotoDestaquePequena", "Latitude", "Longitude", "Status", "Finalidade",
-        "DataHoraAtualizacao"
-      ],
+      fields: basePesquisaFields,
       paginacao: {
         pagina: 1,
         quantidade: 50
@@ -223,22 +259,22 @@ export async function PUT() {
   }
 }
 
- interface Imovel {
-    id: string;
-    Cidade: string;
-    ValorVenda?: number;
-    ValorLocacao?: number;
-    Status?: string;
-    Categoria?: string;
-    Bairro?: string;
-    Dormitorios?: string;
-    Codigo?: string;
-    AreaTotal?: number;
-    Suites?: number;
-    Vagas?: number;
-    Lancamento?: string;
-    Mobiliado?: string;
-    Caracteristicas?: string[];
+interface Imovel {
+  id: string;
+  Cidade: string;
+  ValorVenda?: number;
+  ValorLocacao?: number;
+  Status?: string;
+  Categoria?: string;
+  Bairro?: string;
+  Dormitorios?: string;
+  Codigo?: string;
+  AreaTotal?: number;
+  Suites?: number;
+  Vagas?: number;
+  Lancamento?: string;
+  Mobiliado?: string;
+  Caracteristicas?: string[];
 }
 
 
@@ -348,23 +384,23 @@ export async function GET(request: NextRequest) {
         (item) => item.Mobiliado?.toLowerCase() === mobiliado
       );
     }
-  if (caracteristicas.length) {
-  data = data.filter((item) => {
-    const caracObj: Record<string, any> = item.Caracteristicas || {};
+    if (caracteristicas.length) {
+      data = data.filter((item) => {
+        const caracObj: Record<string, any> = item.Caracteristicas || {};
 
-    return caracteristicas.every((carac) => {
-      const keyLower = carac.toLowerCase();
-      // Procura de forma case-insensitive
-      const foundKey = Object.keys(caracObj).find(
-        (k) => k.toLowerCase() === keyLower
-      );
+        return caracteristicas.every((carac) => {
+          const keyLower = carac.toLowerCase();
+          // Procura de forma case-insensitive
+          const foundKey = Object.keys(caracObj).find(
+            (k) => k.toLowerCase() === keyLower
+          );
 
-      return foundKey
-        ? String(caracObj[foundKey]).toLowerCase() === "sim"
-        : false;
-    });
-  });
-}
+          return foundKey
+            ? String(caracObj[foundKey]).toLowerCase() === "sim"
+            : false;
+        });
+      });
+    }
 
     // Próximo cursor
     const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
@@ -379,5 +415,30 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erro ao buscar imóveis" }, { status: 500 });
+  }
+}
+export async function DELETE() {
+  try {
+    const imoveisRef = collection(db, "imoveis");
+    const snapshot = await getDocs(imoveisRef);
+
+    if (snapshot.empty) {
+      return NextResponse.json({ message: "Nenhum registro encontrado." });
+    }
+
+    await Promise.all(
+      snapshot.docs.map((document) => deleteDoc(doc(db, "imoveis", document.id)))
+    );
+
+    return NextResponse.json({
+      message: `Todos os documentos foram deletados.`,
+      totalDeleted: snapshot.size,
+    });
+  } catch (error: any) {
+    console.error("Erro ao deletar documentos:", error);
+    return NextResponse.json(
+      { error: "Erro ao deletar documentos", details: error.message },
+      { status: 500 }
+    );
   }
 }
