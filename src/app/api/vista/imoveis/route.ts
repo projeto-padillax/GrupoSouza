@@ -285,53 +285,54 @@ export async function GET(request: NextRequest) {
 
     const imoveisRef = collection(db, "imoveis");
 
-    // Contagem total
-    const totalSnap = await getCountFromServer(
-      query(imoveisRef, where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA"))
-    );
-    const totalImoveis = totalSnap.data().count;
-
-    // Query base com paginação
-    let constraints: any[] = [
+    // =====================
+    // Construir filtros Firestore (básicos)
+    // =====================
+    let firestoreConstraints: any[] = [
       where("Status", "==", isAluguel ? "ALUGUEL" : "VENDA"),
-      orderBy(valorField),
-      limit(pageSize)
+      orderBy(valorField)
     ];
 
-    // Correção do cursor
+    if (cidade) firestoreConstraints.push(where("CidadeLower", "==", cidade.toLowerCase())); // campo extra normalizado no banco
+    if (tipos.length === 1) firestoreConstraints.push(where("CategoriaLower", "==", tipos[0].toLowerCase()));
+    if (bairros.length === 1) firestoreConstraints.push(where("BairroLower", "==", bairros[0].toLowerCase()));
+    if (valorMin !== null) firestoreConstraints.push(where(valorField, ">=", valorMin));
+    if (valorMax !== null) firestoreConstraints.push(where(valorField, "<=", valorMax));
+
+    // =====================
+    // Total filtrado (base)
+    // =====================
+    const totalSnap = await getCountFromServer(query(imoveisRef, ...firestoreConstraints));
+    const totalImoveis = totalSnap.data().count;
+
+    // =====================
+    // Paginação
+    // =====================
+    let pageConstraints = [...firestoreConstraints, limit(pageSize * 3)]; // busca extra p/ compensar filtros em memória
+
     if (cursor) {
       const lastDocRef = doc(imoveisRef, cursor);
       const lastDocSnap = await getDoc(lastDocRef);
-
       if (lastDocSnap.exists()) {
-        constraints.push(startAfter(lastDocSnap));
-      } else {
-        console.warn(`Cursor ${cursor} não encontrado. Retornando primeira página.`);
+        pageConstraints.push(startAfter(lastDocSnap));
       }
     }
 
-    const snapshot = await getDocs(query(imoveisRef, ...constraints));
+    const snapshot = await getDocs(query(imoveisRef, ...pageConstraints));
 
     let data: Imovel[] = snapshot.docs.map((docSnap) => ({
       id: docSnap.id,
       ...(docSnap.data() as Omit<Imovel, "id">),
     }));
 
-    // --- FILTROS EM MEMÓRIA ---
-    if (cidade) {
-      data = data.filter((item) => item.Cidade?.toLowerCase() === cidade.toLowerCase());
-    }
-    if (tipos.length) {
+    // =====================
+    // Filtros em memória
+    // =====================
+    if (tipos.length > 1) {
       data = data.filter((item) => tipos.some((tipo) => item.Categoria?.toLowerCase() === tipo.toLowerCase()));
     }
-    if (bairros.length) {
+    if (bairros.length > 1) {
       data = data.filter((item) => bairros.some((bairro) => item.Bairro?.toLowerCase() === bairro.toLowerCase()));
-    }
-    if (valorMin !== null) {
-      data = data.filter((item) => Number(item[valorField] || 0) >= valorMin);
-    }
-    if (valorMax !== null) {
-      data = data.filter((item) => Number(item[valorField] || 0) <= valorMax);
     }
     if (quartos) {
       data = data.filter((item) => String(item.Dormitorios) === String(quartos));
@@ -365,9 +366,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Próximo cursor
-    const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
-    const nextCursor = lastVisible ? lastVisible.id : null;
+    // =====================
+    // Cortar para pageSize e definir próximo cursor
+    // =====================
+    data = data.slice(0, pageSize);
+
+    const lastVisibleDoc = snapshot.docs.find(doc => doc.id === data[data.length - 1]?.id) || null;
+    const nextCursor = lastVisibleDoc ? lastVisibleDoc.id : null;
 
     return NextResponse.json({
       total: totalImoveis,
