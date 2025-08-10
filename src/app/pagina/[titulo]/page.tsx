@@ -5,11 +5,11 @@ import { getPaginaByTitle } from "@/lib/actions/contentPages";
 import "@/app/html-padrao.css";
 
 interface DynamicPageProps {
-  params: { titulo: string };
+  params: Promise<{ titulo: string }>;
 }
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-  const tituloOriginal = decodeURIComponent(params.titulo);
+  const tituloOriginal = await params.then((p) => (p.titulo));
   const pageData = await getPaginaByTitle(tituloOriginal);
 
   if (!pageData) {
@@ -32,11 +32,10 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
 
         {pageData.imagem ? (
           <section
-            className="relative w-full h-[250px] bg-cover bg-center flex items-end"
-            style={{ backgroundImage: `url(${pageData.imagem})` }}
+            className="relative w-[90%] mx-auto max-w-7xl h-[250px] bg-cover bg-center object-cover rounded-4xl justify-items-center"
+            style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${pageData.imagem})` }}
           >
-            <div className="w-full bg-gradient-to-t from-black/50 to-transparent absolute inset-0"></div>
-            <div className="relative z-10 max-w-5xl w-7xl px-4 pb-6 mx-auto">
+            <div className="relative z-10 w-[90%] h-full flex flex-col justify-center max-w-7xl">
               <h1 className="text-white text-4xl font-semibold">{pageData.titulo}</h1>
             </div>
           </section>
@@ -49,10 +48,10 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         )}
 
         <section
-          className={`max-w-5xl mx-auto mt-10 px-4 ${pageData.imagem ? "mb-16" : "mb-1"
+          className={`max-w-5xl w-[70%] mx-auto mt-10 px-4 ${pageData.imagem ? "mb-16" : "mb-1"
             }`}
         >
-          <div className="html-padrao">
+          <div className="html-padrao w-full max-w-6xl">
             <article dangerouslySetInnerHTML={{ __html: pageData.conteudo ?? "" }} />
           </div>
         </section>

@@ -127,7 +127,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
           </button>
         </div>
 
-        <div className="h-full overflow-y-auto pb-20 justify-items-center">
+        <div className="h-full overflow-y-auto pb-20 justify-items-center" style={{ scrollbarWidth: 'none' }}>
           <div className="border-b border-sky-500 w-9/12 ml-4">
             {fixedItems.map((item, index) => (
               <Link

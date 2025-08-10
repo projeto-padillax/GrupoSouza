@@ -4,7 +4,7 @@ import { getConfiguracaoPagina } from "@/lib/actions/config";
 
 export default async function SiteConfig() {
   const config = await getConfiguracaoPagina();
-
+  
   return (
     <main className="py-12">
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
@@ -18,7 +18,7 @@ export default async function SiteConfig() {
             </p>
           </div>
         </div>
-        <ConfigPageForm config={config ?? undefined}/>
+        <ConfigPageForm defaultValues={config ?? undefined}/>
       </div>
     </main>
   );

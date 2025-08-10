@@ -5,6 +5,7 @@ import ChamadasNaHomeSection from "@/components/site/chamadasNaHomeSection";
 import Footer from "@/components/site/footer";
 import Header from "@/components/site/header";
 import { HeroSection } from "@/components/site/heroSection";
+import { MostSearched } from "@/components/site/mostSearched";
 import SlideSection from "@/components/site/slideSection";
 import { getRandomBannerImage } from "@/lib/actions/banner";
 import { getDestaques } from "@/lib/firebase/imoveis/destaques";
@@ -29,6 +30,7 @@ export default async function Home() {
           <SlideSection slides={slides}></SlideSection>
           <ChamadasNaHomeSection ></ChamadasNaHomeSection>
           <DestaquesSection destaques={destaques} />
+          <MostSearched></MostSearched>
           <Footer></Footer>
         </main>
       </div>
