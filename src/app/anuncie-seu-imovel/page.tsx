@@ -35,7 +35,6 @@ export default function Anuncie() {
           </div>
         </section>
 
-        {/* subtítulo */}
         <section className="py-8 md:py-10">
           <div className="max-w-3xl mx-auto px-4 text-lg text-center text-[#444] leading-relaxed">
             <p>
@@ -46,7 +45,6 @@ export default function Anuncie() {
           </div>
         </section>
 
-        {/* Card + Form */}
         <section className="pb-16">
           <div className="max-w-4xl mx-auto px-4">
             <div className="rounded-2xl border border-gray-200 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
