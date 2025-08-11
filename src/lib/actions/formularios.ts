@@ -23,6 +23,8 @@ const formularioServerSchema = z.object({
   mensagem: z.string().optional(),
   condominio: z.string().optional(),
   assunto: z.string().optional(),
+  valorDesejado: z.number().positive().optional(),
+  finalidade: z.string().optional(),
 });
 
 export type FormularioInput = z.infer<typeof formularioServerSchema>;
