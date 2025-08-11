@@ -112,13 +112,11 @@ export function HeroSection(banner: HeroSectionProps) {
       parts.push(`valorMax-${searchData.valueRange.max}`);
     }
 
-    parts.push("1");
-
     router.push(parts.filter(Boolean).join("/"));
   };
 
   const handleSearchByCode = () => {
-    console.log("Buscando por código:", codigo);
+    router.push(`/busca/codigo-${codigo.trim()}`);
   };
 
   return (

@@ -24,19 +24,26 @@ import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Imovel } from "@/app/api/vista/imoveis/route";
 import { Destaque, ImovelCard } from "./imovelcard";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function imoveisPage({
   filtros,
   imoveis,
-  nextCursor,
+  currentPage,
+  totalPages,
   totalImoveis,
 }: {
   filtros: Filtros;
   imoveis: Destaque[];
-  nextCursor?: string;
+  currentPage?: string;
+  totalPages?: string;
   totalImoveis?: number;
 }) {
+  const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
+  const [sortOrder, setSortOrder] = useState(filtros.sort);
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
     tipos: filtros.tipo ?? ([] as string[]),
@@ -131,6 +138,10 @@ export default function imoveisPage({
       titulo += ` em ${searchData.locations.join(", ")}`;
     }
 
+    if (codigo) {
+      titulo += ` com código ${codigo}`;
+    }
+
     // Faixa de preço
     const min = searchData.valueRange.min;
     const max = searchData.valueRange.max;
@@ -157,9 +168,72 @@ export default function imoveisPage({
     setModals({ ...modals, [modalType]: false });
   };
 
+  const handleSearchByCode = (code: string) => {
+    if (!code) return;
+    router.replace(`busca/codigo-${code}`);
+  };
+
   useEffect(() => {
-    console.log(searchData);
-  }, [searchData]);
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return; // Ignora a primeira execução
+    }
+    const parts = ["busca"];
+
+    if (searchData.action) {
+      parts.push(searchData.action);
+    }
+
+    if (searchData.tipos?.length) {
+      parts.push(`tipo-${searchData.tipos.join("_")}`);
+    }
+
+    if (searchData.locations?.length) {
+      parts.push(`cidade-${searchData.locations.join("_")}`);
+    }
+
+    if (searchData.valueRange?.min) {
+      parts.push(`valorMin-${searchData.valueRange.min}`);
+    }
+
+    if (searchData.valueRange?.max) {
+      parts.push(`valorMax-${searchData.valueRange.max}`);
+    }
+
+    if (searchData.quartos != "0") {
+      parts.push(`quartos-${searchData.quartos}`);
+    }
+
+    if (searchData.area != "0") {
+      parts.push(`areaMinima-${searchData.area}`);
+    }
+
+    if (searchData.suites != "0") {
+      parts.push(`suites-${searchData.suites}`);
+    }
+
+    if (searchData.vagas != "0") {
+      parts.push(`vagas-${searchData.vagas}`);
+    }
+
+    if (searchData.caracteristicas?.length) {
+      parts.push(`caracteristicas-${searchData.caracteristicas.join("_")}`);
+    }
+
+    if (searchData.lancamentos) {
+      parts.push(`lancamentos-${searchData.lancamentos}`);
+    }
+
+    if (searchData.mobiliado) {
+      parts.push(`mobiliado-${searchData.mobiliado}`);
+    }
+
+    if (sortOrder) {
+      parts.push(`sort-${sortOrder}`);
+    }
+
+    router.replace("/" + parts.filter(Boolean).join("/"));
+  }, [searchData, router, sortOrder]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -300,10 +374,10 @@ export default function imoveisPage({
                   className="placeholder:text-black border-0 text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 shadow-none text-black"
                 />
                 <Button
-                  onClick={() => console.log("buscar por código:", codigo)}
-                  className="bg-transparent rounded-none cursor-pointer hover:bg-[#4F7DC3] hover:text-white"
+                  onClick={() => handleSearchByCode(codigo)}
+                  className="bg-transparent rounded-none h-full cursor-pointer hover:bg-[#4F7DC3] text-gray-500 hover:text-white"
                 >
-                  <Search className="h-4 w-4 text-gray-500 hover:text-white" />
+                  <Search className="h-4 w-4 text-current" />
                 </Button>
               </div>
             </div>
@@ -482,20 +556,15 @@ export default function imoveisPage({
             <div>
               <Select
                 value={searchData.valueRange.max}
-                onValueChange={(value) =>
-                  setSearchData({
-                    ...searchData,
-                    valueRange: { ...searchData.valueRange, max: value },
-                  })
-                }
+                onValueChange={(value) => setSortOrder(value)}
               >
                 <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">
-                  <SelectValue placeholder="Valor até" />
+                  <SelectValue placeholder={"Filtro"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dataDesc">R$ 100 mil</SelectItem>
-                  <SelectItem value="asc">R$ 200 mil</SelectItem>
-                  <SelectItem value="desc">R$ 500 mil</SelectItem>
+                  <SelectItem value="dataDesc">Mais recentes</SelectItem>
+                  <SelectItem value="asc">Menor valor</SelectItem>
+                  <SelectItem value="desc">Maior valor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -503,12 +572,24 @@ export default function imoveisPage({
         </div>
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-center gap-5">
+            {imoveis.length === 0 && (
+              <p className="text-center text-gray-500 col-span-full">
+                Nenhum imóvel encontrado com os filtros selecionados.
+              </p>
+            )}
+
             {imoveis.map((imovel: Destaque) => (
-              <ImovelCard
-                key={imovel.id}
-                imovel={imovel}
-                activeTab={searchData.action}
-              ></ImovelCard>
+              <Link
+                href={`/imovel/${encodeURIComponent(
+                  imovel.TituloSite || imovel.Descricao
+                )}/${imovel.Codigo}`}
+              >
+                <ImovelCard
+                  key={imovel.id}
+                  imovel={imovel}
+                  activeTab={searchData.action}
+                ></ImovelCard>
+              </Link>
             ))}
           </div>
         </div>
