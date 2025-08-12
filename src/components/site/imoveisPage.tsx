@@ -19,9 +19,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { Destaque, ImovelCard } from "./imovelcard";
+import { ImovelCard } from "./imovelcard";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Destaque } from "@/lib/types/destaque";
 
 export default function imoveisPage({
   filtros,

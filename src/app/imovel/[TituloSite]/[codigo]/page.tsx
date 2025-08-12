@@ -12,9 +12,13 @@ import SemelhantesSection from "@/components/site/semelhantesSection";
 export default async function ImovelPage({
     params,
 }: {
-    params: { codigo: string; tituloSite: string };
+    params: Promise<{ tituloSite: string; codigo: string }>;
 }) {
-    const res = await fetch(`http://localhost:3000/api/vista/imoveis/${params.codigo}`, {
+    const parsedParams = await params.then((p) => ({
+        codigo: p.codigo,
+        tituloSite: p.tituloSite,
+    }));
+    const res = await fetch(`http://localhost:3000/api/vista/imoveis/${parsedParams.codigo}`, {
         cache: "no-store",
     });
 

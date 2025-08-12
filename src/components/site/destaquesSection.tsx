@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Destaque, ImovelCard } from "./imovelcard";
+import { ImovelCard } from "./imovelcard";
 import Link from "next/link";
+import { Destaque } from "@/lib/types/destaque";
 
 interface DestaquesSectionProps {
   destaques: {
@@ -65,6 +66,7 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5 mb-10">
         {todosImoveis.map((imovel: Destaque) => (
           <Link
+            key={imovel.id}
             href={`/imovel/${encodeURIComponent(
               imovel.TituloSite || imovel.Descricao
             )}/${imovel.Codigo}`}
