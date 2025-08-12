@@ -506,7 +506,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const action = searchParams.get("action") ?? "alugar";
+    const action = searchParams.get("action") ?? "comprar";
 
     const tipos = searchParams.get("tipos")
       ?.split(",")
