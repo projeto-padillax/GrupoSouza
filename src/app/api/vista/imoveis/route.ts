@@ -562,7 +562,7 @@ export async function GET(request: NextRequest) {
     };
 
     if (cidade) whereClause.Cidade = { equals: cidade, mode: 'insensitive' };
-    if (bairros.length > 0) {
+    if (bairros.length > 0 && !(bairros.length === 1 && bairros[0].toLowerCase() === "all")) {
       whereClause.Bairro = { in: bairros, mode: 'insensitive' };
     }
     if (tipos.length > 0) {
