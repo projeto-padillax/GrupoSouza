@@ -453,20 +453,58 @@ export async function PUT() {
   }
 }
 
-// --- Interfaces ---
-// Mantenha suas interfaces Foto e Imovel como estão, elas estão corretas
-interface Foto {
-  id: number;
-  destaque?: string | null;
-  codigo?: string | null;
-  url?: string | null;
-  urlPequena?: string | null;
-  imovelId: string;
-}
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
+
+    const codigo = searchParams.get("codigo") || null; // Extract codigo early
+
+    // --- Special handling for 'codigo' ---
+    if (codigo) {
+      const imovel = await prisma.imovel.findUnique({
+        where: {
+          id: codigo,
+        },
+        include: {
+          fotos: {
+            select: {
+              id: true,
+              destaque: true,
+              codigo: true,
+              url: true,
+              urlPequena: true,
+            },
+            orderBy: {
+              id: 'asc'
+            }
+          },
+          caracteristicas: {
+            select: {
+              nome: true,
+              valor: true
+            }
+          }
+        },
+      });
+
+      if (imovel) {
+        return NextResponse.json({
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalItems: 1,
+          imoveis: [imovel], // Return as an array for consistency
+        });
+      } else {
+        return NextResponse.json({
+          currentPage: 1,
+          pageSize: 0,
+          totalPages: 0,
+          totalItems: 0,
+          imoveis: [],
+        }, { status: 404 }); // Return 404 if not found
+      }
+    }
 
     const action = searchParams.get("action") ?? "alugar";
 
@@ -483,7 +521,6 @@ export async function GET(request: NextRequest) {
     const valorMin = searchParams.get("valorMin") ? Number(searchParams.get("valorMin")) : null;
     const valorMax = searchParams.get("valorMax") ? Number(searchParams.get("valorMax")) : null;
     const quartos = searchParams.get("quartos") || null;
-    const codigo = searchParams.get("codigo") || null;
     const areaMinima = searchParams.get("areaMinima") ? String(searchParams.get("areaMinima")) : null; // AreaTotal ainda é string
     const suites = searchParams.get("suites") || null;
     const vagas = searchParams.get("vagas") || null;
@@ -532,7 +569,6 @@ export async function GET(request: NextRequest) {
       whereClause.Categoria = { in: tipos, mode: 'insensitive' };
     }
     if (quartos) whereClause.Dormitorios = quartos;
-    if (codigo) whereClause.Codigo = codigo;
     if (suites) whereClause.Suites = suites;
     if (vagas) whereClause.Vagas = vagas;
     if (lancamentosFilterValue !== null) {
@@ -542,26 +578,22 @@ export async function GET(request: NextRequest) {
         whereClause.Mobiliado = { equals: mobiliadoFilterValue, mode: 'insensitive' };
     }
 
-    // ✨ IMPORTANTE: valorMin/valorMax agora devem comparar com números!
-    // No seu schema.prisma, se `ValorVenda` e `ValorLocacao` forem `Int?`,
-    // então a comparação `gte/lte` também deve ser com números.
     if (valorMin !== null) {
       whereClause[valorField] = {
-        gte: valorMin, // ✨ COMPARAÇÃO NUMÉRICA
+        gte: valorMin,
         ...whereClause[valorField],
       };
     }
     if (valorMax !== null) {
       whereClause[valorField] = {
-        lte: valorMax, // ✨ COMPARAÇÃO NUMÉRICA
+        lte: valorMax,
         ...whereClause[valorField],
       };
     }
 
-    // Se AreaTotal também deve ser numérica, aplique o mesmo processo de alteração de schema/tipo
     if (areaMinima !== null) {
       whereClause.AreaTotal = {
-        gte: String(areaMinima) // Ainda String, se não for alterado no DB
+        gte: String(areaMinima)
       };
     }
 
@@ -580,10 +612,10 @@ export async function GET(request: NextRequest) {
     if (order) {
       switch (order) {
         case "MaiorValor":
-          orderByClause[valorField] = "desc"; // ✨ AGORA FUNCIONARÁ NUMERICAMENTE NO DB
+          orderByClause[valorField] = "desc";
           break;
         case "MenorValor":
-          orderByClause[valorField] = "asc"; // ✨ AGORA FUNCIONARÁ NUMERICAMENTE NO DB
+          orderByClause[valorField] = "asc";
           break;
         case "ImovelRecente":
           orderByClause.DataHoraAtualizacao = "desc";
