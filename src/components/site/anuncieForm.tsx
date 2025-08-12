@@ -14,9 +14,9 @@ const schema = z.object({
     endereco: z.string().min(3, "Informe o endereço"),
     bairro: z.string().min(1, "Informe o bairro"),
     cidade: z.string().min(1, "Informe a cidade"),
-    finalidade: z.enum(["ALUGUEL", "VENDA"], "Escolha a finalidade do anuncio"),
+    finalidade: z.enum(["ALUGUEL", "VENDA", "VENDA E ALUGUEL"], "Escolha a finalidade do anuncio"),
     valorDesejado: z
-        .number("Insira apenas números")
+        .number("Insira o valor desejado")
         .positive("Número deve ser positivo"),
     descricao: z.string().min(5, "Descreva brevemente o imóvel"),
 });
@@ -38,25 +38,12 @@ export default function AnuncieForm(): JSX.Element {
     const onSubmit = (data: FormData) => {
         startTransition(async () => {
             try {
-                const resumo = [
-                    `Novo anúncio de imóvel`,
-                    `Nome: ${data.nome}`,
-                    `Telefone: ${data.telefone}`,
-                    `Email: ${data.email}`,
-                    `Endereço: ${data.endereco}, Bairro: ${data.bairro}, Cidade: ${data.cidade}`,
-                    `Finalidade: ${data.finalidade}`,
-                    data.valorDesejado ? `Valor desejado: R$ ${data.valorDesejado}` : null,
-                    `Descrição: ${data.descricao}`,
-                ]
-                    .filter(Boolean)
-                    .join(" | ");
-
                 await createFormulario({
                     tipo: "ANUNCIEIMOVEL",
                     nome: data.nome,
                     email: data.email,
                     telefone: data.telefone,
-                    mensagem: resumo,
+                    mensagem: data.descricao,
                     urlRespondida: typeof window !== "undefined" ? window.location.href : "",
                     finalidade: data.finalidade,
                     valorDesejado: data.valorDesejado,
