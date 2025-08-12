@@ -49,10 +49,11 @@ export default function imoveisPage({
   const [sortOrder, setSortOrder] = useState(filtros.sort);
   const [titulo, setTitulo] = useState("");
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const location = filtros.bairro?.map((i) => `${filtros.cidade}:${i}`) ?? [];
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
     tipos: filtros.tipo ?? ([] as string[]),
-    locations: [] as string[],
+    locations: location,
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
     quartos: filtros.quartos ?? "0",
     area: filtros.areaMinima ?? "0",
@@ -138,9 +139,18 @@ export default function imoveisPage({
       titulo += `, mobiliado`;
     }
 
+    if (
+      filtros.bairro &&
+      (filtros.bairro.length > 1 || filtros.bairro[0] === "all")
+    ) {
+      titulo += ` em alguns bairros`;
+    }
     // Localizações
-    if (searchData.locations.length > 0) {
-      titulo += ` em ${searchData.locations.join(", ")}`;
+    if (filtros.cidade) {
+      titulo += ` de ${filtros.cidade}`;
+      filtros.bairro?.length == 1 && filtros.bairro[0] !== "all"
+        ? (titulo += ` no bairro ${filtros.bairro[0]}`)
+        : null;
     }
 
     if (codigo) {
@@ -235,7 +245,7 @@ export default function imoveisPage({
     }
 
     if (sortOrder) {
-      parts.push(`sort-${sortOrder}`);
+      parts.push(`order-${sortOrder}`);
     }
 
     parts.push(`${page}`);
@@ -601,7 +611,7 @@ export default function imoveisPage({
               ))}
           </div>
           <div className="max-w-7xl mx-auto px-4 mt-10">
-            { totalImoveis > 0 && (
+            {totalImoveis > 0 && (
               <Pagination>
                 <PaginationContent>
                   {/* Botão Anterior */}

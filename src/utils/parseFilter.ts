@@ -45,7 +45,7 @@ export function parseFiltros(filtros: string[]): Filtros {
     else if (filtro.startsWith("codigo-"))
       parsed.codigo = filtro.slice(7);
     else if (filtro.startsWith("order-"))
-      parsed.sort = filtro.slice(5);
+      parsed.sort = filtro.slice(6);
     else parsed.page = filtro;
   }
 

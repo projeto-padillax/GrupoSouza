@@ -40,6 +40,7 @@ export function HeroSection(banner: HeroSectionProps) {
   });
 
   useEffect(() => {
+    console.log(banner)
     if (isSearching && inputRef.current) {
       inputRef.current.focus();
     }
@@ -57,6 +58,7 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const closeModal = (modalType: "location" | "type" | "value") => {
+    console.log(searchData)
     setModals({ ...modals, [modalType]: false });
   };
 
@@ -134,7 +136,7 @@ export function HeroSection(banner: HeroSectionProps) {
             href={banner.url}
             className="text-4xl md:text-5xl font-semibold text-white mb-4 leading-tight font-[Montserrat, sans-serif]"
           >
-            {banner.titulo && null}
+            {banner.titulo}
           </Link>
           {banner.subtitulo && (<p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>)}
 
