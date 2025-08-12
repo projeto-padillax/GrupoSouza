@@ -172,7 +172,7 @@ export default async function Footer() {
           </div>
         </div>
       </footer>
-      <div className="justify-between pt-4 flex flex-row items-center w-[90%] mx-auto max-w-7xl">
+      <div className="justify-between pt-4 flex flex-row items-center w-[90%] mx-auto max-w-7xl pb-16">
         <a
           href="https://www.leadlink.com.br/templatepro/gruposouza/"
           style={{ color: "#4d4d4d", fontWeight: 400 }}

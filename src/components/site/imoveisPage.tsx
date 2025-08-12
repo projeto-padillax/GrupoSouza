@@ -1,8 +1,6 @@
 "use client";
 import { Filtros } from "@/utils/parseFilter";
 import { useEffect, useState } from "react";
-import ClientLayout from "../client-layout";
-import Header from "./header";
 import {
   Select,
   SelectContent,
@@ -23,6 +21,14 @@ import { ImovelCard } from "./imovelcard";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Destaque } from "@/lib/types/destaque";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 export default function imoveisPage({
   filtros,
@@ -33,13 +39,15 @@ export default function imoveisPage({
 }: {
   filtros: Filtros;
   imoveis: Destaque[];
-  currentPage?: string;
-  totalPages?: string;
-  totalImoveis?: number;
+  currentPage?: number;
+  totalPages?: number;
+  totalImoveis: number;
 }) {
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(currentPage ?? 1);
   const [sortOrder, setSortOrder] = useState(filtros.sort);
+  const [titulo, setTitulo] = useState("");
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
@@ -154,7 +162,7 @@ export default function imoveisPage({
       }
     }
 
-    return titulo;
+    setTitulo(titulo);
   }
 
   const openModal = (modalType: "location" | "type") => {
@@ -167,11 +175,12 @@ export default function imoveisPage({
 
   const handleSearchByCode = (code: string) => {
     if (!code) return;
-    router.replace(`busca/codigo-${code}`);
+    router.replace(`/busca/codigo-${code}`);
   };
 
   useEffect(() => {
     if (isFirstRender) {
+      gerarTitulo(totalImoveis ?? 0);
       setIsFirstRender(false);
       return; // Ignora a primeira execução
     }
@@ -229,8 +238,10 @@ export default function imoveisPage({
       parts.push(`sort-${sortOrder}`);
     }
 
+    parts.push(`${page}`);
+
     router.replace("/" + parts.filter(Boolean).join("/"));
-  }, [searchData, router, sortOrder]);
+  }, [searchData, router, sortOrder, page]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -546,9 +557,7 @@ export default function imoveisPage({
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
             <div className="h-6  rounded-sm">
-              <h1 className="text-2xl font-bold text-[#4d4d4d]">
-                {gerarTitulo(totalImoveis ?? 0)}
-              </h1>
+              <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
             <div>
               <Select
@@ -575,20 +584,82 @@ export default function imoveisPage({
               </p>
             )}
 
-            {imoveis && imoveis.map((imovel: Destaque) => (
-              <Link
-                key={imovel.id}
-                href={`/imovel/${encodeURIComponent(
-                  imovel.TituloSite || imovel.Descricao
-                )}/${imovel.Codigo}`}
-              >
-                <ImovelCard
+            {imoveis &&
+              imoveis.map((imovel: Destaque) => (
+                <Link
                   key={imovel.id}
-                  imovel={imovel}
-                  activeTab={searchData.action}
-                ></ImovelCard>
-              </Link>
-            ))}
+                  href={`/imovel/${encodeURIComponent(
+                    imovel.TituloSite || imovel.Descricao
+                  )}/${imovel.Codigo}`}
+                >
+                  <ImovelCard
+                    key={imovel.id}
+                    imovel={imovel}
+                    activeTab={searchData.action}
+                  ></ImovelCard>
+                </Link>
+              ))}
+          </div>
+          <div className="max-w-7xl mx-auto px-4 mt-10">
+            { totalImoveis > 0 && (
+              <Pagination>
+                <PaginationContent>
+                  {/* Botão Anterior */}
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => setPage(page - 1)}
+                      className={
+                        page === 1
+                          ? "pointer-events-none opacity-50 cursor-none"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {(() => {
+                    const maxVisible = 5; // máximo de páginas visíveis
+                    let startPage = Math.max(
+                      1,
+                      page - Math.floor(maxVisible / 2)
+                    );
+                    let endPage = startPage + maxVisible - 1;
+
+                    if (endPage > (totalPages || 1)) {
+                      endPage = totalPages || 1;
+                      startPage = Math.max(1, endPage - maxVisible + 1);
+                    }
+
+                    const pages = [];
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            className="cursor-pointer"
+                            isActive={page === i}
+                            onClick={() => setPage(i)}
+                          >
+                            {i}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    }
+                    return pages;
+                  })()}
+
+                  {/* Botão Próximo */}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => setPage(page + 1)}
+                      className={
+                        page === totalPages
+                          ? "pointer-events-none opacity-50 cursor-none"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </div>
       </main>

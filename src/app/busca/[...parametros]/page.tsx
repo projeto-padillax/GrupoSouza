@@ -2,6 +2,7 @@ import ImoveisPage from "@/components/site/imoveisPage";
 import { parseFiltros } from "@/utils/parseFilter";
 import Header from "@/components/site/header";
 import ClientLayout from "@/components/client-layout";
+import Footer from "@/components/site/footer";
 interface Props {
   params: Promise<{
     parametros?: string[];
@@ -40,8 +41,10 @@ export default async function Imoveis({ params }: Props) {
       query.set("mobiliado", parsedFiltros.mobiliado);
     if (parsedFiltros.sort)
       query.set("order", parsedFiltros.sort);
-  }
 
+    query.set("page", parsedFiltros.page || "1");
+  }
+  
   const res = await fetch(
     `http://localhost:3000/api/vista/imoveis?${query.toString()}`
   );
@@ -57,6 +60,7 @@ export default async function Imoveis({ params }: Props) {
         totalPages={data.totalPages}
         totalImoveis={data.totalItems}
       />
+      <Footer></Footer>
     </ClientLayout>
   );
 }

@@ -111,7 +111,7 @@ export function HeroSection(banner: HeroSectionProps) {
     if (searchData.valueRange?.max) {
       parts.push(`valorMax-${searchData.valueRange.max}`);
     }
-
+    parts.push(`1`);
     router.push(parts.filter(Boolean).join("/"));
   };
 
