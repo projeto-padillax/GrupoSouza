@@ -506,7 +506,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const action = searchParams.get("action") ?? "alugar";
+    const action = searchParams.get("action") ?? "comprar";
 
     const tipos = searchParams.get("tipos")
       ?.split(",")
@@ -517,7 +517,7 @@ export async function GET(request: NextRequest) {
       .map(item => item.trim())
       .filter(Boolean) || [];
 
-    const cidade = searchParams.get("cidade") ?? "";
+    const cidade = searchParams.get("cidade") ?? "piracicaba";
     const valorMin = searchParams.get("valorMin") ? Number(searchParams.get("valorMin")) : null;
     const valorMax = searchParams.get("valorMax") ? Number(searchParams.get("valorMax")) : null;
     const quartos = searchParams.get("quartos") || null;
@@ -561,8 +561,8 @@ export async function GET(request: NextRequest) {
       Status: isAluguel ? "ALUGUEL" : "VENDA",
     };
 
-    if (cidade) whereClause.Cidade = cidade;
-    if (bairros.length > 0) {
+    if (cidade) whereClause.Cidade = { equals: cidade, mode: 'insensitive' };
+    if (bairros.length > 0 && !(bairros.length === 1 && bairros[0].toLowerCase() === "all")) {
       whereClause.Bairro = { in: bairros, mode: 'insensitive' };
     }
     if (tipos.length > 0) {
