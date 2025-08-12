@@ -1,17 +1,42 @@
 
-export interface Destaque {
+export type Destaque = {
   id: string;
-  AreaTotal: string;
-  Bairro: string;
-  Categoria: string;
-  CodigoImobiliaria: string;
-  Dormitorios: string;
-  FotoDestaque: string;
-  Lancamento: string;
-  Status: string;
-  Vagas: string;
-  ValorLocacao: string;
-  ValorVenda: string;
   Codigo: string;
+  ValorIptu: string;
+  ValorCondominio: string;
+  Categoria: string;
+  InformacaoVenda: string;
+  ObsVenda: string;
+  AreaTerreno: string;
+  Bairro: string;
+  GMapsLatitude: string;
+  GMapsLongitude: string;
+  DescricaoWeb: string;
+  Cidade: string;
+  ValorVenda: number;
+  ValorLocacao: number;
+  Dormitorios: string;
+  Suites: string;
+  Vagas: string;
+  AreaTotal: string;
+  AreaPrivativa: string;
+  Descricao: string;
+  DataHoraAtualizacao: Date;
+  Lancamento: string;
+  Finalidade: string;
+  Status: string;
+  Empreendimento: string;
+  Endereco: string;
+  Numero: string;
+  Complemento: string;
+  UF: string;
+  CEP: string;
   DestaqueWeb: string;
-}
+  FotoDestaque: string;
+  Latitude: string;
+  Longitude: string;
+  TituloSite: string;
+  FotoDestaqueEmpreendimento: string;
+  VideoDestaque: string;
+  Mobiliado: string;
+};
