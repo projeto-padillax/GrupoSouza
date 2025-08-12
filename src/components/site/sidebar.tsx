@@ -70,7 +70,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
 
   const footerItems = [
     { title: "Anuncie seu Imóvel", href: "/anuncie-seu-imovel" },
-    { title: "Sobre a Empresa", href: "/sobre" },
+    { title: "Sobre a Empresa", href: "/empresa" },
     { title: "Contato", href: "/contato" },
     { title: "Política de Privacidade", href: "/privacidade" },
   ];

@@ -59,6 +59,8 @@ export async function createFormulario(input: FormularioInput): Promise<void> {
       mensagem: validated.mensagem,
       condominio: validated.condominio,
       assunto: validated.assunto,
+      finalidade: validated.finalidade,
+      valorDesejado: validated.valorDesejado,
     },
   });
 }

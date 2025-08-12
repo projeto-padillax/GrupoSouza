@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +23,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function AnuncieForm(): JSX.Element {
+export default function AnuncieForm() {
     const [isPending, startTransition] = useTransition();
 
     const {

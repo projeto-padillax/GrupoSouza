@@ -11,7 +11,7 @@ export default function Anuncie() {
       <Header />
 
       <main className="flex-1">
-        <section className="relative w-full h-[320px] md:h-[360px]">
+        <section className="relative w-full h-[320px] md:h-[320px]">
           <Image
             src="/Anuncie seu imovel.jpg"
             alt="Ambiente de sala com sofá"
@@ -20,7 +20,7 @@ export default function Anuncie() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0" />
           <div className="absolute inset-0 z-10 flex items-end justify-center">
             <h1 className="
                     text-white 
