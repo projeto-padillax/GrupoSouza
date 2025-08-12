@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {ImovelCard } from "./imovelcard";
+import { ImovelCard } from "./imovelcard";
 import { Destaque } from "@/lib/types/destaque";
 
 type ApiSemelhantes = {
