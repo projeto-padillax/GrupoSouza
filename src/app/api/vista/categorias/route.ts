@@ -1,5 +1,4 @@
-import { db } from "@/lib/firebase/clientApp";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { prisma } from "@/lib/neon/db";
 
 export async function POST() {
   try {
@@ -59,15 +58,23 @@ export async function POST() {
     const categoriasResidencial = parseCategorias(residencialData?.Categoria);
     const categoriasComercial = parseCategorias(comercialData?.Categoria);
 
-    // Salva no Firestore
-    await setDoc(doc(db, "categorias", "tipos"), {
-      residencial: categoriasResidencial,
-      comercial: categoriasComercial,
+    // Limpa a tabela antes de inserir novos dados para evitar duplicatas em cada execução
+    await prisma.finalidade.deleteMany({});
+
+    // Salva no Neon usando Prisma
+    const finalidadesParaSalvar = [
+      ...categoriasResidencial.map((nome) => ({ nome, tipo: "residencial" })),
+      ...categoriasComercial.map((nome) => ({ nome, tipo: "comercial" })),
+    ];
+
+    await prisma.finalidade.createMany({
+      data: finalidadesParaSalvar,
+      skipDuplicates: true, // Garante que não haverá duplicatas se, por algum motivo, a mesma categoria for gerada novamente
     });
 
     return new Response(
       JSON.stringify({
-        message: "Categorias armazenadas com sucesso",
+        message: "Categorias armazenadas com sucesso no Neon",
         totalResidencial: categoriasResidencial.length,
         totalComercial: categoriasComercial.length,
       }),
@@ -79,27 +86,40 @@ export async function POST() {
       JSON.stringify({ error: "Erro interno no servidor" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
+  } finally {
+    await prisma.$disconnect(); // Desconecta o Prisma Client no final da requisição
   }
 }
 
 export async function GET() {
   try {
-    const docRef = doc(db, "categorias", "tipos");
-    const docSnap = await getDoc(docRef);
+    // Consulta todas as finalidades no Neon usando Prisma
+    const finalidades = await prisma.finalidade.findMany({
+      select: {
+        nome: true,
+        tipo: true,
+      },
+    });
 
-    if (!docSnap.exists()) {
+    // Filtra e organiza por tipo
+    const residencial = finalidades
+      .filter((f) => f.tipo === "residencial")
+      .map((f) => f.nome);
+    const comercial = finalidades
+      .filter((f) => f.tipo === "comercial")
+      .map((f) => f.nome);
+
+    if (!residencial.length && !comercial.length) {
       return new Response(
         JSON.stringify({ error: "Categorias não encontradas" }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const data = docSnap.data();
-
     return new Response(
       JSON.stringify({
-        residencial: data.residencial ?? [],
-        comercial: data.comercial ?? [],
+        residencial: residencial,
+        comercial: comercial,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
@@ -109,5 +129,7 @@ export async function GET() {
       JSON.stringify({ error: "Erro interno no servidor" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
+  } finally {
+    await prisma.$disconnect(); // Desconecta o Prisma Client no final da requisição
   }
 }
