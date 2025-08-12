@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/lib/firebase/clientApp";
 import { prisma } from "@/lib/neon/db";
-import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, setDoc, startAfter, where, getCountFromServer, updateDoc, getDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import pLimit from 'p-limit';
 
