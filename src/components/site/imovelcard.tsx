@@ -3,65 +3,70 @@ import FavoriteButton from "./favoritosButton";
 import { CodigoImobiliariaIcon } from "../ui/codigoImobiliariaIcon";
 
 export interface Destaque {
-  id: string
-  AreaTotal: string
-  Bairro: string
-  Categoria: string
-  CodigoImobiliaria: string
-  Dormitorios: string
-  FotoDestaque: string
-  Lancamento: string
-  Status: string
-  Vagas: string
-  ValorLocacao: string
-  ValorVenda: string
-  Codigo: string
-  TituloSite: string
-  Descricao: string
+  id: string;
+  AreaTotal: string;
+  Bairro: string;
+  Categoria: string;
+  CodigoImobiliaria: string;
+  Dormitorios: string;
+  FotoDestaque: string;
+  Lancamento: string;
+  Status: string;
+  Vagas: string;
+  ValorLocacao: string;
+  ValorVenda: string;
+  Codigo: string;
+  TituloSite: string;
+  Descricao: string;
 }
 
 interface PropertyCardProps {
-  imovel: Destaque
-  activeTab: string
+  imovel: Destaque;
+  activeTab: string;
 }
 
 export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
   const capitalizeCategory = (category: string) => {
     return category
       .toLowerCase()
-      .split('/')
-      .map(part =>
+      .split("/")
+      .map((part) =>
         part
-          .split(' ')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")
       )
-      .join('/')
-  }
+      .join("/");
+  };
 
   // Verifica se há pelo menos uma informação de detalhe para mostrar
-  const hasAreaInfo = Number(imovel.AreaTotal) > 0
-  const hasDormitorios = Number(imovel.Dormitorios) > 0
-  const hasVagas = Number(imovel.Vagas) > 0
-  const hasAnyDetail = hasAreaInfo || hasDormitorios || hasVagas
+  const hasAreaInfo = Number(imovel.AreaTotal) > 0;
+  const hasDormitorios = Number(imovel.Dormitorios) > 0;
+  const hasVagas = Number(imovel.Vagas) > 0;
+  const hasAnyDetail = hasAreaInfo || hasDormitorios || hasVagas;
 
   const formatPrice = () => {
-    const isRent = activeTab === "Alugar"
-    const value = isRent ? imovel.ValorLocacao : imovel.ValorVenda
-    
+    const isRent = activeTab === "Alugar";
+    const value = isRent ? imovel.ValorLocacao : imovel.ValorVenda;
+
     if (!value || value === "" || value === "0") {
-      return "Consulte"
+      return "Consulte";
     }
-    
-    // Formatar o valor como moeda brasileira
-    const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'))
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+
+    // Garante que é string
+    const valueStr = String(value);
+
+    const numericValue = parseFloat(
+      valueStr.replace(/[^\d,]/g, "").replace(",", ".")
+    );
+
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(numericValue)
-  }
+    }).format(numericValue);
+  };
 
   return (
     <div className="w-full overflow-hidden shadow-lg bg-white rounded-md">
@@ -78,10 +83,14 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           {imovel.Bairro}
         </h3>
       </div>
-      
+
       <div className="p-5 flex flex-col h-[180px]">
         {/* Categoria e Código */}
-        <div className={`flex justify-between items-center mb-4 ${hasAnyDetail ? 'border-b border-gray-200 pb-3' : ''}`}>
+        <div
+          className={`flex justify-between items-center mb-4 ${
+            hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
+          }`}
+        >
           <p className="text-sm text-gray-600 font-medium">
             {capitalizeCategory(imovel.Categoria)}
           </p>
@@ -96,13 +105,12 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           {hasAnyDetail ? (
             <div className="flex justify-between items-center w-full border-b border-gray-200 pb-3">
               {hasAreaInfo && (
-                <p className="text-sm text-gray-600">
-                  {imovel.AreaTotal}m²
-                </p>
+                <p className="text-sm text-gray-600">{imovel.AreaTotal}m²</p>
               )}
               {hasDormitorios && (
                 <p className="text-sm text-gray-600">
-                  {imovel.Dormitorios} quarto{Number(imovel.Dormitorios) > 1 ? "s" : ""}
+                  {imovel.Dormitorios} quarto
+                  {Number(imovel.Dormitorios) > 1 ? "s" : ""}
                 </p>
               )}
               {hasVagas && (
@@ -120,11 +128,9 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         {/* Favoritos e Preço - sempre na parte inferior */}
         <div className="flex justify-between items-center mt-auto">
           <FavoriteButton propertyId={`imovel-${imovel.id}`} />
-          <p className="text-lg text-gray-800">
-            {formatPrice()}
-          </p>
+          <p className="text-lg text-gray-800">{formatPrice()}</p>
         </div>
       </div>
     </div>
-  )
+  );
 }

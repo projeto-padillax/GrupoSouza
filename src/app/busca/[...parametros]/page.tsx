@@ -39,7 +39,7 @@ export default async function Imoveis({ params }: Props) {
     if (parsedFiltros.mobiliado)
       query.set("mobiliado", parsedFiltros.mobiliado);
     if (parsedFiltros.sort)
-      query.set("sort", parsedFiltros.sort);
+      query.set("order", parsedFiltros.sort);
   }
 
   const res = await fetch(
@@ -55,7 +55,7 @@ export default async function Imoveis({ params }: Props) {
         imoveis={data.imoveis}
         currentPage={data.currentPage}
         totalPages={data.totalPages}
-        totalImoveis={data.total}
+        totalImoveis={data.totalItems}
       />
     </ClientLayout>
   );

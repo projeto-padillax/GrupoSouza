@@ -15,14 +15,10 @@ import { LocationSelectModal } from "./locationSelectModal";
 import { TypeSelectModal } from "./tipoImovelSelectModal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { set } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Checkbox } from "../ui/checkbox";
-import ca from "zod/v4/locales/ca.cjs";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { Imovel } from "@/app/api/vista/imoveis/route";
 import { Destaque, ImovelCard } from "./imovelcard";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -562,9 +558,9 @@ export default function imoveisPage({
                   <SelectValue placeholder={"Filtro"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dataDesc">Mais recentes</SelectItem>
-                  <SelectItem value="asc">Menor valor</SelectItem>
-                  <SelectItem value="desc">Maior valor</SelectItem>
+                  <SelectItem value="ImovelRecente">Mais recentes</SelectItem>
+                  <SelectItem value="MenorValor">Menor valor</SelectItem>
+                  <SelectItem value="MaiorValor">Maior valor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -578,8 +574,9 @@ export default function imoveisPage({
               </p>
             )}
 
-            {imoveis.map((imovel: Destaque) => (
+            {imoveis && imoveis.map((imovel: Destaque) => (
               <Link
+                key={imovel.id}
                 href={`/imovel/${encodeURIComponent(
                   imovel.TituloSite || imovel.Descricao
                 )}/${imovel.Codigo}`}
