@@ -14,7 +14,7 @@ type ApiSemelhantes = {
 
 export default async function SemelhantesSection({ codigo }: { codigo: string }) {
     const res = await fetch(
-        `http://localhost:3000/api/vista/imoveis/${codigo}/semelhante`,
+        `/api/vista/imoveis/${codigo}/semelhante`,
         { cache: "no-store" }
     );
 
