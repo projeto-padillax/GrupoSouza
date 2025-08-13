@@ -3,6 +3,7 @@ import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import { getPaginaByTitle } from "@/lib/actions/contentPages";
 import "@/app/html-padrao.css";
+import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 interface DynamicPageProps {
   params: Promise<{ titulo: string }>;
@@ -25,7 +26,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4">
             <div className="h-6 bg-gray-100 rounded-sm select-none">
-              Espaço reservado para Breadcrumb
+              <BreadCrumb pageTitle={tituloOriginal} />
             </div>
           </div>
         </div>

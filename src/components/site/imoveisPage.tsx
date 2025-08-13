@@ -29,6 +29,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import BreadCrumb from "./filteredBreadcrumb";
 
 export default function imoveisPage({
   filtros,
@@ -559,8 +560,8 @@ export default function imoveisPage({
       <main className="flex-1 pb-8">
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="h-6 bg-gray-100 rounded-sm select-none">
-              Espaço reservado para Breadcrumb
+            <div className="h-6 rounded-sm select-none">
+              <BreadCrumb pageTitle={titulo} />
             </div>
           </div>
         </div>
