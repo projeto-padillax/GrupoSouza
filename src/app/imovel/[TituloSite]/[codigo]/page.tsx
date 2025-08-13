@@ -10,16 +10,15 @@ import MidiaBox from "@/components/site/midiaBox";
 import SemelhantesSection from "@/components/site/semelhantesSection";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
+
+
 export default async function ImovelPage({
     params,
 }: {
-    params: Promise<{ tituloSite: string; codigo: string }>;
+    params: Promise<{ codigo: string; tituloSite: string }>;
 }) {
-    const parsedParams = await params.then((p) => ({
-        codigo: p.codigo,
-        tituloSite: p.tituloSite,
-    }));
-    const res = await fetch(`http://localhost:3000/api/vista/imoveis/${parsedParams.codigo}`, {
+    const { codigo, tituloSite } = await params;
+    const res = await fetch(`/api/vista/imoveis/${codigo}`, {
         cache: "no-store",
     });
 
@@ -36,7 +35,7 @@ export default async function ImovelPage({
                     <section className="pt-4 border-t border-gray-200 mb-4">
                         <div className="flex justify-between items-center">
                             <nav className="text-sm text-gray-500">
-                                 <BreadCrumb pageTitle={parsedParams.tituloSite} />
+                                 <BreadCrumb pageTitle={tituloSite} />
                             </nav>
                         </div>
                     </section>

@@ -42,12 +42,12 @@ function decideModalidade(base: Imovel, explicit?: "venda" | "aluguel"): "venda"
   return "venda";
 }
 
-export async function GET(req: Request, { params }: { params: { codigo: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ codigo: string }> }) {
   try {
     const url = new URL(req.url);
     const explicitModalidade = url.searchParams.get("modalidade") as "venda" | "aluguel" | null;
 
-    const { codigo } = params;
+    const { codigo } = await params;
 
     // 1. Fetch the base property using Prisma
     const baseImovel = await prisma.imovel.findUnique({
@@ -88,7 +88,7 @@ export async function GET(req: Request, { params }: { params: { codigo: string }
 
     const cidade = base.Cidade;
     const finalidade = base.Finalidade;
-    const categoria = base.Categoria; // Keep for potential future use if logic changes
+    // const categoria = base.Categoria;
 
     // Ensure types for Prisma where clause are correct
     const statusCompat = STATUS_COMPATIVEIS[modalidade] as readonly ("VENDA" | "ALUGUEL" | "VENDA E ALUGUEL")[];
@@ -166,8 +166,8 @@ export async function GET(req: Request, { params }: { params: { codigo: string }
       base: { codigo: base.Codigo, modalidade, priceField, basePrice },
       semelhantes: top4,
     });
-  } catch (err: any) {
-    console.error("Erro ao buscar imóveis semelhantes:", err.message);
+  } catch (err) {
+    if (err instanceof Error) console.error("Erro ao buscar imóveis semelhantes:", err.message);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   } finally {
     await prisma.$disconnect();
