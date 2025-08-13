@@ -88,7 +88,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ codigo: 
 
     const cidade = base.Cidade;
     const finalidade = base.Finalidade;
-    const categoria = base.Categoria; // Keep for potential future use if logic changes
+    // const categoria = base.Categoria;
 
     // Ensure types for Prisma where clause are correct
     const statusCompat = STATUS_COMPATIVEIS[modalidade] as readonly ("VENDA" | "ALUGUEL" | "VENDA E ALUGUEL")[];
@@ -166,8 +166,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ codigo: 
       base: { codigo: base.Codigo, modalidade, priceField, basePrice },
       semelhantes: top4,
     });
-  } catch (err: any) {
-    console.error("Erro ao buscar imóveis semelhantes:", err.message);
+  } catch (err) {
+    if (err instanceof Error) console.error("Erro ao buscar imóveis semelhantes:", err.message);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   } finally {
     await prisma.$disconnect();
