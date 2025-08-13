@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
-import { Mail } from 'lucide-react'
+import { SendHorizonal } from 'lucide-react'
 import { createFormulario } from '@/lib/actions/formularios'
 
 const schema = z.object({
@@ -38,6 +38,7 @@ export default function ContatoForm() {
           nome: data.nome,
           email: data.email,
           telefone: data.telefone,
+          assunto: data.assunto,
           mensagem: data.mensagem,
           urlRespondida: typeof window !== 'undefined' ? window.location.href : '',
         })
@@ -51,67 +52,76 @@ export default function ContatoForm() {
     })
   }
 
+  const baseInput =
+    'w-full bg-transparent outline-none border-0 focus:ring-0 placeholder:text-[#9aa2b1] text-[15px]'
+  const cell = 'p-2 md:p-3'
+  const label =
+    'block text-[11px] font-semibold tracking-wide text-gray-800 uppercase mb-1'
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 text-sm">
-      <div>
-        <input
-          {...register('nome')}
-          placeholder="Nome"
-          className="w-full border border-gray-200 bg-gray-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-[#4f7dc3]"
-        />
-        {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome.message}</p>}
+    <form onSubmit={handleSubmit(onSubmit)} className="text-sm">
+      <div className="rounded-lg border border-gray-500 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-500">
+          <div className={cell}>
+            <label className={label}>Nome</label>
+            <input {...register('nome')} className={baseInput} />
+            {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome.message}</p>}
+          </div>
+
+          <div className={cell}>
+            <label className={label}>E-mail</label>
+            <input {...register('email')} className={baseInput} />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+          </div>
+
+          <div className={cell}>
+            <label className={label}>Telefone</label>
+            <input {...register('telefone')} className={baseInput} />
+            {errors.telefone && <p className="text-red-500 text-xs mt-1">{errors.telefone.message}</p>}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-500 border-t border-gray-500">
+          <div className={`md:col-span-3 ${cell}`}>
+            <label className={label}>Assunto</label>
+            <input {...register('assunto')} className={baseInput} />
+            {errors.assunto && <p className="text-red-500 text-xs mt-1">{errors.assunto.message}</p>}
+          </div>
+        </div>
+
+        <div className="border-t border-gray-500">
+          <div className={cell}>
+            <label className={label}>Mensagem</label>
+            <textarea
+              {...register('mensagem')}
+              className={`${baseInput} resize-none min-h-[96px]`}
+            />
+            {errors.mensagem && <p className="text-red-500 text-xs mt-1">{errors.mensagem.message}</p>}
+          </div>
+        </div>
       </div>
 
-      <div>
-        <input
-          {...register('email')}
-          placeholder="E-mail"
-          className="w-full border border-gray-200 bg-gray-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-[#4f7dc3]"
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
-      </div>
+      <div className="mt-4 mb-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <p className="text-xs text-[#6b7280]">
+          Ao continuar, você está de acordo com os <span className="underline">Termos de Uso</span> e ciente do
+          <span className="underline"> Aviso de Privacidade</span>.
+        </p>
 
-      <div>
-        <input
-          {...register('telefone')}
-          placeholder="Telefone"
-          className="w-full border border-gray-200 bg-gray-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-[#4f7dc3]"
-        />
-        {errors.telefone && <p className="text-red-500 text-xs mt-1">{errors.telefone.message}</p>}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="inline-flex items-center gap-3 px-6 py-3 rounded-md bg-[#4f7dc3] hover:bg-[#426db0] text-white font-medium transition"
+        >
+          {isPending ? (
+            <div className="h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full" />
+          ) : (
+            <>
+              Enviar
+              <SendHorizonal size={18} />
+            </>
+          )}
+        </button>
       </div>
-
-      <div>
-        <input
-          {...register('assunto')}
-          placeholder="Assunto"
-          className="w-full border border-gray-200 bg-gray-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-[#4f7dc3]"
-        />
-        {errors.assunto && <p className="text-red-500 text-xs mt-1">{errors.assunto.message}</p>}
-      </div>
-
-      <div>
-        <textarea
-          {...register('mensagem')}
-          placeholder="Escreva sua Mensagem"
-          className="w-full border border-gray-200 bg-gray-100 rounded-lg px-4 py-3 resize-none min-h-[96px] outline-none focus:ring-2 focus:ring-[#4f7dc3]"
-        />
-        {errors.mensagem && <p className="text-red-500 text-xs mt-1">{errors.mensagem.message}</p>}
-      </div>
-
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full bg-[#0b1f3b] hover:bg-[#091730] text-white font-semibold tracking-wide text-sm py-3 rounded-lg flex items-center gap-2 justify-center transition cursor-pointer"
-      >
-        {isPending ? (
-          <div className="h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full" />
-        ) : (
-          <>
-            <Mail size={18} />
-            ENVIAR
-          </>
-        )}
-      </button>
     </form>
   )
 }
