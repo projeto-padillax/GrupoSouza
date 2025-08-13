@@ -27,6 +27,19 @@ export default async function ImovelPage({
     }
 
     const imovel = await res.json();
+
+    const imagensGaleria: { Foto: string }[] = (() => {
+        const fotos = (imovel.fotos ?? []).map((foto: { url: string }) => ({
+            Foto: foto.url,
+        }));
+
+        if (fotos.length > 1) {
+            fotos.push(fotos.shift()!);
+        }
+
+        return fotos;
+    })();
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -42,16 +55,7 @@ export default async function ImovelPage({
 
                     <section className="mb-8">
                         <GaleriaImagens
-                            imagens={[
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                                { Foto: imovel.FotoDestaque },
-                            ]}
+                            imagens={imagensGaleria}
                             principal={imovel.FotoDestaque}
                             video={imovel.VideoDestaque && imovel.VideoDestaque.trim() !== ""
                                 ? [imovel.VideoDestaque]
@@ -65,7 +69,7 @@ export default async function ImovelPage({
                             <div className="space-y-8">
                                 <div className="space-y-4">
                                     <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                                        {imovel.TituloSite || imovel.Descricao} 
+                                        {imovel.TituloSite || imovel.Descricao}
                                     </h1>
 
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
@@ -105,88 +109,65 @@ export default async function ImovelPage({
                                         )}
                                     </div>
 
-                                    <div
-                                        className="
-                                                        flex flex-wrap justify-center lg:justify-start
-                                                        items-center gap-x-4 gap-y-4
-                                                        text-sm text-grey mt-10
-                                                    "
-                                    >
+                                    <div className="flex flex-wrap justify-center lg:justify-start items-start gap-x-4 gap-y-4 text-sm text-grey mt-10">
                                         {imovel.Categoria && (
-                                            <div className="flex flex-col items-center min-w-[90px]">
-                                                <Home size={26} className="opacity-70 sm:size-[30px]" />
-                                                <div className="mt-1 sm:mt-2 flex items-center gap-2">
-                                                    <span className="text-center">
-                                                        {imovel.Categoria
-                                                            ?.toLowerCase()
-                                                            .replace(/\b\w/g, (char: string) => char.toUpperCase())}
+                                            <div className="flex items-end gap-2">
+                                                <div className="flex flex-col items-center min-w-[90px]">
+                                                    <Home size={26} className="opacity-70 sm:size-[30px]" />
+                                                    <span className="mt-1 sm:mt-2 text-center leading-5">
+                                                        {imovel.Categoria?.toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase())}
                                                     </span>
-                                                    <Dot
-                                                        size={25}
-                                                        className="text-[#0061bc] hidden sm:inline-flex"
-                                                    />
                                                 </div>
+                                                <Dot size={25} className="text-[#0061bc] hidden sm:inline-block self-end -translate-y-[0px]" />
                                             </div>
                                         )}
 
                                         {imovel.Dormitorios > 0 && (
-                                            <div className="flex flex-col items-center min-w-[90px]">
-                                                <BedDouble size={26} className="opacity-70 sm:size-[30px]" />
-                                                <div className="mt-1 sm:mt-2 flex items-center gap-2">
-                                                    <span className="text-center">
+                                            <div className="flex items-end gap-2">
+                                                <div className="flex flex-col items-center min-w-[90px]">
+                                                    <BedDouble size={26} className="opacity-70 sm:size-[30px]" />
+                                                    <span className="mt-1 sm:mt-2 text-center leading-5">
                                                         {imovel.Dormitorios} quartos
-                                                        {imovel.Suites > 0
-                                                            ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? 's' : ''})`
-                                                            : ''}
+                                                        {imovel.Suites > 0 ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? "s" : ""})` : ""}
                                                     </span>
-                                                    <Dot
-                                                        size={25}
-                                                        className="text-[#0061bc] hidden sm:inline-flex"
-                                                    />
                                                 </div>
+                                                <Dot size={25} className="text-[#0061bc] hidden sm:inline-block self-end -translate-y-[0px]" />
                                             </div>
                                         )}
 
                                         {imovel.AreaPrivativa > 0 && (
-                                            <div className="flex flex-col items-center min-w-[90px]">
-                                                <Ratio size={26} className="opacity-70 sm:size-[30px]" />
-                                                <div className="mt-1 sm:mt-2 flex items-center gap-2">
-                                                    <span className="text-center">
+                                            <div className="flex items-end gap-2">
+                                                <div className="flex flex-col items-center min-w-[90px]">
+                                                    <Ratio size={26} className="opacity-70 sm:size-[30px]" />
+                                                    <span className="mt-1 sm:mt-2 text-center leading-5">
                                                         {imovel.AreaPrivativa} m² privativos
                                                     </span>
-                                                    <Dot
-                                                        size={25}
-                                                        className="text-[#0061bc] hidden sm:inline-flex"
-                                                    />
                                                 </div>
+                                                <Dot size={25} className="text-[#0061bc] hidden sm:inline-block self-end -translate-y-[0px]" />
                                             </div>
                                         )}
 
                                         {imovel.AreaTerreno > 0 && (
-                                            <div className="flex flex-col items-center min-w-[90px]">
-                                                <Ratio size={26} className="opacity-70 sm:size-[30px]" />
-                                                <div className="mt-1 sm:mt-2 flex items-center gap-2">
-                                                    <span className="text-center">{imovel.AreaTerreno} m² totais</span>
-                                                    <Dot
-                                                        size={25}
-                                                        className="text-[#0061bc] hidden sm:inline-flex"
-                                                    />
+                                            <div className="flex items-end gap-2">
+                                                <div className="flex flex-col items-center min-w-[90px]">
+                                                    <Ratio size={26} className="opacity-70 sm:size-[30px]" />
+                                                    <span className="mt-1 sm:mt-2 text-center leading-5">
+                                                        {imovel.AreaTerreno} m² totais
+                                                    </span>
                                                 </div>
+                                                <Dot size={25} className="text-[#0061bc] hidden sm:inline-block self-end -translate-y-[0px]" />
                                             </div>
                                         )}
 
                                         {imovel.Vagas > 0 && (
                                             <div className="flex flex-col items-center min-w-[90px]">
                                                 <CarFront size={26} className="opacity-70 sm:size-[30px]" />
-                                                <div className="mt-1 sm:mt-2 flex items-center">
-                                                    <span className="text-center">
-                                                        {imovel.Vagas} vaga{imovel.Vagas > 1 ? 's' : ''}
-                                                    </span>
-                                                </div>
+                                                <span className="mt-1 sm:mt-2 text-center leading-5">
+                                                    {imovel.Vagas} vaga{imovel.Vagas > 1 ? "s" : ""}
+                                                </span>
                                             </div>
                                         )}
                                     </div>
-
 
                                 </div>
 
@@ -206,16 +187,7 @@ export default async function ImovelPage({
                                 <AgendamentoForm codigo={imovel.Codigo} />
 
                                 <MidiaBox
-                                    imagens={[
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                        { Foto: imovel.FotoDestaque },
-                                    ]}
+                                    imagens={imagensGaleria}
                                     videos={imovel.VideoDestaque && imovel.VideoDestaque.trim() !== ""
                                         ? [imovel.VideoDestaque]
                                         : []
