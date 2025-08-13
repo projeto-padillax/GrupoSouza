@@ -36,8 +36,8 @@ export function parseFiltros(filtros: string[]): Filtros {
       parsed.areaMinima = filtro.slice(11);
     else if (filtro.startsWith("suites-")) parsed.suites = filtro.slice(7);
     else if (filtro.startsWith("vagas-")) parsed.vagas = filtro.slice(6);
-    else if (filtro.startsWith("características-"))
-      parsed.caracteristicas = filtro.slice(15).split("_");
+    else if (filtro.startsWith("caracteristicas-"))
+      parsed.caracteristicas = filtro.slice(16).split("_");
     else if (filtro.startsWith("lançamentos-"))
       parsed.lancamentos = filtro.slice(12);
     else if (filtro.startsWith("mobiliado-"))
@@ -48,7 +48,8 @@ export function parseFiltros(filtros: string[]): Filtros {
       parsed.sort = filtro.slice(6);
     else parsed.page = filtro;
   }
-
+  console.log("teste")
+  console.log(parsed);
   return parsed;
 }
 

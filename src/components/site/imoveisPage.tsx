@@ -70,7 +70,7 @@ export default function imoveisPage({
   });
   
   useEffect(() => {
-    console.log(location)
+    console.log(filtros)
   },[])
 
   const caracteristicas = [
