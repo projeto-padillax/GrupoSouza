@@ -72,7 +72,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
     { title: "Anuncie seu Imóvel", href: "/anuncie-seu-imovel" },
     { title: "Sobre a Empresa", href: "/empresa" },
     { title: "Contato", href: "/contato" },
-    { title: "Política de Privacidade", href: "/privacidade" },
+    { title: "Política de Privacidade", href: "/politica-de-privacidade" },
   ];
 
   const handleDynamicItemClick = async (item: PaginasConteudo) => {
