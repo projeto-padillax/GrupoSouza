@@ -69,10 +69,10 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
   ];
 
   const footerItems = [
-    { title: "Anuncie seu Imóvel", href: "/anuncie" },
-    { title: "Sobre a Empresa", href: "/sobre" },
+    { title: "Anuncie seu Imóvel", href: "/anuncie-seu-imovel" },
+    { title: "Sobre a Empresa", href: "/empresa" },
     { title: "Contato", href: "/contato" },
-    { title: "Política de Privacidade", href: "/privacidade" },
+    { title: "Política de Privacidade", href: "/politica-de-privacidade" },
   ];
 
   const handleDynamicItemClick = async (item: PaginasConteudo) => {
