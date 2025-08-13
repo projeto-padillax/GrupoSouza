@@ -42,12 +42,12 @@ function decideModalidade(base: Imovel, explicit?: "venda" | "aluguel"): "venda"
   return "venda";
 }
 
-export async function GET(req: Request, { params }: { params: { codigo: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ codigo: string }> }) {
   try {
     const url = new URL(req.url);
     const explicitModalidade = url.searchParams.get("modalidade") as "venda" | "aluguel" | null;
 
-    const { codigo } = params;
+    const { codigo } = await params;
 
     // 1. Fetch the base property using Prisma
     const baseImovel = await prisma.imovel.findUnique({
