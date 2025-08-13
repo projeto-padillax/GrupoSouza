@@ -44,7 +44,6 @@ export default async function Imoveis({ params }: Props) {
 
     query.set("page", parsedFiltros.page || "1");
   }
-  console.log(query.toString());
   const res = await fetch(
     `http://localhost:3000/api/vista/imoveis?${query.toString()}`
   );

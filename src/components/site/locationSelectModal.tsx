@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Search } from "lucide-react";
+import { te } from "date-fns/locale";
 
 interface LocationOption {
   cidade: string;
@@ -39,6 +40,8 @@ export function LocationSelectModal({
 
   useEffect(() => {
     if (isOpen) {
+      console.log(selectedLocations);
+
       // Copia o estado externo para o interno ao abrir o modal
       setTempSelectedLocations(selectedLocations);
     }
@@ -116,7 +119,7 @@ export function LocationSelectModal({
   };
 
   const handleConfirm = () => {
-    onSelectionChange(tempSelectedLocations); // Só aplica aqui
+    onSelectionChange(tempSelectedLocations);
     onClose();
   };
 
@@ -149,8 +152,10 @@ export function LocationSelectModal({
               >
                 <div className="flex items-center gap-3">
                   <Checkbox
-                    checked={tempSelectedLocations.includes(
-                      `${location.cidade}:all`
+                    checked={tempSelectedLocations.some(
+                      (loc) =>
+                        loc.toLowerCase() ===
+                        `${location.cidade}:all`.toLowerCase()
                     )}
                     onCheckedChange={(checked) =>
                       handleLocationChange(location.cidade, checked as boolean)
@@ -179,11 +184,14 @@ export function LocationSelectModal({
                         <div key={bairro} className="flex items-center gap-2">
                           <Checkbox
                             id={locationKey}
-                            checked={tempSelectedLocations.includes(
-                              locationKey
+                            checked={tempSelectedLocations.some(
+                              (loc) =>
+                                loc.toLowerCase() === locationKey.toLowerCase()
                             )}
-                            disabled={tempSelectedLocations.includes(
-                              `${location.cidade}:all`
+                            disabled={tempSelectedLocations.some(
+                              (loc) =>
+                                loc.toLowerCase() ===
+                                `${location.cidade}:all`.toLowerCase()
                             )}
                             onCheckedChange={(checked) =>
                               handleLocationChange(
@@ -210,7 +218,7 @@ export function LocationSelectModal({
 
         {/* Footer */}
         <div className="flex justify-center pt-4 border-t">
-          <Button onClick={handleConfirm}>Confirmar Seleção</Button>
+          <Button onClick={handleConfirm} className="bg-[#4F7DC3] hover:bg-[#0084d7] cursor-pointer">Confirmar Seleção</Button>
         </div>
       </DialogContent>
     </Dialog>
