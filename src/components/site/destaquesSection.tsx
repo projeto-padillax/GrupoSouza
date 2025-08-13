@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Destaque, ImovelCard } from "./imovelcard";
+import { ImovelCard } from "./imovelcard";
+import { Destaque } from "@/lib/types/destaque";
 
 interface DestaquesSectionProps {
   destaques: {

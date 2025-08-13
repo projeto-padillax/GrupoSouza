@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Destaque, ImovelCard } from "./imovelcard";
+import { ImovelCard } from "./imovelcard";
+import { Destaque } from "@/lib/types/destaque";
 
 type ApiSemelhantes = {
     base?: {
@@ -13,7 +14,7 @@ type ApiSemelhantes = {
 
 export default async function SemelhantesSection({ codigo }: { codigo: string }) {
     const res = await fetch(
-        `http://localhost:3000/api/vista/imoveis/${codigo}/semelhante`,
+        `/api/vista/imoveis/${codigo}/semelhante`,
         { cache: "no-store" }
     );
 

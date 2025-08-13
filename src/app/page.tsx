@@ -1,6 +1,3 @@
-// import { db } from "@/lib/firebase/clientApp"
-// import { getDocs, collection } from "firebase/firestore"
-
 import ChamadasNaHomeSection from "@/components/site/chamadasNaHomeSection";
 import Footer from "@/components/site/footer";
 import Header from "@/components/site/header";

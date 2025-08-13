@@ -1,24 +1,7 @@
 import Image from "next/image";
 import FavoriteButton from "./favoritosButton";
 import { CodigoImobiliariaIcon } from "../ui/codigoImobiliariaIcon";
-
-export interface Destaque {
-  id: string
-  AreaTotal: string
-  Bairro: string
-  Categoria: string
-  CodigoImobiliaria: string
-  Dormitorios: string
-  FotoDestaque: string
-  Lancamento: string
-  Status: string
-  Vagas: string
-  ValorLocacao: string
-  ValorVenda: string
-  Codigo: string
-  TituloSite: string
-  Descricao: string
-}
+import { Destaque } from "@/lib/types/destaque";
 
 interface PropertyCardProps {
   imovel: Destaque
@@ -46,22 +29,22 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
   const hasAnyDetail = hasAreaInfo || hasDormitorios || hasVagas
 
   const formatPrice = () => {
-    const isRent = activeTab === "Alugar"
-    const value = isRent ? imovel.ValorLocacao : imovel.ValorVenda
-    
-    if (!value || value === "" || value === "0") {
-      return "Consulte"
+    const isRent = activeTab === "Alugar";
+    // Value is already a number or null/undefined, no need for string manipulation
+    const value = isRent ? imovel.ValorLocacao : imovel.ValorVenda;
+
+    if (value === null || value === undefined || value === 0) {
+      return "Consulte";
     }
-    
-    // Formatar o valor como moeda brasileira
-    const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'))
+
+    // Format the numeric value as Brazilian currency
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(numericValue)
-  }
+    }).format(value);
+  };
 
   return (
     <div className="w-full overflow-hidden shadow-lg bg-white rounded-md">
@@ -78,7 +61,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           {imovel.Bairro}
         </h3>
       </div>
-      
+
       <div className="p-5 flex flex-col h-[180px]">
         {/* Categoria e Código */}
         <div className={`flex justify-between items-center mb-4 ${hasAnyDetail ? 'border-b border-gray-200 pb-3' : ''}`}>

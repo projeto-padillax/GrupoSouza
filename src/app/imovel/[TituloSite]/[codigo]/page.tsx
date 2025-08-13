@@ -9,12 +9,15 @@ import EmpreendimentoBox from "@/components/site/empreendimentoBox";
 import MidiaBox from "@/components/site/midiaBox";
 import SemelhantesSection from "@/components/site/semelhantesSection";
 
+
+
 export default async function ImovelPage({
     params,
 }: {
-    params: { codigo: string; tituloSite: string };
+    params: Promise<{ codigo: string; tituloSite: string }>;
 }) {
-    const res = await fetch(`http://localhost:3000/api/vista/imoveis/${params.codigo}`, {
+    const { codigo } = await params;
+    const res = await fetch(`/api/vista/imoveis/${codigo}`, {
         cache: "no-store",
     });
 

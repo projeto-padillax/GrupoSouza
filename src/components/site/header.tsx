@@ -4,7 +4,6 @@ import Link from 'next/link';
 import SidebarWrapper from './sideBarWrapper';
 import Image from 'next/image';
 import FavoriteIcon from './favoritosIcon';
-import FavoriteButton from './favoritosButton';
 import { FaWhatsapp } from "react-icons/fa";
 
 

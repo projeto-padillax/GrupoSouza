@@ -79,7 +79,7 @@ export default function PaginaConteudo({ initialContentPages }: Props) {
   }, [pages]);
 
   function formatPageUrl(titulo: string) {
-    return `http://localhost:3000/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
+    return `${process.env.NEXT_PUBLIC_BASE_URL || ""}/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
   }
 
   const formattedDate = (date: Date) => {
