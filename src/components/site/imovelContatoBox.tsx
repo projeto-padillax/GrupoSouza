@@ -74,7 +74,7 @@ export default function ImovelContatoBox({
                 >
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-xl sm:text-[22px] font-semibold text-gray-800 truncate">
-                            R$ {valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                          {valor > 0 ?  `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}` : "Consultar"}
                         </p>
 
                         {isVenda && (

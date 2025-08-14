@@ -133,10 +133,6 @@ html {
   scroll-behavior: smooth;
 }
 
-body[data-scroll-locked] {
-  --radix-scroll-lock-padding: 0px !important;
-  overflow: unset !important;
-  position: unset !important;
-  touch-action: auto !important;
-  overscroll-behavior: auto !important;
+.data-\[placeholder\]\:text-muted-foreground[data-placeholder]{
+  color: black
 }

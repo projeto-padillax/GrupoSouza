@@ -23,6 +23,15 @@ export function TypeSelectModal({
   onSelectionChange,
 }: TypeSelectModalProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [tempSelectedTypes, setTempSelectedTypes] = useState<string[]>([])
+
+  useEffect(() => {
+    if (isOpen) {
+      console.log(selectedTypes);
+
+      setTempSelectedTypes(selectedTypes);
+    }
+  }, [isOpen, selectedTypes]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 650);
@@ -60,41 +69,41 @@ export function TypeSelectModal({
 
   const handleTypeChange = (typeId: string, checked: boolean) => {
     if (checked) {
-      onSelectionChange([...selectedTypes, typeId]);
+      setTempSelectedTypes([...tempSelectedTypes, typeId]);
     } else {
-      onSelectionChange(selectedTypes.filter((id) => id !== typeId));
+      setTempSelectedTypes(tempSelectedTypes.filter((id) => id !== typeId));
     }
   };
 
   const handleConfirm = () => {
-    console.log(selectedTypes);
+    onSelectionChange(tempSelectedTypes);
     onClose();
   };
 
   const allResidenciaisSelected = residenciaisTypes.every((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
   const someResidenciaisSelected = residenciaisTypes.some((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
 
   const allComerciaisSelected = comerciaisTypes.every((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
   const someComerciaisSelected = comerciaisTypes.some((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
 
   const handleSelectAll = (types: { id: string }[], checked: boolean) => {
     const ids = types.map((t) => t.id);
     if (checked) {
-      const updated = [...selectedTypes];
+      const updated = [...tempSelectedTypes];
       ids.forEach((id) => {
         if (!updated.includes(id)) updated.push(id);
       });
-      onSelectionChange(updated);
+      setTempSelectedTypes(updated);
     } else {
-      onSelectionChange(selectedTypes.filter((id) => !ids.includes(id)));
+      setTempSelectedTypes(tempSelectedTypes.filter((id) => !ids.includes(id)));
     }
   };
 
@@ -131,19 +140,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? "border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -178,19 +187,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -227,19 +236,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? "border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -274,19 +283,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? " border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }

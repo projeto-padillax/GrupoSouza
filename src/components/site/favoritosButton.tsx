@@ -14,14 +14,25 @@ export default function FavoriteButton({ propertyId }: Props) {
   const isFav = isFavorite(propertyId);
 
   const toggleFavorite = () => {
-    isFav ? removeFavorite(propertyId) : addFavorite(propertyId);
+    if (isFav) {
+      removeFavorite(propertyId);
+    } else {
+      addFavorite(propertyId);
+    }
   };
 
   return (
-    <button onClick={toggleFavorite} aria-label="Favoritar">
+    <button
+      className="z-50"
+      onClick={(e) => {
+        e.preventDefault();
+        toggleFavorite();
+      }}
+      aria-label="Favoritar"
+    >
       <Heart
         size={24}
-        className={`transition-colors duration-200 ${
+        className={`hover:text-blue-700 transition-colors duration-200 ${
           isFav ? "text-blue-500 fill-blue-500" : "text-gray-400"
         }`}
       />

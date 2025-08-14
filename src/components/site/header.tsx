@@ -4,7 +4,6 @@ import Link from 'next/link';
 import SidebarWrapper from './sideBarWrapper';
 import Image from 'next/image';
 import FavoriteIcon from './favoritosIcon';
-import FavoriteButton from './favoritosButton';
 import { FaWhatsapp } from "react-icons/fa";
 
 
@@ -14,7 +13,7 @@ export default function Header() {
   return (
     <>
       <header className="bg-whit h-28 content-center">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto w-[90%]">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">

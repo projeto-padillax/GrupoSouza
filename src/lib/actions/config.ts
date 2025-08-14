@@ -160,6 +160,59 @@ export async function getConfiguracaoPagina(): Promise<configuracaoSchema | null
   }
 }
 
+export async function GetEnderecos() {
+  try {
+    const cfg = await prisma.configuracaoPagina.findFirst({
+      orderBy: { id: "asc" },
+      select: {
+        enderecos: {
+          select: {
+            id: true,
+            rua: true,
+            bairro: true,
+            cidade: true,
+            estado: true,
+            cep: true,
+            linkGoogleMaps: true,
+            telefone1: true,
+            isWhatsApp1: true,
+            tituloTelefone1: true,
+            telefone2: true,
+            isWhatsApp2: true,
+            tituloTelefone2: true,
+            telefone3: true,
+            isWhatsApp3: true,
+            tituloTelefone3: true,
+          },
+        },
+      },
+    });
+
+    const enderecos = cfg?.enderecos ?? [];
+    return enderecos;
+  } catch (error) {
+    console.error("Erro ao buscar 'Sobre nós':", error);
+    throw new Error("Erro ao buscar 'Sobre nós'");
+  }
+}
+
+export async function getSobreNos(): Promise<string | null> {
+  try {
+    const record = await prisma.configuracaoPagina.findFirst({
+      orderBy: { id: "asc" },
+      select: { sobreNos: true },
+    });
+
+    if (!record) return null;
+
+    // Sanitiza: garante string, mesmo se vier null
+    return record.sobreNos ?? "";
+  } catch (error) {
+    console.error("Erro ao buscar 'Sobre nós':", error);
+    throw new Error("Erro ao buscar 'Sobre nós'");
+  }
+}
+
 export async function createConfiguracaoPagina(
   configuracao: Omit<configuracaoSchema, "id">
 ) {
@@ -272,4 +325,5 @@ export async function updateConfiguracaoPagina(
     console.error("Erro ao atualizar configuração da página:", error);
     throw new Error("Erro ao atualizar configuração da página");
   }
+
 }
