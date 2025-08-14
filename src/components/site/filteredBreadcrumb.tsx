@@ -35,77 +35,82 @@ export default function BreadCrumb() {
   type Crumb = { label: string; href?: string };
   const crumbs: Crumb[] = [];
 
-  // Caso seja página de imóvel individual
-  const isSinglePropertyPage = segments[0] === "imovel" && segments.length >= 3;
-  if (isSinglePropertyPage) {
+  // Página "Anuncie seu Imóvel"
+  if (segments[0] === "anuncie-seu-imovel") {
     crumbs.push({ label: "Início", href: "/" });
-    crumbs.push({ label: "Imóveis", href: "/imoveis" });
-    crumbs.push({ label: decodeLabel(segments[1]) }); // nome do imóvel
+    crumbs.push({ label: "Anunciar Imóvel" });
   } else {
-    // Página de listagem
-    const actionSeg = segments.find((s) => s === "comprar" || s === "alugar");
-    const action = actionSeg ? capitalize(decodeLabel(actionSeg)) : "Comprar";
+    // Caso seja página de imóvel individual
+    const isSinglePropertyPage = segments[0] === "imovel" && segments.length >= 3;
+    if (isSinglePropertyPage) {
+      crumbs.push({ label: "Início", href: "/" });
+      crumbs.push({ label: "Imóveis", href: "/imoveis" });
+      crumbs.push({ label: decodeLabel(segments[1]) }); // nome do imóvel
+    } else {
+      // Página de listagem
+      const actionSeg = segments.find((s) => s === "comprar" || s === "alugar");
+      const action = actionSeg ? capitalize(decodeLabel(actionSeg)) : "Comprar";
 
-    const tiposSeg = segments.find((s) => s.startsWith("tipo-"));
-    const tipos: string[] = tiposSeg
-      ? tiposSeg
-          .slice("tipo-".length)
-          .split("_")
-          .filter(Boolean)
-          .map((t) => capitalize(decodeLabel(t)))
-      : [];
+      const tiposSeg = segments.find((s) => s.startsWith("tipo-"));
+      const tipos: string[] = tiposSeg
+        ? tiposSeg
+            .slice("tipo-".length)
+            .split("_")
+            .filter(Boolean)
+            .map((t) => capitalize(decodeLabel(t)))
+        : [];
 
-    const cidadeSegIndex = segments.findIndex((s) => s.startsWith("cidade-"));
-    let cidadeNome = "";
-    let bairros: string[] = [];
-    let cidadeHref = "/";
-    if (cidadeSegIndex >= 0) {
-      const raw = segments[cidadeSegIndex].slice("cidade-".length);
-      const pares = raw.split("_").filter(Boolean);
-      if (pares[0]) cidadeNome = capitalize(decodeLabel(pares[0].split(":")[0]));
-      bairros = pares.map((p) => capitalize(decodeLabel(p.split(":")[1] || ""))).filter(Boolean);
+      const cidadeSegIndex = segments.findIndex((s) => s.startsWith("cidade-"));
+      let cidadeNome = "";
+      let bairros: string[] = [];
+      let cidadeHref = "/";
+      if (cidadeSegIndex >= 0) {
+        const raw = segments[cidadeSegIndex].slice("cidade-".length);
+        const pares = raw.split("_").filter(Boolean);
+        if (pares[0]) cidadeNome = capitalize(decodeLabel(pares[0].split(":")[0]));
+        bairros = pares.map((p) => capitalize(decodeLabel(p.split(":")[1] || ""))).filter(Boolean);
 
-      // URL até a cidade
-      const cidadeLimpa = pares[0].split(":")[0];
-      const pathAteCidade = [...segments.slice(0, cidadeSegIndex), `cidade-${cidadeLimpa}`];
-      cidadeHref = "/" + pathAteCidade.join("/");
+        const cidadeLimpa = pares[0].split(":")[0];
+        const pathAteCidade = [...segments.slice(0, cidadeSegIndex), `cidade-${cidadeLimpa}`];
+        cidadeHref = "/" + pathAteCidade.join("/");
+      }
+
+      const lancamentos = segments.some((s) => /^lancamentos(-s|-true)?$/i.test(s));
+      const mobiliado = segments.some((s) => /^mobiliado(-sim|-true)?$/i.test(s));
+
+      // Início
+      crumbs.push({ label: "Início", href: "/" });
+
+      // Ação
+      if (actionSeg) {
+        crumbs.push({
+          label: action,
+          href: `/${segments.slice(0, segments.indexOf(actionSeg) + 1).join("/")}`,
+        });
+      }
+
+      // Tipos
+      if (tipos.length > 0) {
+        crumbs.push({
+          label: formatListWithCount(tipos),
+          href: `/${segments.slice(0, segments.indexOf(tiposSeg!) + 1).join("/")}`,
+        });
+      }
+
+      // Cidade
+      if (cidadeNome) {
+        crumbs.push({ label: cidadeNome, href: cidadeHref });
+      }
+
+      // Bairros
+      if (bairros.length > 0) {
+        crumbs.push({ label: formatListWithCount(bairros) });
+      }
+
+      // Lançamentos / Mobiliado
+      if (lancamentos) crumbs.push({ label: "Lançamentos" });
+      if (mobiliado) crumbs.push({ label: "Mobiliados" });
     }
-
-    const lancamentos = segments.some((s) => /^lancamentos(-sim|-true)?$/i.test(s));
-    const mobiliado = segments.some((s) => /^mobiliado(-sim|-true)?$/i.test(s));
-
-    // Início
-    crumbs.push({ label: "Início", href: "/" });
-
-    // Ação
-    if (actionSeg) {
-      crumbs.push({
-        label: action,
-        href: `/${segments.slice(0, segments.indexOf(actionSeg) + 1).join("/")}`,
-      });
-    }
-
-    // Tipos
-    if (tipos.length > 0) {
-      crumbs.push({
-        label: formatListWithCount(tipos),
-        href: `/${segments.slice(0, segments.indexOf(tiposSeg!) + 1).join("/")}`,
-      });
-    }
-
-    // Cidade
-    if (cidadeNome) {
-      crumbs.push({ label: cidadeNome, href: cidadeHref });
-    }
-
-    // Bairros
-    if (bairros.length > 0) {
-      crumbs.push({ label: formatListWithCount(bairros) });
-    }
-
-    // Lançamentos / Mobiliado
-    if (lancamentos) crumbs.push({ label: "Lançamentos" });
-    if (mobiliado) crumbs.push({ label: "Mobiliados" });
   }
 
   return (

@@ -12,7 +12,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-whit h-28 content-center">
+      <header className="bg-white h-28 content-center">
         <div className="max-w-7xl mx-auto w-[90%]">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">

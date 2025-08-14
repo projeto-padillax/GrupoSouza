@@ -3,6 +3,7 @@ import { parseFiltros } from "@/utils/parseFilter";
 import Header from "@/components/site/header";
 import ClientLayout from "@/components/client-layout";
 import Footer from "@/components/site/footer";
+
 interface Props {
   params: Promise<{
     parametros?: string[];
