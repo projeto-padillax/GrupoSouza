@@ -64,7 +64,7 @@ function parseFiltroURL(param: string) {
     if (!cidade || !bairro) continue;
 
     const cidadeKey = cidade.toLowerCase();
-    const bairroFormatado = bairro.toLowerCase().replace(/\s+/g, "-");
+    const bairroFormatado = bairro.toLowerCase();
 
     if (!mapa.has(cidadeKey)) {
       mapa.set(cidadeKey, []);
