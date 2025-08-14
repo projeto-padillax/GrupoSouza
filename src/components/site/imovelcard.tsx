@@ -23,10 +23,12 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
   }
 
   // Verifica se há pelo menos uma informação de detalhe para mostrar
-  const hasAreaInfo = Number(imovel.AreaTotal) > 0
+  const areas = [imovel.AreaTotal, imovel.AreaPrivativa, imovel.AreaTerreno];
+  const area = areas.find(a => Number(a) > 0);
+
   const hasDormitorios = Number(imovel.Dormitorios) > 0
   const hasVagas = Number(imovel.Vagas) > 0
-  const hasAnyDetail = hasAreaInfo || hasDormitorios || hasVagas
+  const hasAnyDetail = area || hasDormitorios || hasVagas
 
   const formatPrice = () => {
     const isRent = activeTab === "Alugar";
@@ -78,11 +80,11 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         <div className="flex-1 flex items-center justify-center mb-4">
           {hasAnyDetail ? (
             <div className="flex justify-between items-center w-full border-b border-gray-200 pb-3">
-              {hasAreaInfo && (
-                <p className="text-sm text-gray-600">
-                  {imovel.AreaTotal}m²
-                </p>
-              )}
+              {area && (
+  <p className="text-sm text-gray-600">
+    {area}m²
+  </p>
+)}
               {hasDormitorios && (
                 <p className="text-sm text-gray-600">
                   {imovel.Dormitorios} quarto{Number(imovel.Dormitorios) > 1 ? "s" : ""}
