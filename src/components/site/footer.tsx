@@ -32,7 +32,7 @@ export default async function Footer() {
             <div className="mb-6 lg:mb-0">
               <Link href="/">
                 <Image
-                  src={"/logoGrupoSouza.png"}
+                  src={siteConfig?.logoUrl ?? "/logoGrupoSouza.png"}
                   alt={"Logo do Site"}
                   width={150}
                   height={47}
