@@ -95,7 +95,8 @@ export function LocationSelectModal({
 
   const handleLocationChange = (locationKey: string, checked: boolean) => {
     const isCity = !locationKey.includes(":");
-
+    console.log(locationKey)
+    console.log(checked)
     if (isCity) {
       if (checked) {
         setTempSelectedLocations([`${locationKey}:all`]);
@@ -110,8 +111,9 @@ export function LocationSelectModal({
       if (checked) {
         setTempSelectedLocations([...tempSelectedLocations, locationKey]);
       } else {
+        console.log(tempSelectedLocations)
         setTempSelectedLocations(
-          tempSelectedLocations.filter((loc) => loc !== locationKey)
+          tempSelectedLocations.filter((loc) => loc.toLowerCase() !== locationKey.toLowerCase())
         );
       }
     }
@@ -119,6 +121,7 @@ export function LocationSelectModal({
 
   const handleConfirm = () => {
     onSelectionChange(tempSelectedLocations);
+    // console.log("Selected Locations:", tempSelectedLocations);
     onClose();
   };
 

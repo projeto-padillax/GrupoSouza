@@ -27,7 +27,6 @@ export function TypeSelectModal({
 
   useEffect(() => {
     if (isOpen) {
-      console.log(selectedTypes);
 
       setTempSelectedTypes(selectedTypes);
     }
@@ -41,30 +40,30 @@ export function TypeSelectModal({
   }, []);
 
   const residenciaisTypes = [
-    { id: "apartamentos", label: "Apartamentos" },
-    { id: "areas-empresariais", label: "Áreas Empresariais" },
-    { id: "chacaras", label: "Chácaras" },
-    { id: "condominios-fechados", label: "Condomínios Fechados" },
-    { id: "loteamentos-condominios", label: "Loteamentos em Condomínios" },
+    { id: "apartamento", label: "Apartamentos" },
+    { id: "áreas empresariais", label: "Áreas Empresariais" },
+    { id: "chácara", label: "Chácaras" },
+    { id: "condominio fechado", label: "Condomínios Fechados" },
+    { id: "loteamento em condominio", label: "Loteamentos em Condomínios" },
     { id: "residencias", label: "Residências" },
     {
-      id: "residencias-predios-comerciais",
+      id: "residencia/predios comerciais",
       label: "Residências/Prédios Comerciais",
     },
-    { id: "sitios", label: "Sítios" },
+    { id: "sitio", label: "Sítios" },
   ];
 
   const comerciaisTypes = [
-    { id: "barracoes", label: "Barracões" },
-    { id: "comerciais", label: "Comerciais" },
-    { id: "estacionamentos", label: "Estacionamentos" },
-    { id: "galpoes-areas-empresariais", label: "Galpões e Áreas Empresariais" },
-    { id: "pontos-comerciais", label: "Pontos Comerciais" },
-    { id: "predios-comerciais", label: "Prédios Comerciais" },
-    { id: "salas-comerciais", label: "Salas Comerciais" },
-    { id: "saloes", label: "Salões" },
-    { id: "terrenos", label: "Terrenos" },
-    { id: "vagas-garagem", label: "Vagas de Garagem" },
+    { id: "barracões", label: "Barracões" },
+    { id: "comercial", label: "Comerciais" },
+    { id: "estacionamento", label: "Estacionamentos" },
+    { id: "galpões e áreas empresariais", label: "Galpões e Áreas Empresariais" },
+    { id: "ponto comercial", label: "Pontos Comerciais" },
+    { id: "predio comercial", label: "Prédios Comerciais" },
+    { id: "sala comercial", label: "Salas Comerciais" },
+    { id: "salões", label: "Salões" },
+    { id: "terreno", label: "Terrenos" },
+    { id: "vaga de garagem", label: "Vagas de Garagem" },
   ];
 
   const handleTypeChange = (typeId: string, checked: boolean) => {
@@ -77,6 +76,7 @@ export function TypeSelectModal({
 
   const handleConfirm = () => {
     onSelectionChange(tempSelectedTypes);
+    // console.log("Selected Types:", tempSelectedTypes);
     onClose();
   };
 

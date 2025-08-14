@@ -508,7 +508,7 @@ export async function GET(request: NextRequest) {
         }, { status: 404 }); // Return 404 if not found
       }
     }
-
+    
     const action = searchParams.get("action") ?? "comprar";
 
     const tipos = searchParams.get("tipos")

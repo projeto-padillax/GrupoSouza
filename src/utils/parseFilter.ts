@@ -22,7 +22,7 @@ export function parseFiltros(filtros: string[]): Filtros {
   const parsed: Filtros = {};
   parsed.action = filtros[0];
   for (const filtro of filtros) {
-    if (filtro.startsWith("tipo-")) parsed.tipo = filtro.slice(5).split("_");
+    if (filtro.startsWith("tipos-")) parsed.tipo = filtro.slice(6).split("_").map((t) => decodeURIComponent(t));
     else if (filtro.startsWith("cidade-")) {
       const parseFiltro = parseFiltroURL(filtro);
       const [cidade, bairros] = parseFiltro.split(":");
@@ -48,8 +48,7 @@ export function parseFiltros(filtros: string[]): Filtros {
       parsed.sort = filtro.slice(6);
     else parsed.page = filtro;
   }
-  console.log("teste")
-  console.log(parsed);
+
   return parsed;
 }
 

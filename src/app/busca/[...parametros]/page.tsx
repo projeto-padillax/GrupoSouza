@@ -13,7 +13,7 @@ interface Props {
 export default async function Imoveis({ params }: Props) {
   const filtros = (await params.then((p) => p.parametros)) ?? [];
   const parsedFiltros = parseFiltros(filtros);
-  console.log(filtros)
+
   const query = new URLSearchParams();
   if (parsedFiltros.codigo) {
     query.set("codigo", parsedFiltros.codigo);
@@ -49,7 +49,7 @@ export default async function Imoveis({ params }: Props) {
     `http://localhost:3000/api/vista/imoveis?${query.toString()}`
   );
   const data = await res.json();
-  console.log(parsedFiltros)
+
   return (
     <ClientLayout>
       <Header></Header>

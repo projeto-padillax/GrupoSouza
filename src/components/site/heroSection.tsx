@@ -97,7 +97,7 @@ export function HeroSection(banner: HeroSectionProps) {
     }
 
     if (searchData.tipos?.length) {
-      parts.push(`tipo-${searchData.tipos.join("_")}`);
+      parts.push(`tipos-${searchData.tipos.join("_")}`);
     }
 
     if (searchData.locations?.length) {
@@ -112,7 +112,7 @@ export function HeroSection(banner: HeroSectionProps) {
       parts.push(`valorMax-${searchData.valueRange.max}`);
     }
     parts.push(`1`);
-    console.log(parts)
+
     router.push(parts.filter(Boolean).join("/"));
   };
 

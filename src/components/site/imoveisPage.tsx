@@ -30,6 +30,7 @@ import {
   PaginationPrevious,
 } from "../ui/pagination";
 import BreadCrumb from "./filteredBreadcrumb";
+import fi from "zod/v4/locales/fi.cjs";
 
 export default function ImoveisPage({
   filtros,
@@ -55,7 +56,9 @@ export default function ImoveisPage({
     [];
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
-    tipos: filtros.tipo ?? ([] as string[]),
+    tipos: filtros.tipo
+      ? filtros.tipo.map((t: string) => decodeURIComponent(t))
+      : ([] as string[]),
     locations: location,
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
     quartos: filtros.quartos ?? "0",
@@ -204,7 +207,7 @@ export default function ImoveisPage({
     }
 
     if (searchData.tipos?.length) {
-      parts.push(`tipo-${searchData.tipos.join("_")}`);
+      parts.push(`tipos-${searchData.tipos.join("_")}`);
     }
 
     if (searchData.locations?.length) {
@@ -253,12 +256,7 @@ export default function ImoveisPage({
     parts.push(`${page}`);
 
     router.replace("/" + parts.filter(Boolean).join("/"));
-  }, [
-    searchData,
-    router,
-    sortOrder,
-    page,
-  ]);
+  }, [searchData, router, sortOrder, page]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -567,7 +565,7 @@ export default function ImoveisPage({
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4">
             <div className="h-6 rounded-sm select-none">
-              <BreadCrumb/>
+              <BreadCrumb />
             </div>
           </div>
         </div>
