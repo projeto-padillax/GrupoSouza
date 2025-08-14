@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAllChamadas } from "@/lib/actions/chamada";
+import Link from "next/link";
 
 interface ChamadasNaHomeSectionProps {
   titulo: string;
@@ -17,6 +18,7 @@ export default async function CategoryCards() {
       <div className="w-[90%] mx-auto max-w-7xl">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5  gap-6">
           {categories.map((category: ChamadasNaHomeSectionProps, index: number) => (
+            <Link href={category.url} key={index}>
             <Card
               key={index}
               className="relative overflow-hidden hover:shadow-2xl transform transition duration-300 hover:scale-105 cursor-pointer aspect-[3/4] py-0" // proporção para manter altura responsiva
@@ -38,6 +40,7 @@ export default async function CategoryCards() {
                 </CardContent>
               </div>
             </Card>
+            </Link>
           ))}
         </div>
       </div>
