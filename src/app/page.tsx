@@ -10,6 +10,8 @@ import { getAllSlides } from "@/lib/actions/slide";
 import { DestaquesSection } from "@/components/site/destaquesSection";
 import ClientLayout from "@/components/client-layout";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [imageHero, slides, destaques] = await Promise.all([
     getRandomBannerImage(),

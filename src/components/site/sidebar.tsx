@@ -42,31 +42,31 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
     };
   }, [isOpen]);
 
-  const locacaoItems = [
-    { title: "2ª via de Boleto", href: "/boleto" },
-    { title: "Seguro Fiança", href: "/seguro-fianca" },
-    { title: "Título de Capitalização", href: "/capitalizacao" },
-  ];
+  // const locacaoItems = [
+  //   { title: "2ª via de Boleto", href: "/boleto" },
+  //   { title: "Seguro Fiança", href: "/seguro-fianca" },
+  //   { title: "Título de Capitalização", href: "/capitalizacao" },
+  // ];
 
-  const condominiosItems = [
-    { title: "Área Restrita", href: "/condominios/area-restrita" },
-    { title: "Administração", href: "/condominios/administracao" },
-  ];
+  // const condominiosItems = [
+  //   { title: "Área Restrita", href: "/condominios/area-restrita" },
+  //   { title: "Administração", href: "/condominios/administracao" },
+  // ];
 
-  const proprietariosItems = [
-    {
-      title: "Administração de Imóveis para Locação",
-      href: "/proprietarios/administracao-locacao",
-    },
-    {
-      title: "Demonstrativos de Rendimentos Mensais",
-      href: "/proprietarios/demonstrativos",
-    },
-    {
-      title: "Administração e Avaliação de Imóveis para Venda",
-      href: "/proprietarios/administracao-venda",
-    },
-  ];
+  // const proprietariosItems = [
+  //   {
+  //     title: "Administração de Imóveis para Locação",
+  //     href: "/proprietarios/administracao-locacao",
+  //   },
+  //   {
+  //     title: "Demonstrativos de Rendimentos Mensais",
+  //     href: "/proprietarios/demonstrativos",
+  //   },
+  //   {
+  //     title: "Administração e Avaliação de Imóveis para Venda",
+  //     href: "/proprietarios/administracao-venda",
+  //   },
+  // ];
 
   const footerItems = [
     { title: "Anuncie seu Imóvel", href: "/anuncie-seu-imovel" },
@@ -141,7 +141,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
             ))}
           </div>
 
-          <div className="border-b border-sky-500 w-9/12 ml-4">
+          {/* <div className="border-b border-sky-500 w-9/12 ml-4">
             <div className="py-3 ">
               <h3 className="font-semibold text-sm uppercase tracking-wide">
                 Locação
@@ -157,9 +157,9 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
                 <span>{item.title}</span>
               </Link>
             ))}
-          </div>
+          </div> */}
 
-          <div className="border-b border-sky-500 w-9/12 ml-4">
+          {/* <div className="border-b border-sky-500 w-9/12 ml-4">
             <div className="py-3">
               <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">
                 Condomínios
@@ -175,8 +175,8 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
                 <span>{item.title}</span>
               </Link>
             ))}
-          </div>
-
+          </div> */}
+{/* 
           <div className="border-b border-sky-500 w-9/12 ml-4">
             <div className="py-3">
               <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">
@@ -193,7 +193,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
                 <span>{item.title}</span>
               </Link>
             ))}
-          </div>
+          </div> */}
 
           {dynamicItems.length > 0 && (
             <div className="border-b border-sky-500 w-9/12 ml-4">

@@ -5,11 +5,12 @@ import SidebarWrapper from './sideBarWrapper';
 import Image from 'next/image';
 import FavoriteIcon from './favoritosIcon';
 import { FaWhatsapp } from "react-icons/fa";
+import { getLogo } from '@/lib/actions/config';
 
 
-export default function Header() {
+export default async function Header() {
   // const { isOpen, openSidebar, closeSidebar } = useSidebar();
-
+  const logo = await getLogo()
   return (
     <>
       <header className="bg-white h-28 content-center">
@@ -17,7 +18,7 @@ export default function Header() {
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">
-                <Image src={"/logoGrupoSouza.png"} alt={'Logo do Site'} width={200} height={69}></Image>
+                <Image src={logo ?? ''} alt={'Logo do Site'} width={200} height={69}></Image>
               </Link>
             </div>
             <div className="flex items-center space-x-4">

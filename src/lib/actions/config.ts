@@ -327,3 +327,20 @@ export async function updateConfiguracaoPagina(
   }
 
 }
+
+export async function getLogo(){
+  try {
+    const record = await prisma.configuracaoPagina.findFirst({
+      orderBy: { id: "asc" },
+      select: { logoUrl: true },
+    });
+
+    if (!record) return null;
+
+    // Sanitiza: garante string, mesmo se vier null
+    return record.logoUrl ?? "";
+  } catch (error) {
+    console.error("Erro ao buscar logo:", error);
+    throw new Error("Erro ao buscar logo");
+  }
+}
