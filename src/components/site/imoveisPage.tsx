@@ -569,12 +569,12 @@ export default function imoveisPage({
         </div>
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
-            <div className="h-6  rounded-sm">
+            <div className="h-auto min-h-6  rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
             <div>
               <Select
-                value={searchData.valueRange.max}
+                value={sortOrder}
                 onValueChange={(value) => setSortOrder(value)}
               >
                 <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">
