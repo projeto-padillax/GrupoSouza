@@ -42,7 +42,6 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState(filtros.sort);
   const [titulo, setTitulo] = useState("");
-  const [isFirstRender, setIsFirstRender] = useState(true);
   const location =
     filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ??
     [];
@@ -83,7 +82,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   useEffect(() => {
     if (searchData.locations && searchData.locations.length > 0) {
       const [cidade, ...rest] = searchData.locations[0].split(":");
-
+      console.log(...rest)
       // Extrai os bairros de todas as localizações
       const novosBairros = searchData.locations.map((loc) => loc.split(":")[1]);
 

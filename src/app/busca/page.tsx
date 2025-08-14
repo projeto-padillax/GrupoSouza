@@ -7,7 +7,7 @@ import Footer from "@/components/site/footer";
 import { Filtros, parseFiltroURL } from "@/utils/parseFilter";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     action?: string;
     tipos?: string;
     cidade?: string;
@@ -24,7 +24,7 @@ interface Props {
     codigo?: string;
     page?: string;
     sort?: string;
-  };
+  }>;
 }
 
 export default async function Imoveis({ searchParams }: Props) {
