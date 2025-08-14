@@ -2,7 +2,7 @@ import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import ContatoForm from "@/components/site/contatoForm";
-import BreadCrumb from "@/components/site/filteredBreadcrumb";
+// import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 export default async function Contatos() {
   return (
@@ -14,9 +14,9 @@ export default async function Contatos() {
       <main className="flex-1">
         <section className="relative w-full py-8">
           <div className="w-[90%] mx-auto max-w-7xl">
-            <div className="rounded-sm mb-5">
+            {/* <div className="rounded-sm mb-5">
               <BreadCrumb/>
-            </div>
+            </div> */}
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image
                 src="/contato.webp"

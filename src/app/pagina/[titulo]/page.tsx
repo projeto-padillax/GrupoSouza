@@ -3,7 +3,7 @@ import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import { getPaginaByTitle } from "@/lib/actions/contentPages";
 import "@/app/html-padrao.css";
-import BreadCrumb from "@/components/site/filteredBreadcrumb";
+// import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 interface DynamicPageProps {
   params: Promise<{ titulo: string }>;
@@ -22,9 +22,9 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
       <main className="flex-1 bg-white">
         <div className="w-full py-3">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="h-6 bg-gray-100 rounded-sm select-none">
+            {/* <div className="h-6 bg-gray-100 rounded-sm select-none">
               <BreadCrumb />
-            </div>
+            </div> */}
           </div>
         </div>
 

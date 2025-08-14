@@ -8,7 +8,7 @@ import AgendamentoForm from "@/components/site/agendamentoForm";
 import EmpreendimentoBox from "@/components/site/empreendimentoBox";
 import MidiaBox from "@/components/site/midiaBox";
 import SemelhantesSection from "@/components/site/semelhantesSection";
-import BreadCrumb from "@/components/site/filteredBreadcrumb";
+// import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 
 export default async function ImovelPage({
@@ -49,9 +49,9 @@ export default async function ImovelPage({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <section className="pt-4 border-t border-gray-200 mb-4">
                         <div className="flex justify-between items-center">
-                            <nav className="text-sm text-gray-500">
+                            {/* <nav className="text-sm text-gray-500">
                                  <BreadCrumb/>
-                            </nav>
+                            </nav> */}
                         </div>
                     </section>
 
