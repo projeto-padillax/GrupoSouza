@@ -69,10 +69,10 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
   ];
 
   const footerItems = [
-    { title: "Anuncie seu Imóvel", href: "/anuncie" },
-    { title: "Sobre a Empresa", href: "/sobre" },
+    { title: "Anuncie seu Imóvel", href: "/anuncie-seu-imovel" },
+    { title: "Sobre a Empresa", href: "/empresa" },
     { title: "Contato", href: "/contato" },
-    { title: "Política de Privacidade", href: "/privacidade" },
+    { title: "Política de Privacidade", href: "/politica-de-privacidade" },
   ];
 
   const handleDynamicItemClick = async (item: PaginasConteudo) => {
@@ -99,7 +99,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
+        className="rounded-md mr-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
         aria-label="Abrir menu"
       >
         <Menu className="h-6 w-6" />

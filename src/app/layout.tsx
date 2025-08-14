@@ -9,6 +9,11 @@ const montserrat = Montserrat({
   weight: ["200", "400", "500", "600", "700"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "Grupo Souza",
   description: "Grupo Souza",

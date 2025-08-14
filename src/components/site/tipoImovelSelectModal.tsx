@@ -23,6 +23,14 @@ export function TypeSelectModal({
   onSelectionChange,
 }: TypeSelectModalProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [tempSelectedTypes, setTempSelectedTypes] = useState<string[]>([])
+
+  useEffect(() => {
+    if (isOpen) {
+
+      setTempSelectedTypes(selectedTypes);
+    }
+  }, [isOpen, selectedTypes]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 650);
@@ -32,69 +40,70 @@ export function TypeSelectModal({
   }, []);
 
   const residenciaisTypes = [
-    { id: "apartamentos", label: "Apartamentos" },
-    { id: "areas-empresariais", label: "Áreas Empresariais" },
-    { id: "chacaras", label: "Chácaras" },
-    { id: "condominios-fechados", label: "Condomínios Fechados" },
-    { id: "loteamentos-condominios", label: "Loteamentos em Condomínios" },
+    { id: "apartamento", label: "Apartamentos" },
+    { id: "áreas empresariais", label: "Áreas Empresariais" },
+    { id: "chácara", label: "Chácaras" },
+    { id: "condominio fechado", label: "Condomínios Fechados" },
+    { id: "loteamento em condominio", label: "Loteamentos em Condomínios" },
     { id: "residencias", label: "Residências" },
     {
-      id: "residencias-predios-comerciais",
+      id: "residencia/predios comerciais",
       label: "Residências/Prédios Comerciais",
     },
-    { id: "sitios", label: "Sítios" },
+    { id: "sitio", label: "Sítios" },
   ];
 
   const comerciaisTypes = [
-    { id: "barracoes", label: "Barracões" },
-    { id: "comerciais", label: "Comerciais" },
-    { id: "estacionamentos", label: "Estacionamentos" },
-    { id: "galpoes-areas-empresariais", label: "Galpões e Áreas Empresariais" },
-    { id: "pontos-comerciais", label: "Pontos Comerciais" },
-    { id: "predios-comerciais", label: "Prédios Comerciais" },
-    { id: "salas-comerciais", label: "Salas Comerciais" },
-    { id: "saloes", label: "Salões" },
-    { id: "terrenos", label: "Terrenos" },
-    { id: "vagas-garagem", label: "Vagas de Garagem" },
+    { id: "barracões", label: "Barracões" },
+    { id: "comercial", label: "Comerciais" },
+    { id: "estacionamento", label: "Estacionamentos" },
+    { id: "galpões e áreas empresariais", label: "Galpões e Áreas Empresariais" },
+    { id: "ponto comercial", label: "Pontos Comerciais" },
+    { id: "predio comercial", label: "Prédios Comerciais" },
+    { id: "sala comercial", label: "Salas Comerciais" },
+    { id: "salões", label: "Salões" },
+    { id: "terreno", label: "Terrenos" },
+    { id: "vaga de garagem", label: "Vagas de Garagem" },
   ];
 
   const handleTypeChange = (typeId: string, checked: boolean) => {
     if (checked) {
-      onSelectionChange([...selectedTypes, typeId]);
+      setTempSelectedTypes([...tempSelectedTypes, typeId]);
     } else {
-      onSelectionChange(selectedTypes.filter((id) => id !== typeId));
+      setTempSelectedTypes(tempSelectedTypes.filter((id) => id !== typeId));
     }
   };
 
   const handleConfirm = () => {
-    console.log(selectedTypes);
+    onSelectionChange(tempSelectedTypes);
+    // console.log("Selected Types:", tempSelectedTypes);
     onClose();
   };
 
   const allResidenciaisSelected = residenciaisTypes.every((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
   const someResidenciaisSelected = residenciaisTypes.some((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
 
   const allComerciaisSelected = comerciaisTypes.every((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
   const someComerciaisSelected = comerciaisTypes.some((t) =>
-    selectedTypes.includes(t.id)
+    tempSelectedTypes.includes(t.id)
   );
 
   const handleSelectAll = (types: { id: string }[], checked: boolean) => {
     const ids = types.map((t) => t.id);
     if (checked) {
-      const updated = [...selectedTypes];
+      const updated = [...tempSelectedTypes];
       ids.forEach((id) => {
         if (!updated.includes(id)) updated.push(id);
       });
-      onSelectionChange(updated);
+      setTempSelectedTypes(updated);
     } else {
-      onSelectionChange(selectedTypes.filter((id) => !ids.includes(id)));
+      setTempSelectedTypes(tempSelectedTypes.filter((id) => !ids.includes(id)));
     }
   };
 
@@ -131,19 +140,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? "border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -178,19 +187,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -227,19 +236,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? "border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }
@@ -274,19 +283,19 @@ export function TypeSelectModal({
                     <div
                       key={type.id}
                       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
-                        selectedTypes.includes(type.id)
+                        tempSelectedTypes.includes(type.id)
                           ? " border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
                       }`}
                       onClick={() =>
                         handleTypeChange(
                           type.id,
-                          !selectedTypes.includes(type.id)
+                          !tempSelectedTypes.includes(type.id)
                         )
                       }
                     >
                       <Checkbox
-                        checked={selectedTypes.includes(type.id)}
+                        checked={tempSelectedTypes.includes(type.id)}
                         onCheckedChange={(checked) =>
                           handleTypeChange(type.id, checked as boolean)
                         }

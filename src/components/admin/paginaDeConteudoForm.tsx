@@ -309,7 +309,7 @@ export default function PaginaDeConteudoForm({
                         <FormControl>
                           <CldUploadWidget
                             options={{
-                              clientAllowedFormats: ["png", "jpeg", "jpg"],
+                              clientAllowedFormats: ["png", "jpeg", "jpg", "webp"],
                             }}
                             uploadPreset="grupo-souze-unsigned"
                             onSuccess={(result) => {

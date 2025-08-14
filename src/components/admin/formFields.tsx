@@ -107,7 +107,7 @@ export function FormFields<T extends FieldValues>({
               <div className="flex-1">
                 <FormControl>
                   <CldUploadWidget
-                    options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg'] }}
+                    options={{ clientAllowedFormats: ['png', 'jpeg', 'jpg', 'webp'] }}
                     uploadPreset="grupo-souze-unsigned"
                     onSuccess={(result) => {
                       if (result?.info && typeof result.info !== "string") {
