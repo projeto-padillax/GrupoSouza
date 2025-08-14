@@ -40,7 +40,6 @@ export function HeroSection(banner: HeroSectionProps) {
   });
 
   useEffect(() => {
-    console.log(banner)
     if (isSearching && inputRef.current) {
       inputRef.current.focus();
     }
@@ -58,7 +57,6 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const closeModal = (modalType: "location" | "type" | "value") => {
-    console.log(searchData)
     setModals({ ...modals, [modalType]: false });
   };
 
@@ -114,6 +112,7 @@ export function HeroSection(banner: HeroSectionProps) {
       parts.push(`valorMax-${searchData.valueRange.max}`);
     }
     parts.push(`1`);
+    console.log(parts)
     router.push(parts.filter(Boolean).join("/"));
   };
 

@@ -1,6 +1,6 @@
 "use client";
 import { Filtros } from "@/utils/parseFilter";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -50,7 +50,7 @@ export default function imoveisPage({
   const [sortOrder, setSortOrder] = useState(filtros.sort);
   const [titulo, setTitulo] = useState("");
   const [isFirstRender, setIsFirstRender] = useState(true);
-  const location = filtros.bairro?.map((i) => `${filtros.cidade}:${i}`) ?? [];
+  const location = filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ?? [];
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
     tipos: filtros.tipo ?? ([] as string[]),
@@ -69,6 +69,10 @@ export default function imoveisPage({
     location: false,
     type: false,
   });
+  
+  useEffect(() => {
+    console.log(filtros)
+  },[])
 
   const caracteristicas = [
     { id: "academia", label: "Academia" },
@@ -95,9 +99,9 @@ export default function imoveisPage({
         : "imóveis para alugar";
 
     // Tipos de imóvel
-    if (searchData.tipos.length > 0) {
-      titulo += ` (${searchData.tipos.join(", ")})`;
-    }
+    // if (searchData.tipos.length > 0) {
+    //   titulo += ` (${searchData.tipos.join(", ")})`;
+    // }
 
     // Quartos
     if (searchData.quartos !== "0") {
@@ -248,7 +252,6 @@ export default function imoveisPage({
     if (sortOrder) {
       parts.push(`order-${sortOrder}`);
     }
-
     parts.push(`${page}`);
 
     router.replace("/" + parts.filter(Boolean).join("/"));
@@ -567,12 +570,12 @@ export default function imoveisPage({
         </div>
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
-            <div className="h-6  rounded-sm">
+            <div className="h-auto min-h-6  rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
             <div>
               <Select
-                value={searchData.valueRange.max}
+                value={sortOrder}
                 onValueChange={(value) => setSortOrder(value)}
               >
                 <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">

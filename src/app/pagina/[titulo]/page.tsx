@@ -10,20 +10,17 @@ interface DynamicPageProps {
 }
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
-  const tituloOriginal = await params.then((p) => (p.titulo));
+  const tituloOriginal = await params.then((p) => p.titulo);
   const pageData = await getPaginaByTitle(tituloOriginal);
 
-  if (!pageData) {
-    notFound();
-  }
-
+  if (!pageData) notFound();
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
       <main className="flex-1 bg-white">
-        <div className="w-full py-4">
+        <div className="w-full py-3">
           <div className="max-w-7xl mx-auto px-4">
             <div className="h-6 bg-gray-100 rounded-sm select-none">
               <BreadCrumb pageTitle={tituloOriginal} />
@@ -32,28 +29,37 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         </div>
 
         {pageData.imagem ? (
-          <section
-            className="relative w-[90%] mx-auto max-w-7xl h-[250px] bg-cover bg-center object-cover rounded-4xl justify-items-center"
-            style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${pageData.imagem})` }}
-          >
-            <div className="relative z-10 w-[90%] h-full flex flex-col justify-center max-w-7xl">
-              <h1 className="text-white text-4xl font-semibold">{pageData.titulo}</h1>
+          <section className="relative w-full pt-6 pb-4">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${pageData.imagem})` }}
+                />
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-y-0 left-0 flex items-center z-10 px-6">
+                  <h1 className="text-white text-2xl md:text-4xl font-semibold">
+                    {pageData.titulo}
+                  </h1>
+                </div>
+              </div>
             </div>
           </section>
         ) : (
-          <section className="bg-white py-10">
-            <div className="max-w-5xl mx-auto px-4">
-              <h1 className="text-4xl font-semibold text-gray-900">{pageData.titulo}</h1>
+          <section className="pt-6 pb-4">
+            <div className="max-w-4xl mx-auto px-4">
+              <h1 className="text-2xl md:text-4xl font-semibold text-gray-900">
+                {pageData.titulo}
+              </h1>
             </div>
           </section>
         )}
 
-        <section
-          className={`max-w-5xl w-[70%] mx-auto mt-10 px-4 ${pageData.imagem ? "mb-16" : "mb-1"
-            }`}
-        >
-          <div className="html-padrao w-full max-w-6xl">
-            <article dangerouslySetInnerHTML={{ __html: pageData.conteudo ?? "" }} />
+        <section className="pt-4 md:pt-6 pb-12">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="html-padrao">
+              <article dangerouslySetInnerHTML={{ __html: pageData.conteudo ?? "" }} />
+            </div>
           </div>
         </section>
       </main>

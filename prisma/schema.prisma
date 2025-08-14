@@ -170,6 +170,8 @@ model Formulario {
   mensagem      String?
   condominio    String?
   assunto       String?
+  finalidade    String?
+  valorDesejado Decimal?
 }
 
 enum tipoFormulario {
