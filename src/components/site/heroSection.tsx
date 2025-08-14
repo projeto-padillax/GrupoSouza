@@ -113,7 +113,7 @@ export function HeroSection(banner: HeroSectionProps) {
     }
     parts.push(`1`);
 
-    router.push(parts.filter(Boolean).join("/"));
+    router.push(`/busca?${parts.filter(Boolean).join("/")}`);
   };
 
   const handleSearchByCode = () => {

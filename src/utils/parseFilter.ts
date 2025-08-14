@@ -52,7 +52,7 @@ export function parseFiltros(filtros: string[]): Filtros {
   return parsed;
 }
 
-function parseFiltroURL(param: string) {
+export function parseFiltroURL(param: string) {
   const decoded = decodeURIComponent(param);
   const cidadesNome = decoded.replace("cidade-", "");
   const partes = cidadesNome.split("_");

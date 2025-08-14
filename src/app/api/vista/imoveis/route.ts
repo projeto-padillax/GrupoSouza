@@ -459,7 +459,7 @@ export async function PUT() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-
+    console.log("Received search parameters:", (searchParams.toString()));
     const codigo = searchParams.get("codigo") || null; // Extract codigo early
 
     // --- Special handling for 'codigo' ---
