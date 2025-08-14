@@ -9,6 +9,8 @@ import EmpreendimentoBox from "@/components/site/empreendimentoBox";
 import MidiaBox from "@/components/site/midiaBox";
 import SemelhantesSection from "@/components/site/semelhantesSection";
 
+
+
 export default async function ImovelPage({
     params,
 }: {

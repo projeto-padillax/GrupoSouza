@@ -189,6 +189,9 @@ const processAndUpsertProperty = async (code: string, propertyData: VistaPropert
     // ✨ Include 'CodigoImobiliaria' in the destructuring
     const { Caracteristicas, Foto, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
 
+    console.log(Foto)
+    console.log(CodigoImobiliaria)
+
     const validDataHoraAtualizacao: string =
       DataHoraAtualizacao && !isNaN(Date.parse(DataHoraAtualizacao))
         ? new Date(DataHoraAtualizacao).toISOString()
@@ -608,7 +611,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    let orderByClause: any = {};
+    const orderByClause: any = {};
     if (order) {
       switch (order) {
         case "MaiorValor":

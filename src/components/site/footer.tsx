@@ -183,7 +183,7 @@ export default async function Footer() {
         </a>
         <div className="text-sm">
           <Link
-            href="/privacidade"
+            href="/politica-de-privacidade"
             className="text-black hover:text-gray-300 transition-colors font-medium"
           >
             Política de Privacidade

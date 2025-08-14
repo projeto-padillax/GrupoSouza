@@ -36,8 +36,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ codigo: st
     }
 
     return NextResponse.json(imovel); // Return the found property
-  } catch (error: any) { // Add type annotation for error
-    console.error("Erro ao buscar imóvel:", error.message); // Log error message
+  } catch (error) { // Add type annotation for error
+    if (error instanceof Error) {
+      console.error("Erro ao buscar imóvel:", error.message); // Log error message
+    }
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma client after the request
