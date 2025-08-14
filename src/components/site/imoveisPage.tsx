@@ -1,6 +1,6 @@
 "use client";
 import { Filtros } from "@/utils/parseFilter";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -31,7 +31,7 @@ import {
 } from "../ui/pagination";
 import BreadCrumb from "./filteredBreadcrumb";
 
-export default function imoveisPage({
+export default function ImoveisPage({
   filtros,
   imoveis,
   currentPage,
@@ -50,7 +50,9 @@ export default function imoveisPage({
   const [sortOrder, setSortOrder] = useState(filtros.sort);
   const [titulo, setTitulo] = useState("");
   const [isFirstRender, setIsFirstRender] = useState(true);
-  const location = filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ?? [];
+  const location =
+    filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ??
+    [];
   const [searchData, setSearchData] = useState({
     action: filtros.action ?? "comprar",
     tipos: filtros.tipo ?? ([] as string[]),
@@ -69,10 +71,6 @@ export default function imoveisPage({
     location: false,
     type: false,
   });
-  
-  useEffect(() => {
-    console.log(filtros)
-  },[])
 
   const caracteristicas = [
     { id: "academia", label: "Academia" },
@@ -153,9 +151,9 @@ export default function imoveisPage({
     // Localizações
     if (filtros.cidade) {
       titulo += ` de ${filtros.cidade}`;
-      filtros.bairro?.length == 1 && filtros.bairro[0] !== "all"
-        ? (titulo += ` no bairro ${filtros.bairro[0]}`)
-        : null;
+      if (filtros.bairro?.length === 1 && filtros.bairro[0] !== "all") {
+        titulo += ` no bairro ${filtros.bairro[0]}`;
+      }
     }
 
     if (codigo) {
@@ -255,7 +253,15 @@ export default function imoveisPage({
     parts.push(`${page}`);
 
     router.replace("/" + parts.filter(Boolean).join("/"));
-  }, [searchData, router, sortOrder, page]);
+  }, [
+    searchData,
+    router,
+    sortOrder,
+    page,
+    gerarTitulo,
+    totalImoveis,
+    isFirstRender,
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">
