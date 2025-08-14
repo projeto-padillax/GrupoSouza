@@ -127,7 +127,7 @@ export function LocationSelectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-4xl max-w-4xl max-h-[80vh] overflow-hidden flex flex-col w-[80%]">
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="sm:max-w-4xl max-w-4xl max-h-[80vh] overflow-hidden flex flex-col w-[80%]">
         <DialogHeader>
           <DialogTitle>Selecionar Localização</DialogTitle>
         </DialogHeader>
