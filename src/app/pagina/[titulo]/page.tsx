@@ -23,13 +23,18 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         <div className="w-full py-3">
           <div className="max-w-7xl mx-auto px-4">
             <div className="h-6 bg-gray-100 rounded-sm select-none">
-              <BreadCrumb/>
+              <BreadCrumb />
             </div>
           </div>
         </div>
 
         {pageData.imagem ? (
-          <section className="relative w-full pt-6 pb-4">
+          <section
+            className="relative w-full pt-6 pb-4"
+            style={{
+              backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${pageData.imagem})`,
+            }}
+          >
             <div className="max-w-7xl mx-auto px-4">
               <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
                 <div
@@ -58,7 +63,9 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         <section className="pt-4 md:pt-6 pb-12">
           <div className="max-w-4xl mx-auto px-4">
             <div className="html-padrao">
-              <article dangerouslySetInnerHTML={{ __html: pageData.conteudo ?? "" }} />
+              <article
+                dangerouslySetInnerHTML={{ __html: pageData.conteudo ?? "" }}
+              />
             </div>
           </div>
         </section>
