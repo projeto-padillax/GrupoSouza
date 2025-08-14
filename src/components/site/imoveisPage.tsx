@@ -258,9 +258,6 @@ export default function ImoveisPage({
     router,
     sortOrder,
     page,
-    gerarTitulo,
-    totalImoveis,
-    isFirstRender,
   ]);
 
   return (
@@ -570,7 +567,7 @@ export default function ImoveisPage({
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4">
             <div className="h-6 rounded-sm select-none">
-              <BreadCrumb pageTitle={titulo} />
+              <BreadCrumb/>
             </div>
           </div>
         </div>
