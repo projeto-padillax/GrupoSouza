@@ -13,6 +13,7 @@ import Link from "next/link";
 import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -31,7 +32,7 @@ export function HeroSection(banner: HeroSectionProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [codigo, setCodigo] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   const [modals, setModals] = useState({
     location: false,
     type: false,
@@ -89,11 +90,34 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const handleSearch = () => {
-    console.log("Dados de busca:", searchData);
+    const parts = ["busca"];
+
+    if (searchData.action) {
+      parts.push(searchData.action);
+    }
+
+    if (searchData.tipos?.length) {
+      parts.push(`tipo-${searchData.tipos.join("_")}`);
+    }
+
+    if (searchData.locations?.length) {
+      parts.push(`cidade-${searchData.locations.join("_")}`);
+    }
+
+    if (searchData.valueRange?.min) {
+      parts.push(`valorMin-${searchData.valueRange.min}`);
+    }
+
+    if (searchData.valueRange?.max) {
+      parts.push(`valorMax-${searchData.valueRange.max}`);
+    }
+    parts.push(`1`);
+    console.log(parts)
+    router.push(parts.filter(Boolean).join("/"));
   };
 
   const handleSearchByCode = () => {
-    console.log("Buscando por código:", codigo);
+    router.push(`/busca/codigo-${codigo.trim()}`);
   };
 
   return (
@@ -111,7 +135,7 @@ export function HeroSection(banner: HeroSectionProps) {
             href={banner.url}
             className="text-4xl md:text-5xl font-semibold text-white mb-4 leading-tight font-[Montserrat, sans-serif]"
           >
-            {banner.titulo && null}
+            {banner.titulo}
           </Link>
           {banner.subtitulo && (<p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>)}
 
