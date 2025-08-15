@@ -22,10 +22,10 @@ export default async function Footer() {
   }
 
   return (
-    <>
-      <footer className="text-black w-[90%] mx-auto max-w-7xl border-t border-b">
+    <section className="py-12 justify-items-center">
+      <footer className="text-black px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         {/* Container principal */}
-        <div className="py-6 rounded-lg">
+        <div className="py-6 rounded-lg border-t border-b">
           {/* Seção superior */}
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-center border-b pb-6">
             {/* Logo */}
@@ -64,7 +64,7 @@ export default async function Footer() {
 
           {/* Menu Horizontal */}
           <div className="w-full pt-6 mb-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div className="col-span-1 place-self-center md:place-self-start">
+            <div className="col-span-1 place-self-start md:place-self-start">
               <h3 className="font-bold text-[#4F7DC3] mb-6">Navegação</h3>
               <nav className="flex flex-col gap-4 md:gap-8">
                 <Link
@@ -190,6 +190,6 @@ export default async function Footer() {
           </Link>
         </div>
       </div>
-    </>
+    </section>
   );
 }

@@ -122,14 +122,14 @@ export function HeroSection(banner: HeroSectionProps) {
 
   return (
     <section
-      className="relative h-[90vh] w-[100%] overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center"
+      className="relative min-h-[90vh] min-h-[90svh] min-h-[90dvh] w-[100%] overflow-x-hidden bg-cover bg-center overflow-hidden object-cover justify-items-center content-center"
       style={{
         backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 60%),url(${banner.imageUrl})`,
       }}
     >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className={`z-10 w-[90%] h-full flex flex-col max-w-7xl justify-center ${!banner.subtitulo ? "items-center" : ""}`}>
+      <div className={`z-10 px-8 sm:px-10 md:px-12 w-full h-full flex flex-col max-w-7xl ${!banner.subtitulo ? "items-center" : ""}`}>
         <div className="">
           <Link
             href={banner.url}
@@ -137,12 +137,12 @@ export function HeroSection(banner: HeroSectionProps) {
           >
             {banner.titulo}
           </Link>
-          {banner.subtitulo && (<p className="text-xl text-white mb-[160px]">{banner.subtitulo}</p>)}
+          {banner.subtitulo && (<p className="text-xl text-white mb-28 md:mb-[160px]">{banner.subtitulo}</p>)}
 
           {/* Search tabs */}
           <div className="flex gap-8">
             <Link
-              href="#"
+              href="https://www.gruposouza.leadlink.com.br/busca/comprar/cidade/piracicaba/lancamentos/s/1/"
               className="pt-2 text-white bg-transparent text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
             >
               Lançamentos
@@ -271,7 +271,7 @@ export function HeroSection(banner: HeroSectionProps) {
               </Button>
             </div>
           </div>
-          <div className="flex justify-start items-center text-white mt-2 bg-transparent">
+          <div className="flex justify-start items-center text-white mt-2 mb-3 bg-transparent">
             {!isSearching ? (
               <Button
                 onClick={() => setIsSearching(true)}

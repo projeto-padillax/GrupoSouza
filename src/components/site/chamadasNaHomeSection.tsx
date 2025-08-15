@@ -14,8 +14,8 @@ export default async function CategoryCards() {
   const categories = await getAllChamadas();
 
   return (
-    <section className="py-12">
-      <div className="w-[90%] mx-auto max-w-7xl">
+    <section className="py-12 justify-items-center">
+      <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5  gap-6">
           {categories.map((category: ChamadasNaHomeSectionProps, index: number) => (
             <Link href={category.url} key={index}>

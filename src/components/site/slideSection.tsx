@@ -38,8 +38,8 @@ export default function SlideSection({ slides }: SlideSectionProps) {
   }, [api]);
 
   return (
-    <section className="py-8">
-      <div className="w-[90%] mx-auto max-w-7xl">
+    <section className="py-8 justify-items-center">
+      <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         <Carousel setApi={setApi}>
           <CarouselContent>
             {slides.map((slide, index) => (
@@ -56,7 +56,7 @@ export default function SlideSection({ slides }: SlideSectionProps) {
                       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                     )}
                   </Link>
-                  <div className="absolute [background:linear-gradient(0deg,rgba(0,0,0,0.59)_0%,rgba(237,221,83,0)_100%)] bottom-0 left-0 right-0 flex items-end px-[2.4rem] py-[2rem] text-white">
+                  <div className="absolute [background:linear-gradient(0deg,rgba(0,0,0,0.59)_0%,rgba(237,221,83,0)_100%)] bottom-0 left-0 right-0 flex items-end px-[2rem] py-[2rem] text-white">
                     <h2
                       dangerouslySetInnerHTML={{
                         __html: slide.titulo ?? "Slide não encontrado",
