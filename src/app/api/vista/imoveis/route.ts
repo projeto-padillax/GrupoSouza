@@ -459,8 +459,7 @@ export async function PUT() {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    console.log("Received search parameters:", (searchParams.toString()));
-    const codigo = searchParams.get("codigo") || null; // Extract codigo early
+    const codigo = searchParams.get("codigo") || null;
 
     // --- Special handling for 'codigo' ---
     if (codigo) {
@@ -510,49 +509,21 @@ export async function GET(request: NextRequest) {
     }
     
     const action = searchParams.get("action") ?? "comprar";
-
-    const tipos = searchParams.get("tipos")
-      ?.split(",")
-      .map(item => item.trim())
-      .filter(Boolean) || [];
-    const bairros = searchParams.get("bairro")
-      ?.split(",")
-      .map(item => item.trim())
-      .filter(Boolean) || [];
-
+    const tipos = searchParams.get("tipos")?.split(",").filter(Boolean) || [];
+    const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || [];
     const cidade = searchParams.get("cidade") ?? "piracicaba";
-    const valorMin = searchParams.get("valorMin") ? Number(searchParams.get("valorMin")) : null;
-    const valorMax = searchParams.get("valorMax") ? Number(searchParams.get("valorMax")) : null;
+    const valorMin = Number(searchParams.get("valorMin")) || null;
+    const valorMax = Number(searchParams.get("valorMax")) || null;
     const quartos = searchParams.get("quartos") || null;
-    const areaMinima = searchParams.get("areaMinima") ? String(searchParams.get("areaMinima")) : null; // AreaTotal ainda é string
     const suites = searchParams.get("suites") || null;
     const vagas = searchParams.get("vagas") || null;
     const caracteristicas = searchParams.get("caracteristicas")?.split(",").filter(Boolean) || [];
+    const lancamentosFilterValue = parseSimNao(searchParams.get("lancamentos"));
+    const mobiliadoFilterValue = parseSimNao(searchParams.get("mobiliado"));
+    const areaMinima = searchParams.get("areaMinima") ? String(searchParams.get("areaMinima")) : null; // AreaTotal ainda é string
+    const sort = searchParams.get("sort") || "MaisRecente";
 
-    let lancamentosFilterValue: "Sim" | "Nao" | null = null;
-    const rawLancamentos = searchParams.get("lancamentos");
-    if (rawLancamentos !== null) {
-        const normalized = rawLancamentos.toLowerCase().trim();
-        if (["sim", "s", "true"].includes(normalized)) {
-            lancamentosFilterValue = "Sim";
-        } else if (["nao", "n", "false"].includes(normalized)) {
-            lancamentosFilterValue = "Nao";
-        }
-    }
-
-    let mobiliadoFilterValue: "Sim" | "Nao" | null = null;
-    const rawMobiliado = searchParams.get("mobiliado");
-    if (rawMobiliado !== null) {
-        const normalized = rawMobiliado.toLowerCase().trim();
-        if (["sim", "s", "true"].includes(normalized)) {
-            mobiliadoFilterValue = "Sim";
-        } else if (["nao", "n", "false"].includes(normalized)) {
-            mobiliadoFilterValue = "Nao";
-        }
-    }
-
-    const order = searchParams.get("order") || null;
-
+    // "Paginacao"
     const pageSize = Number(searchParams.get("pageSize")) || 12;
     const page = Number(searchParams.get("page")) || 1;
     const skip = (page - 1) * pageSize;
@@ -571,9 +542,9 @@ export async function GET(request: NextRequest) {
     if (tipos.length > 0) {
       whereClause.Categoria = { in: tipos, mode: 'insensitive' };
     }
-    if (quartos) whereClause.Dormitorios = quartos;
-    if (suites) whereClause.Suites = suites;
-    if (vagas) whereClause.Vagas = vagas;
+    if (quartos) whereClause.Dormitorios = { gte: Number(quartos) };
+    if (suites) whereClause.Suites =  { gte: Number(suites) };
+    if (vagas) whereClause.Vagas = { gte: Number(vagas) };
     if (lancamentosFilterValue !== null) {
         whereClause.Lancamento = { equals: lancamentosFilterValue, mode: 'insensitive' };
     }
@@ -611,30 +582,30 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    const orderByClause: any = {};
-    if (order) {
-      switch (order) {
+    const sortByClause: any = {};
+    if (sort) {
+      switch (sort) {
         case "MaiorValor":
-          orderByClause[valorField] = "desc";
+          sortByClause[valorField] = "desc";
           break;
         case "MenorValor":
-          orderByClause[valorField] = "asc";
+          sortByClause[valorField] = "asc";
           break;
         case "ImovelRecente":
-          orderByClause.DataHoraAtualizacao = "desc";
+          sortByClause.DataHoraAtualizacao = "desc";
           break;
         default:
-          orderByClause[valorField] = "asc"; // Default pode ser por valor ou outro campo
+          sortByClause[valorField] = "asc"; // Default pode ser por valor ou outro campo
       }
     } else {
-      // Valor padrão de ordenação se 'order' não for fornecido
-      orderByClause[valorField] = "asc"; // ou DataHoraAtualizacao: 'desc'
+      // Valor padrão de ordenação se 'sort' não for fornecido
+      sortByClause[valorField] = "asc"; // ou DataHoraAtualizacao: 'desc'
     }
 
     const [imoveis, totalCount] = await prisma.$transaction([
       prisma.imovel.findMany({
         where: whereClause,
-        orderBy: orderByClause,
+        orderBy: sortByClause,
         take: pageSize,
         skip: skip,
         include: {
@@ -675,9 +646,15 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error("Erro ao buscar imóveis:", error.message);
     return NextResponse.json({ error: "Erro interno no servidor ao buscar imóveis" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
+}
+
+function parseSimNao(value: string | null): "Sim" | "Nao" | null {
+  if (!value) return null;
+  const normalized = value.toLowerCase().trim();
+  if (["sim", "s", "true"].includes(normalized)) return "Sim";
+  if (["nao", "n", "false"].includes(normalized)) return "Nao";
+  return null;
 }
 
 export async function DELETE() {
