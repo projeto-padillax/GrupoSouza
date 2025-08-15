@@ -8,6 +8,7 @@ import AgendamentoForm from "@/components/site/agendamentoForm";
 import EmpreendimentoBox from "@/components/site/empreendimentoBox";
 import MidiaBox from "@/components/site/midiaBox";
 import SemelhantesSection from "@/components/site/semelhantesSection";
+import FavoriteButton from "@/components/site/favoritosButton";
 // import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 
@@ -42,6 +43,11 @@ export default async function ImovelPage({
         return fotos;
     })();
 
+    const hasBadges =
+        imovel.Lancamento === "Sim" ||
+        imovel.Estudadação === "Sim" ||
+        imovel.Etiqueta === "Sim";
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -75,40 +81,55 @@ export default async function ImovelPage({
                                     </h1>
 
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
-                                        <div className="flex gap-2 flex-wrap">
-                                            {[
-                                                imovel.Lancamento === "Sim" && "LANÇAMENTO",
-                                                imovel.Estudadação === "Sim" && "ESTUDA DAÇÃO",
-                                                imovel.Etiqueta === "Sim" && "ETIQUETA",
-                                            ]
-                                                .filter(Boolean)
-                                                .slice(0, 3)
-                                                .map((badge, i) => (
-                                                    <span
-                                                        key={i}
-                                                        className="border border-[#0061bc] bg-[#eaf4fe] text-black px-5 py-[6px] rounded-md text-xs font-medium"
-                                                    >
-                                                        {badge}
-                                                    </span>
-                                                ))}
-                                        </div>
-
-                                        {(parseFloat(imovel.ValorCondominio) > 0 || parseFloat(imovel.ValorIptu) > 0) && (
-                                            <div className="flex items-center gap-2 text-xs text-black whitespace-nowrap">
-                                                <span>
-                                                    Condomínio R$ {parseFloat(imovel.ValorCondominio).toLocaleString("pt-BR")}/mês
-                                                </span>
-
-                                                <Dot
-                                                    size={30}
-                                                    className="text-gray-500 relative top-[1px]"
-                                                />
-
-                                                <span>
-                                                    IPTU R$ {parseFloat(imovel.ValorIptu).toLocaleString("pt-BR")}/mês
-                                                </span>
+                                        {hasBadges && (
+                                            <div className="flex gap-2 flex-wrap">
+                                                {[
+                                                    imovel.Lancamento === "Sim" && "LANÇAMENTO",
+                                                    imovel.Estudadação === "Sim" && "ESTUDA DAÇÃO",
+                                                    imovel.Etiqueta === "Sim" && "ETIQUETA",
+                                                ]
+                                                    .filter(Boolean)
+                                                    .slice(0, 3)
+                                                    .map((badge, i) => (
+                                                        <span
+                                                            key={i}
+                                                            className="border border-[#0061bc] bg-[#eaf4fe] text-black px-5 py-[6px] rounded-md text-xs font-medium"
+                                                        >
+                                                            {badge}
+                                                        </span>
+                                                    ))}
                                             </div>
                                         )}
+
+                                        {(imovel.ValorCondominio && parseFloat(imovel.ValorCondominio) > 0.0) ||
+                                            (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
+                                            <div className="flex items-center gap-2 text-xs text-black whitespace-nowrap">
+
+                                                {imovel.ValorCondominio && parseFloat(imovel.ValorCondominio) > 0 && (
+                                                    <span>
+                                                        Condomínio R${" "}
+                                                        {parseFloat(imovel.ValorCondominio).toLocaleString("pt-BR")}/mês
+                                                    </span>
+                                                )}
+
+                                                {imovel.ValorCondominio && parseFloat(imovel.ValorCondominio) > 0 &&
+                                                    imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0 && (
+                                                        <Dot size={30} className="text-gray-500 relative top-[1px]" />
+                                                    )}
+
+                                                {(imovel.ValorIptu != "") && parseFloat(imovel.ValorIptu) > 0 && (
+                                                    <span>
+                                                        IPTU R${" "}
+                                                        {parseFloat(imovel.ValorIptu).toLocaleString("pt-BR")}/mês
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ) : null}
+
+                                        <div className="flex items-center gap-1 ml-4">
+                                            <FavoriteButton propertyId={`imovel-${imovel.id}`} />
+                                            <span className="font-bold">Salvar</span>
+                                        </div>
                                     </div>
 
                                     <div className="flex flex-wrap justify-center lg:justify-start items-start gap-x-4 gap-y-4 text-sm text-grey mt-10">
