@@ -15,11 +15,7 @@ interface DestaquesSectionProps {
 
 export function DestaquesSection({ destaques }: DestaquesSectionProps) {
   const [activeTab, setActiveTab] = useState<string>("Alugar");
-  const [todosImoveis, setTodosImoveis] = useState<Destaque[]>([
-    ...destaques.lancamentos,
-    ...destaques.venda,
-    ...destaques.aluguel,
-  ]);
+  const [todosImoveis, setTodosImoveis] = useState<Destaque[]>([]);
 
   useEffect(() => {
     switch (activeTab) {
@@ -50,14 +46,23 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-          py-1 border-b-4 inline-block
-          transition-colors duration-300 ease-in-out
-          cursor-pointer
-          ${activeTab === tab ? "border-[#0084d7]" : "border-transparent"}
-          hover:border-[#005a9e"]
-        `}
+                relative py-1 inline-block group
+                transition-colors duration-300 ease-in-out
+                cursor-pointer
+                ${activeTab === tab ? "text-[#0084d7]" : "text-gray-800"}
+                hover:text-[#005a9e]
+              `}
             >
               {tab}
+              {/* Animated bottom border with fade effect */}
+              <span
+                className={`
+                  absolute bottom-0 left-0 h-[2px] w-1/2 w-full bg-[#0084d7]
+                  transition-opacity duration-300 ease-in-out
+                  ${activeTab === tab ? "opacity-100" : "opacity-0"}
+                  group-hover:opacity-100 group-hover:bg-[#0084d7]
+                `}
+              ></span>
             </button>
           ))}
         </div>

@@ -22,7 +22,9 @@ export default function Header() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-4 text-sm text-gray-600">
-                <FavoriteIcon />
+                <Link href={"/favoritos"} prefetch={true}>
+                  <FavoriteIcon />
+                </Link>
                 <div className="flex items-center">
                   <Phone className="h-4 w-4 mr-1" />
                   <span>(19) 3417-8190</span>
