@@ -127,7 +127,7 @@ export default async function ImovelPage({
                                         ) : null}
 
                                         <div className="flex items-center gap-1 ml-4">
-                                            <FavoriteButton propertyId={`imovel-${imovel.id}`} />
+                                            <FavoriteButton property={imovel} />
                                             <span className="font-bold">Salvar</span>
                                         </div>
                                     </div>
