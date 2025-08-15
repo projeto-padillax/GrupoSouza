@@ -2,22 +2,23 @@
 "use client";
 
 import { useFavoriteStore } from "@/lib/stores/useFavoriteStore";
+import { Destaque } from "@/lib/types/destaque";
 import { Heart } from "lucide-react";
 
 type Props = {
-  propertyId: string;
+  property: Destaque;
 };
 
-export default function FavoriteButton({ propertyId }: Props) {
+export default function FavoriteButton({ property }: Props) {
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
 
-  const isFav = isFavorite(propertyId);
+  const isFav = isFavorite(property.id);
 
   const toggleFavorite = () => {
     if (isFav) {
-      removeFavorite(propertyId);
+      removeFavorite(property.id);
     } else {
-      addFavorite(propertyId);
+      addFavorite(property);
     }
   };
 

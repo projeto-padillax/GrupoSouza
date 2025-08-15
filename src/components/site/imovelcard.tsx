@@ -4,52 +4,50 @@ import { CodigoImobiliariaIcon } from "../ui/codigoImobiliariaIcon";
 import { Destaque } from "@/lib/types/destaque";
 
 interface PropertyCardProps {
-  imovel: Destaque
-  activeTab: string
+  imovel: Destaque;
+  activeTab: string;
 }
 
 export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
   const capitalizeCategory = (category: string) => {
     return category
       .toLowerCase()
-      .split('/')
-      .map(part =>
+      .split("/")
+      .map((part) =>
         part
-          .split(' ')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")
       )
-      .join('/')
-  }
+      .join("/");
+  };
 
-  // Verifica se há pelo menos uma informação de detalhe para mostrar
   const areas = [imovel.AreaTotal, imovel.AreaPrivativa, imovel.AreaTerreno];
-  const area = areas.find(a => Number(a) > 0);
+  const area = areas.find((a) => Number(a) > 0);
 
-  const hasDormitorios = Number(imovel.Dormitorios) > 0
-  const hasVagas = Number(imovel.Vagas) > 0
-  const hasAnyDetail = area || hasDormitorios || hasVagas
+  const hasDormitorios = Number(imovel.Dormitorios) > 0;
+  const hasVagas = Number(imovel.Vagas) > 0;
+  const hasAnyDetail = area || hasDormitorios || hasVagas;
 
   const formatPrice = () => {
     const isRent = activeTab === "Alugar";
-    // Value is already a number or null/undefined, no need for string manipulation
     const value = isRent ? imovel.ValorLocacao : imovel.ValorVenda;
 
     if (value === null || value === undefined || value === 0) {
       return "Consulte";
     }
 
-    // Format the numeric value as Brazilian currency
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
   };
 
   return (
-    <div className="w-full overflow-hidden shadow-lg bg-white rounded-md">
+    // Adicionando a classe hover:bg-gray-50 e transition para uma animação suave
+    <div className="w-full overflow-hidden shadow-lg bg-white rounded-md transition-colors duration-200 hover:bg-gray-50 cursor-pointer">
       <div className="relative w-full h-48">
         <Image
           src={imovel.FotoDestaque || "/placeholder.svg"}
@@ -66,7 +64,11 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
 
       <div className="p-5 flex flex-col h-[180px]">
         {/* Categoria e Código */}
-        <div className={`flex justify-between items-center mb-4 ${hasAnyDetail ? 'border-b border-gray-200 pb-3' : ''}`}>
+        <div
+          className={`flex justify-between items-center mb-4 ${
+            hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
+          }`}
+        >
           <p className="text-sm text-gray-600 font-medium">
             {capitalizeCategory(imovel.Categoria)}
           </p>
@@ -81,18 +83,20 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           {hasAnyDetail ? (
             <div className="flex justify-between items-center w-full border-b border-gray-200 pb-3">
               {area && (
-  <p className="text-sm text-gray-600">
-    {area}m²
-  </p>
-)}
+                <p className="text-sm text-gray-600">
+                  {area}m²
+                </p>
+              )}
               {hasDormitorios && (
                 <p className="text-sm text-gray-600">
-                  {imovel.Dormitorios} quarto{Number(imovel.Dormitorios) > 1 ? "s" : ""}
+                  {imovel.Dormitorios} quarto
+                  {Number(imovel.Dormitorios) > 1 ? "s" : ""}
                 </p>
               )}
               {hasVagas && (
                 <p className="text-sm text-gray-600">
-                  {imovel.Vagas} vaga{Number(imovel.Vagas) > 1 ? "s" : ""}
+                  {imovel.Vagas} vaga
+                  {Number(imovel.Vagas) > 1 ? "s" : ""}
                 </p>
               )}
             </div>
@@ -104,12 +108,10 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
 
         {/* Favoritos e Preço - sempre na parte inferior */}
         <div className="flex justify-between items-center mt-auto">
-          <FavoriteButton propertyId={`imovel-${imovel.id}`} />
-          <p className="text-lg text-gray-800">
-            {formatPrice()}
-          </p>
+          <FavoriteButton property={imovel} />
+          <p className="text-lg text-gray-800">{formatPrice()}</p>
         </div>
       </div>
     </div>
-  )
+  );
 }
