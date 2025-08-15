@@ -150,7 +150,7 @@ export default async function ImovelPage({
                                                 <div className="flex flex-col items-center min-w-[90px]">
                                                     <BedDouble size={26} className="opacity-70 sm:size-[30px]" />
                                                     <span className="mt-1 sm:mt-2 text-center leading-5">
-                                                        {imovel.Dormitorios} quartos
+                                                        {imovel.Dormitorios} quarto{imovel.Dormitorios > 1 ? "s" : ""}
                                                         {imovel.Suites > 0 ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? "s" : ""})` : ""}
                                                     </span>
                                                 </div>

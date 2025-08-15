@@ -34,17 +34,22 @@ export default function ImovelContatoBox({
         <div className="block">
             <div className="lg:sticky lg:top-2">
                 <div className="flex justify-center mb-3 lg:mb-4">
-                    <div className="flex items-center gap-3">
-                        <Image
-                            src="/logoGrupoSouza.png"
-                            alt="Corretor"
-                            width={55}
-                            height={55}
-                            className="rounded-full object-cover"
-                        />
+                    <div className="flex items-start gap-4">
+                        <div className="w-[70px] h-[70px] rounded-md overflow-hidden">
+                            <Image
+                                src="/perfil.jpg"
+                                alt="Corretor"
+                                width={70}
+                                height={70}
+                                className="object-cover w-full h-full"
+                            />
+                        </div>
                         <div>
-                            <p className="text-sm font-semibold text-[#111827]">Nome Corretor</p>
-                            <div className="text-xs text-gray-600 space-x-4">
+                            <p className="text-sm font-semibold text-[#111827] tracking-wide uppercase mb-2">
+                                Nome Corretor
+                            </p>
+
+                            <div className="text-[12px] text-black flex items-center gap-5">
                                 <button
                                     type="button"
                                     className="border-b border-gray-300 pb-[1px] hover:text-black hover:border-black transition"
@@ -52,6 +57,9 @@ export default function ImovelContatoBox({
                                 >
                                     Enviar WhatsApp
                                 </button>
+
+                                <span className="inline-block h-4 w-px bg-white" />
+
                                 <button
                                     type="button"
                                     className="border-b border-gray-300 pb-[1px] hover:text-black hover:border-black transition"
@@ -64,44 +72,34 @@ export default function ImovelContatoBox({
                 </div>
 
                 <div
-                    className="
-                                    bg-white rounded-2xl
-                                    shadow-md lg:shadow-[0_0_15px_5px_rgba(0,0,0,0.2)]
-                                    p-4 sm:p-5 lg:p-6
-                                    w-full max-w-none lg:max-w-[450px]
-                                    mx-auto
-                                "
+                    className="bg-white rounded-2xl shadow-md lg:shadow-[0_0_15px_5px_rgba(0,0,0,0.12)] p-4 sm:p-5 lg:p-8 w-full lg:max-w-[460px] mx-auto"
                 >
-                    <div className="flex items-center justify-between gap-3">
-                        <p className="text-xl sm:text-[22px] font-semibold text-gray-800 truncate">
-                          {valor > 0 ?  `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}` : "Consultar"}
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                        <p className="text-[20px] sm:text-[20px] font-semibold text-gray-800 truncate">
+                            {valor > 0 ? `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}` : 'Consultar'}
+                            
                         </p>
 
                         {isVenda && (
                             <button
                                 onClick={() => abrirModal('financiamento')}
-                                className="text-[12px] border-b border-gray-300 pb-[1px] text-gray-600 hover:text-black hover:border-black transition"
+                                className="text-[12px] border-b border-grey-300 pb-[1px] text-black hover:text-black hover:border-black transition"
                             >
                                 Simular financiamento
                             </button>
                         )}
                     </div>
 
-                    <div className="mt-3 sm:mt-4">
+                    <div className="mt-2 sm:mt-2">
                         <MaisInformacoesForm codigoImovel={codigoImovel} />
                     </div>
 
                     <button
                         onClick={() => setAbrirAgendamento(true)}
-                        className="
-                                    mt-4 w-full
-                                    hover:bg-gray-100 text-black font-medium
-                                    text-sm py-3 px-4
-                                    rounded-[6px] flex items-center gap-2 justify-center transition
-                                    "
+                        className="mt-4 w-full hover:bg-gray-100 text-black font-medium text-sm py-3 px-4 rounded-[8px] flex items-center gap-2 justify-center transition"
                     >
                         <CalendarClock size={18} />
-                        <span> Agendar Visita</span>
+                        <span>Agendar visita</span>
                     </button>
                 </div>
             </div>
