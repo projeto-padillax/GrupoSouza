@@ -20,7 +20,7 @@ export default async function ImovelPage({
         codigo: p.codigo,
         tituloSite: p.tituloSite,
     }));
-    const res = await fetch(`http://localhost:3000/api/vista/imoveis/${parsedParams.codigo}`, {
+    const res = await fetch(`/api/vista/imoveis/${parsedParams.codigo}`, {
         cache: "no-store",
     });
 
