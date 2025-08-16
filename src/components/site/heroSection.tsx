@@ -170,7 +170,7 @@ const newSearchParams = new URLSearchParams();
                     setSearchData({ ...searchData, action: value })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full font-medium border-0 shadow-none cursor-pointer">
                     <SelectValue placeholder="Comprar" />
                   </SelectTrigger>
                   <SelectContent>
@@ -186,16 +186,16 @@ const newSearchParams = new URLSearchParams();
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={
+                      className={`font-medium ${
                         searchData.tipos.length === 0
-                          ? "text-gray-500"
-                          : "text-gray-900"
+                          ? "text-black"
+                          : "text-black"}`
                       }
                     >
                       {getTypeDisplayText()}
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
                 </Button>
 
                 {/* Localização - Modal Select */}
@@ -206,16 +206,16 @@ const newSearchParams = new URLSearchParams();
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={
+                      className={`font-medium ${
                         searchData.locations.length === 0
-                          ? "text-gray-500"
-                          : "text-gray-900"
+                          ? "text-black"
+                          : "text-black"}`
                       }
                     >
                       Localização
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
                 </Button>
 
                 <Select
@@ -227,7 +227,7 @@ const newSearchParams = new URLSearchParams();
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
                     <SelectValue placeholder="Valor de" />
                   </SelectTrigger>
                   <SelectContent>
@@ -249,7 +249,7 @@ const newSearchParams = new URLSearchParams();
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
                     <SelectValue placeholder="Valor até" />
                   </SelectTrigger>
                   <SelectContent>
