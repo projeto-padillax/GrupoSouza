@@ -47,6 +47,17 @@ export default function BreadCrumb() {
     // rota especial de busca
     if (pathname === "/busca") {
       const query = new URLSearchParams();
+      
+      // Codigo
+      const codigo = searchParams.get("codigo");
+      if (codigo) {
+        query.set("codigo", codigo);
+        items.push({
+          name: codigo,
+          href: pathname + "?" + query.toString(),
+        });
+        return items;
+      }
 
       // Action
       const action = searchParams.get("action");

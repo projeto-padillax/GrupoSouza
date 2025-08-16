@@ -18,8 +18,9 @@ export type Destaque = {
   Dormitorios: string;
   Suites: string;
   Vagas: string;
-  AreaTotal: string;
-  AreaPrivativa: string;
+  AreaTotal: number;
+  AreaPrivativa: number;
+  AreaConstruida: number;
   Descricao: string;
   DataHoraAtualizacao: Date;
   Lancamento: string;

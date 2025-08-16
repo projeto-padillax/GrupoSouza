@@ -22,7 +22,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
       .join("/");
   };
 
-  const areas = [imovel.AreaTotal, imovel.AreaPrivativa, imovel.AreaTerreno];
+  const areas = [imovel.AreaTotal, imovel.AreaTerreno, imovel.AreaConstruida];
   const area = areas.find((a) => Number(a) > 0);
 
   const hasDormitorios = Number(imovel.Dormitorios) > 0;
@@ -85,15 +85,15 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         <div className="flex-1 flex items-center justify-center mb-4">
           {hasAnyDetail ? (
             <div className="flex justify-between items-center w-full border-b border-gray-200 pb-3">
-              {area && (
-                <p className="text-sm text-gray-600">
-                  {area}m²
-                </p>
-              )}
-              {hasDormitorios && (
+               {hasDormitorios && (
                 <p className="text-sm text-gray-600">
                   {imovel.Dormitorios} quarto
                   {Number(imovel.Dormitorios) > 1 ? "s" : ""}
+                </p>
+              )}
+              {area && (
+                <p className="text-sm text-gray-600">
+                  {area}m²
                 </p>
               )}
               {hasVagas && (
