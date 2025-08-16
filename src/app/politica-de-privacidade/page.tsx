@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
-// import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import BreadCrumb from "@/components/site/filteredBreadcrumb";
 
 export default function PoliticaDePrivacidade() {
   return (
@@ -13,9 +13,9 @@ export default function PoliticaDePrivacidade() {
       <main className="flex-1">
         <section className="relative w-full py-8 pb-0">
           <div className="w-[90%] mx-auto max-w-7xl">
-            {/* <div className="rounded-sm mb-5">
+            <div className="rounded-sm mb-7">
               <BreadCrumb/>
-            </div> */}
+            </div>
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image
                 src="/contato.webp"

@@ -11,7 +11,7 @@ interface VistaPagination {
 }
 
 interface VistaResearchPayload {
-  fields: (string | Record<string, string[] | string>)[] ; // Atualizado para suportar objetos aninhados como { Foto: [...] }
+  fields: (string | Record<string, string[] | string>)[]; // Atualizado para suportar objetos aninhados como { Foto: [...] }
   paginacao?: VistaPagination; // Opcional para detalhes
 }
 
@@ -61,17 +61,17 @@ const PROPERTIES_PER_PAGE = 50;
 const LISTING_RESEARCH_FIELDS: string[] = [
   "Codigo", "ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda",
   "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
-  "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal", "AreaPrivativa",
+  "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal",
   "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento",
   "Finalidade", "Status", "Empreendimento", "Endereco",
   "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
-  "TituloSite", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado"
+  "TituloSite", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado", "AreaConstruida"
 ];
 
 // Campos para os detalhes (detalhes) - inclui a estrutura de fotos
 const DETAIL_RESEARCH_FIELDS: (string | Record<string, string[]>)[] = [
-    ...LISTING_RESEARCH_FIELDS, // Inclui todos os campos da listagem
-    { Foto: ["Foto", "FotoPequena", "Destaque"] } // ✨ ADICIONADO: Para buscar detalhes da foto
+  ...LISTING_RESEARCH_FIELDS, // Inclui todos os campos da listagem
+  { Foto: ["Foto", "FotoPequena", "Destaque"] } // ✨ ADICIONADO: Para buscar detalhes da foto
 ];
 
 const BASE_PARAMS_LISTING: VistaBaseParams = {
@@ -80,7 +80,7 @@ const BASE_PARAMS_LISTING: VistaBaseParams = {
 };
 
 const BASE_PARAMS_DETAILS: VistaBaseParams = {
-    key: process.env.VISTA_KEY!,
+  key: process.env.VISTA_KEY!,
 };
 
 
@@ -115,17 +115,17 @@ const buildListingsUrl = (page: number): string => {
  * @returns {string} A URL completa para a API de detalhes do imóvel.
  */
 const buildDetailsUrl = (propertyCode: string): string => {
-    const researchPayload: VistaResearchPayload = {
-        fields: DETAIL_RESEARCH_FIELDS, // ✨ Usa os campos de detalhe que incluem a estrutura 'Foto'
-    };
+  const researchPayload: VistaResearchPayload = {
+    fields: DETAIL_RESEARCH_FIELDS, // ✨ Usa os campos de detalhe que incluem a estrutura 'Foto'
+  };
 
-    const params = new URLSearchParams({
-        ...BASE_PARAMS_DETAILS,
-        pesquisa: JSON.stringify(researchPayload),
-        imovel: propertyCode // ✨ O código do imóvel é passado como parâmetro 'imovel'
-    });
+  const params = new URLSearchParams({
+    ...BASE_PARAMS_DETAILS,
+    pesquisa: JSON.stringify(researchPayload),
+    imovel: propertyCode // ✨ O código do imóvel é passado como parâmetro 'imovel'
+  });
 
-    return `${VISTA_BASE_URL}/detalhes?${params}`;
+  return `${VISTA_BASE_URL}/detalhes?${params}`;
 };
 
 
@@ -159,22 +159,23 @@ async function fetchData<T>(url: string): Promise<T> {
 }
 
 interface VistaPropertyData {
-    Codigo?: string;
-    Cidade?: string;
-    ValorVenda?: string | null;
-    ValorLocacao?: string | null;
-    Dormitorios?: string;
-    Suites?: string;
-    Vagas?: string;
-    AreaTotal?: string;
-    AreaPrivativa?: string;
-    DataHoraAtualizacao?: string;
-    Lancamento?: string;
-    Mobiliado?: string;
-    Caracteristicas?: Record<string, any>;
-    Foto?: Record<string, VistaPropertyDetailPhoto>;
-    CodigoImobiliaria?: string; // ✨ Add CodigoImobiliaria to the interface to be safe
-    [key: string]: any; // Permite outros campos dinâmicos da API Vista
+  Codigo?: string;
+  Cidade?: string;
+  ValorVenda?: string;
+  ValorLocacao?: string;
+  Dormitorios?: string;
+  Suites?: string;
+  Vagas?: string;
+  AreaTotal?: string;
+  AreaTerreno?: string;
+  AreaConstruida?: string;
+  DataHoraAtualizacao?: string;
+  Lancamento?: string;
+  Mobiliado?: string;
+  Caracteristicas?: Record<string, any>;
+  Foto?: Record<string, VistaPropertyDetailPhoto>;
+  CodigoImobiliaria?: string; // ✨ Add CodigoImobiliaria to the interface to be safe
+  [key: string]: any; // Permite outros campos dinâmicos da API Vista
 }
 
 // ... (restante do código até processAndUpsertProperty)
@@ -189,17 +190,14 @@ const processAndUpsertProperty = async (code: string, propertyData: VistaPropert
     // ✨ Include 'CodigoImobiliaria' in the destructuring
     const { Caracteristicas, Foto, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
 
-    console.log(Foto)
-    console.log(CodigoImobiliaria)
-
     const validDataHoraAtualizacao: string =
       DataHoraAtualizacao && !isNaN(Date.parse(DataHoraAtualizacao))
         ? new Date(DataHoraAtualizacao).toISOString()
         : new Date().toISOString();
 
     const details: VistaPropertyDetails = await fetchData<VistaPropertyDetails>(buildDetailsUrl(code)).catch(err => {
-        console.warn(`Não foi possível buscar detalhes para o imóvel ${code}: ${err.message}`);
-        return {};
+      console.warn(`Não foi possível buscar detalhes para o imóvel ${code}: ${err.message}`);
+      return {};
     });
 
     const photosToCreate: ImovelPhotoCreateInput[] = Object.values(details.Foto || {}).map((photo: VistaPropertyDetailPhoto) => ({
@@ -215,49 +213,71 @@ const processAndUpsertProperty = async (code: string, propertyData: VistaPropert
     }));
 
     const parseToInt = (value: string | null | undefined): number | null => {
-        if (value === null || value === undefined || value.trim() === '') {
-            return null;
-        }
-        const parsed = parseInt(value, 10);
-        return isNaN(parsed) ? null : parsed;
+      if (value === null || value === undefined || value.trim() === '') {
+        return null;
+      }
+      const parsed = parseInt(value, 10);
+      return isNaN(parsed) ? null : parsed;
+    };
+
+    const parseToFloat = (value: string | null | undefined): number | null => {
+      if (!value || value.trim() === '') return 0;
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? null : parsed;
     };
 
     const valorVendaInt = parseToInt(restOfProperty.ValorVenda);
     const valorLocacaoInt = parseToInt(restOfProperty.ValorLocacao);
+    const areaTotalFloat = parseToFloat(restOfProperty.AreaTotal);
+    const areaTerrenoFloat = parseToFloat(restOfProperty.AreaTerreno);
+    const areaConstruidaFloat = parseToFloat(restOfProperty.AreaConstruida);
 
     const photosUpdateOperations: any = {};
     if (photosToCreate.length > 0) {
-        photosUpdateOperations.fotos = {
-            deleteMany: {},
-            create: photosToCreate,
-        };
+      photosUpdateOperations.fotos = {
+        deleteMany: {},
+        create: photosToCreate,
+      };
     }
 
     const caracteristicasUpdateOperations: any = {};
     if (characteristicsToCreate.length > 0) {
-        caracteristicasUpdateOperations.caracteristicas = {
-            deleteMany: {},
-            create: characteristicsToCreate,
-        };
+      caracteristicasUpdateOperations.caracteristicas = {
+        deleteMany: {},
+        create: characteristicsToCreate,
+      };
     }
+
+    const {
+      AreaTotal,
+      AreaTerreno,
+      AreaConstruida,
+      ...rest
+    } = restOfProperty;
 
     await prisma.imovel.upsert({
       where: { id: code },
       update: {
-        ...restOfProperty,
+        ...rest, // agora rest não contém os campos de área
         Cidade: Cidade,
         ValorVenda: valorVendaInt,
         ValorLocacao: valorLocacaoInt,
+        AreaTotal: areaTotalFloat,
+        AreaTerreno: areaTerrenoFloat,
+        AreaConstruida: areaConstruidaFloat,
         DataHoraAtualizacao: validDataHoraAtualizacao,
         ...photosUpdateOperations,
         ...caracteristicasUpdateOperations,
       },
       create: {
         id: code,
-        ...restOfProperty,
+        ...rest, // rest sem campos de área
         Cidade: Cidade,
         ValorVenda: valorVendaInt,
         ValorLocacao: valorLocacaoInt,
+        AreaTotal: areaTotalFloat,
+        AreaTerreno: areaTerrenoFloat,
+        AreaConstruida: areaConstruidaFloat,
         DataHoraAtualizacao: validDataHoraAtualizacao,
         fotos: {
           create: photosToCreate
@@ -507,7 +527,7 @@ export async function GET(request: NextRequest) {
         }, { status: 404 }); // Return 404 if not found
       }
     }
-    
+
     const action = searchParams.get("action") ?? "comprar";
     const tipos = searchParams.get("tipos")?.split(",").filter(Boolean) || [];
     const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || [];
@@ -520,7 +540,7 @@ export async function GET(request: NextRequest) {
     const caracteristicas = searchParams.get("caracteristicas")?.split(",").filter(Boolean) || [];
     const lancamentosFilterValue = parseSimNao(searchParams.get("lancamentos"));
     const mobiliadoFilterValue = parseSimNao(searchParams.get("mobiliado"));
-    const areaMinima = searchParams.get("areaMinima") ? String(searchParams.get("areaMinima")) : null; // AreaTotal ainda é string
+    const areaMinima = searchParams.get("areaMinima") || null; // AreaTotal ainda é string
     const sort = searchParams.get("sort") || "MaisRecente";
 
     // "Paginacao"
@@ -543,13 +563,13 @@ export async function GET(request: NextRequest) {
       whereClause.Categoria = { in: tipos, mode: 'insensitive' };
     }
     if (quartos) whereClause.Dormitorios = { gte: String(quartos) };
-    if (suites) whereClause.Suites =  { gte: String(suites) };
+    if (suites) whereClause.Suites = { gte: String(suites) };
     if (vagas) whereClause.Vagas = { gte: String(vagas) };
     if (lancamentosFilterValue !== null) {
-        whereClause.Lancamento = { equals: lancamentosFilterValue, mode: 'insensitive' };
+      whereClause.Lancamento = { equals: lancamentosFilterValue, mode: 'insensitive' };
     }
     if (mobiliadoFilterValue !== null) {
-        whereClause.Mobiliado = { equals: mobiliadoFilterValue, mode: 'insensitive' };
+      whereClause.Mobiliado = { equals: mobiliadoFilterValue, mode: 'insensitive' };
     }
 
     if (valorMin !== null) {
@@ -566,9 +586,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (areaMinima !== null) {
-      whereClause.AreaTotal = {
-        gte: String(areaMinima)
-      };
+      const areaFilter = Number(areaMinima);
+
+      whereClause.OR = [
+        { AreaTotal: { gte: areaFilter } },
+        { AreaTerreno: { gte: areaFilter } },
+        { AreaConstruida: { gte: areaFilter } },
+      ];
     }
 
     if (caracteristicas.length > 0) {
@@ -618,14 +642,14 @@ export async function GET(request: NextRequest) {
               urlPequena: true,
             },
             orderBy: {
-                id: 'asc'
+              id: 'asc'
             }
           },
           caracteristicas: {
-              select: {
-                  nome: true,
-                  valor: true
-              }
+            select: {
+              nome: true,
+              valor: true
+            }
           }
         },
       }),
@@ -646,7 +670,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error("Erro ao buscar imóveis:", error.message);
     return NextResponse.json({ error: "Erro interno no servidor ao buscar imóveis" }, { status: 500 });
-  } 
+  }
 }
 
 function parseSimNao(value: string | null): "Sim" | "Nao" | null {

@@ -41,7 +41,7 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
             Destaques
           </h2>
 
-          <div className="flex justify-center items-center gap-4 md:pl-[35px] md:border-l border-[#d0d0d0] text-[1.2rem] py-2">
+          <div className="flex justify-center items-center gap-6 md:pl-[35px] md:border-l border-[#d0d0d0] text-[1.2rem] py-2">
             {["Alugar", "Comprar", "Lançamentos"].map((tab) => (
               <button
                 key={tab}
