@@ -55,8 +55,12 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           fill
           className="object-cover rounded-t-xl rounded-b-xl"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent rounded-t-xl rounded-b-xl" />
-        <div className="absolute inset-0 shadow-inner rounded-t-xl rounded-b-xl" />
+        { /* alterar o black/90 para mais ou pra menos para mudar a intensidade da sombra*/}
+        <div className="absolute bottom-0 left-0 w-full 
+                  h-16 sm:h-20 md:h-24 lg:h-28 
+                  bg-gradient-to-t from-black/90 to-transparent 
+                  rounded-b-xl" />
+
         <h3 className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold px-4">
           {imovel.Bairro}
         </h3>
@@ -65,9 +69,8 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
       <div className="p-5 flex flex-col h-[180px]">
         {/* Categoria e Código */}
         <div
-          className={`flex justify-between items-center mb-4 ${
-            hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
-          }`}
+          className={`flex justify-between items-center mb-4 ${hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
+            }`}
         >
           <p className="text-sm text-gray-600 font-medium">
             {capitalizeCategory(imovel.Categoria)}
