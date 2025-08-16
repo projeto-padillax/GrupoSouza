@@ -542,9 +542,9 @@ export async function GET(request: NextRequest) {
     if (tipos.length > 0) {
       whereClause.Categoria = { in: tipos, mode: 'insensitive' };
     }
-    if (quartos) whereClause.Dormitorios = { gte: Number(quartos) };
-    if (suites) whereClause.Suites =  { gte: Number(suites) };
-    if (vagas) whereClause.Vagas = { gte: Number(vagas) };
+    if (quartos) whereClause.Dormitorios = { gte: String(quartos) };
+    if (suites) whereClause.Suites =  { gte: String(suites) };
+    if (vagas) whereClause.Vagas = { gte: String(vagas) };
     if (lancamentosFilterValue !== null) {
         whereClause.Lancamento = { equals: lancamentosFilterValue, mode: 'insensitive' };
     }

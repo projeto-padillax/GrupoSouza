@@ -1,6 +1,6 @@
 "use client";
 import { Filtros } from "@/utils/parseFilter";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -18,7 +18,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { ImovelCard } from "./imovelcard";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Destaque } from "@/lib/types/destaque";
 import {
@@ -52,17 +52,17 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       : ([] as string[]),
     locations: location,
     cidade: filtros.cidade ?? "Piracicaba",
-    bairro: filtros.bairro ?? ([] as string[]),
+    bairro: filtros.bairro ?? (["all"] as string[]),
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
-    quartos: filtros.quartos ?? "0",
-    area: filtros.areaMinima ?? "0",
-    suites: filtros.suites ?? "0",
-    vagas: filtros.vagas ?? "0",
+    quartos: filtros.quartos ?? "",
+    area: filtros.areaMinima ?? "",
+    suites: filtros.suites ?? "",
+    vagas: filtros.vagas ?? "",
     caracteristicas: filtros.caracteristicas ?? ([] as string[]),
     lancamentos: filtros.lancamentos ?? "",
     mobiliado: filtros.mobiliado ?? "",
   });
-  const [codigo, setCodigo] = useState("");
+  const [codigo, setCodigo] = useState(filtros.codigo ?? "");
   const [modals, setModals] = useState({
     location: false,
     type: false,
@@ -80,50 +80,29 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   ];
 
   useEffect(() => {
-    if (searchData.locations && searchData.locations.length > 0) {
-      const [cidade, ...rest] = searchData.locations[0].split(":");
-      console.log(...rest)
-      // Extrai os bairros de todas as localizações
-      const novosBairros = searchData.locations.map((loc) => loc.split(":")[1]);
-
-      // Atualiza o estado da cidade e bairros no searchData
-      setSearchData((prev) => ({
-        ...prev,
-        cidade: cidade,
-        bairro: novosBairros,
-      }));
-    } else {
-      // Caso não haja localizações, resetar a cidade e bairros para os valores padrão.
-      setSearchData((prev) => ({
-        ...prev,
-        cidade: "Piracicaba", // Valor padrão
-        bairro: ["all"],
-      }));
-    }
-  }, [searchData.locations]);
-
-  useEffect(() => {
     const newSearchParams = new URLSearchParams();
-    console.log(filtros.bairro);
+
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
       newSearchParams.set("tipos", searchData.tipos.join(","));
-    if (searchData.cidade !== "")
-      newSearchParams.set("cidade", searchData.cidade);
-    if (searchData.bairro?.length > 0)
-      newSearchParams.set("bairro", searchData.bairro.join(","));
+    if (searchData.locations.length > 0) {
+      newSearchParams.set("cidade", searchData.locations[0].split(":")[0]);
+      newSearchParams.set(
+        "bairro",
+        searchData.locations.map((i) => i.split(":")[1]).join(",")
+      );
+    }
     if (searchData.valueRange.min)
       newSearchParams.set("valorMin", searchData.valueRange.min);
     if (searchData.valueRange.max)
       newSearchParams.set("valorMax", searchData.valueRange.max);
-    if (searchData.quartos !== "0")
+    if (searchData.quartos !== "")
       newSearchParams.set("quartos", searchData.quartos);
-    if (searchData.area !== "0")
+    if (searchData.area !== "")
       newSearchParams.set("areaMinima", searchData.area);
-    if (searchData.suites !== "0")
+    if (searchData.suites !== "")
       newSearchParams.set("suites", searchData.suites);
-    if (searchData.vagas !== "0")
-      newSearchParams.set("vagas", searchData.vagas);
+    if (searchData.vagas !== "") newSearchParams.set("vagas", searchData.vagas);
     if (searchData.caracteristicas?.length > 0)
       newSearchParams.set(
         "caracteristicas",
@@ -138,10 +117,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     if (sortOrder) newSearchParams.set("sort", sortOrder);
     newSearchParams.set("page", String(page));
     // 2. Atualizar a URL do navegador
-    router.replace(`/busca?${decodeURIComponent(newSearchParams.toString())}`, {
+    router.push(`?${decodeURIComponent(newSearchParams.toString())}`, {
       scroll: false,
     });
-
+    console.log(newSearchParams.toString());
     // 3. Buscar os dados da API
     const fetchImoveis = async () => {
       setLoading(true);
@@ -185,28 +164,28 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     // }
 
     // Quartos
-    if (searchData.quartos !== "0") {
+    if (searchData.quartos !== "") {
       titulo += `, com ${searchData.quartos}+ quarto${
         searchData.quartos !== "1" ? "s" : ""
       }`;
     }
 
     // Suítes
-    if (searchData.suites !== "0") {
+    if (searchData.suites !== "") {
       titulo += `, com ${searchData.suites}+ suíte${
         searchData.suites !== "1" ? "s" : ""
       }`;
     }
 
     // Vagas
-    if (searchData.vagas !== "0") {
+    if (searchData.vagas !== "") {
       titulo += `, com ${searchData.vagas}+ vaga${
         searchData.vagas !== "1" ? "s" : ""
       }`;
     }
 
     // Área mínima
-    if (searchData.area !== "0") {
+    if (searchData.area !== "") {
       titulo += `, com área mínima de ${searchData.area}m²`;
     }
 
@@ -261,6 +240,17 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     setTitulo(titulo);
   }
 
+  function toSlug(text: string): string {
+    return text
+      .normalize("NFD") // separa acentos das letras
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // remove caracteres especiais
+      .trim() // remove espaços extras do começo/fim
+      .replace(/\s+/g, "-") // troca espaços por -
+      .replace(/-+/g, "-") // evita múltiplos hífens
+      .toLowerCase();
+  }
+
   const openModal = (modalType: "location" | "type") => {
     setModals({ ...modals, [modalType]: true });
   };
@@ -269,9 +259,26 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     setModals({ ...modals, [modalType]: false });
   };
 
-  const handleSearchByCode = (code: string) => {
+  const handleSearchByCode = async (code: string) => {
     if (!code) return;
-    router.replace(`/busca/codigo-${code}`);
+    router.push(`/busca?codigo=${code}`, {
+      scroll: false,
+    });
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/vista/imoveis?codigo=${code}`);
+      const data = await res.json();
+      setImoveis(data.imoveis);
+      setTotalPages(data.totalPages);
+      setTotalImoveis(data.totalItems);
+      gerarTitulo(data.totalItems);
+      // ... (atualize totalPages e totalImoveis)
+    } catch (error) {
+      console.error("Falha ao buscar imóveis:", error);
+      setImoveis([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -552,7 +559,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   onCheckedChange={(checked) =>
                     setSearchData({
                       ...searchData,
-                      lancamentos: checked ? "s" : "n",
+                      lancamentos: checked ? "s" : "",
                     })
                   }
                 />
@@ -568,7 +575,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   onCheckedChange={(checked) =>
                     setSearchData({
                       ...searchData,
-                      mobiliado: checked ? "sim" : "nao",
+                      mobiliado: checked ? "sim" : "",
                     })
                   }
                 />
@@ -578,8 +585,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         </div>
       </div>
       <main className="flex-1 pb-8">
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full py-4 justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
             <div className="h-6 rounded-sm select-none">
               <BreadCrumb />
             </div>
@@ -625,7 +632,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 <Link
                   key={imovel.id}
                   href={`/imovel/${encodeURIComponent(
-                    imovel.TituloSite || imovel.Descricao
+                    toSlug(imovel.TituloSite) || toSlug(imovel.Descricao)
                   )}/${imovel.Codigo}`}
                 >
                   <ImovelCard imovel={imovel} activeTab={searchData.action} />
@@ -700,8 +707,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         isOpen={modals.location}
         onClose={() => closeModal("location")}
         selectedLocations={searchData.locations}
-        onSelectionChange={(locations) =>
-          setSearchData({ ...searchData, locations })
+        onSelectionChange={(location) =>
+          setSearchData({ ...searchData, locations: location })
         }
       />
 

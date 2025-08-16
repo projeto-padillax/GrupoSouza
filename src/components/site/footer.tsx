@@ -25,7 +25,7 @@ export default async function Footer() {
     <section className="py-12 justify-items-center">
       <footer className="text-black px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         {/* Container principal */}
-        <div className="py-6 rounded-lg border-t border-b">
+        <div className="py-6 border-t border-b">
           {/* Seção superior */}
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-center border-b pb-6">
             {/* Logo */}
