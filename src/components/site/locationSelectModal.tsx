@@ -43,7 +43,6 @@ export function LocationSelectModal({
     []
   );
   const [selectedCidade, setSelectedCidade] = useState<string>("");
-  
 
   useEffect(() => {
     if (isOpen) {
@@ -67,7 +66,7 @@ export function LocationSelectModal({
           })
         );
 
-        const cidadesOrdenadas = cidadesMapeadas.sort(
+        const cidadesOrdenadas : LocationOption[] = cidadesMapeadas.sort(
           (a: LocationOption, b: LocationOption) => {
             if (a.cidade.toLowerCase() === "piracicaba") return -1;
             if (b.cidade.toLowerCase() === "piracicaba") return 1;
@@ -106,6 +105,7 @@ export function LocationSelectModal({
   };
 
   const handleConfirm = () => {
+    console.log(tempSelectedLocations);
     onSelectionChange(tempSelectedLocations);
     onClose();
   };
@@ -162,107 +162,117 @@ export function LocationSelectModal({
 
         {/* Lista de bairros */}
         {/* Lista de bairros */}
-<div className="flex-1 overflow-y-auto space-y-4 border rounded-lg p-3 bg-gray-50">
-  {cidadeAtual && (
-    <>
-      {(() => {
-        const principais = bairrosFiltrados.slice(0, 12);
-        const outros = bairrosFiltrados.slice(12);
+        <div className="flex-1 overflow-y-auto pr-4">
+          {cidadeAtual && (
+            <>
+              {(() => {
+                const principais = bairrosFiltrados.slice(0, 12);
+                const outros = bairrosFiltrados.slice(12);
 
-        const renderSecao = (titulo: string, lista: string[]) => {
-          if (lista.length === 0) return null;
+                const renderSecao = (titulo: string, lista: string[]) => {
+                  if (lista.length === 0) return null;
 
-          const allKeys = lista.map((bairro) => `${selectedCidade}:${bairro}`);
-          const selecionados = allKeys.filter((key) =>
-            tempSelectedLocations.some(
-              (loc) => loc.toLowerCase() === key.toLowerCase()
-            )
-          );
+                  const allKeys = lista.map(
+                    (bairro) => `${selectedCidade}:${bairro}`
+                  );
+                  const selecionados = allKeys.filter((key) =>
+                    tempSelectedLocations.some(
+                      (loc) => loc.toLowerCase() === key.toLowerCase()
+                    )
+                  );
 
-          const allSelected = selecionados.length === allKeys.length;
-          const partiallySelected =
-            selecionados.length > 0 && selecionados.length < allKeys.length;
+                  const allSelected = selecionados.length === allKeys.length;
+                  const partiallySelected =
+                    selecionados.length > 0 &&
+                    selecionados.length < allKeys.length;
 
-          return (
-            <div className="space-y-2">
-              {/* Cabeçalho da seção com checkbox */}
-              <div className="flex items-center gap-2 bg-[#4F7DC3] text-white px-3 py-2 rounded-md">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      // seleciona todos da seção
-                      const novos = allKeys.filter(
-                        (key) =>
-                          !tempSelectedLocations.some(
-                            (loc) => loc.toLowerCase() === key.toLowerCase()
-                          )
-                      );
-                      setTempSelectedLocations([
-                        ...tempSelectedLocations,
-                        ...novos,
-                      ]);
-                    } else {
-                      // remove todos da seção
-                      setTempSelectedLocations(
-                        tempSelectedLocations.filter(
-                          (loc) =>
-                            !lista.some(
-                              (bairro) =>
-                                loc.toLowerCase() ===
-                                `${selectedCidade}:${bairro}`.toLowerCase()
-                            )
-                        )
-                      );
-                    }
-                  }}
-                  // indeterminate={partiallySelected}
-                  className="border-white data-[state=checked]:bg-white data-[state=checked]:text-[#4F7DC3]"
-                />
-                <span className="font-medium">{titulo}</span>
-              </div>
-
-              {/* Lista de bairros */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-2 bg-white p-3 rounded-md">
-                {lista.map((bairro) => {
-                  const locationKey = `${selectedCidade}:${bairro}`;
                   return (
-                    <div key={bairro} className="flex items-center gap-2">
-                      <Checkbox
-                        id={locationKey}
-                        checked={tempSelectedLocations.some(
-                          (loc) =>
-                            loc.toLowerCase() === locationKey.toLowerCase()
-                        )}
-                        onCheckedChange={(checked) =>
-                          handleLocationChange(locationKey, checked as boolean)
-                        }
-                      />
-                      <label
-                        htmlFor={locationKey}
-                        className="text-sm cursor-pointer"
-                      >
-                        {bairro}
-                      </label>
+                    <div className="space-y-2">
+                      {/* Cabeçalho da seção com checkbox */}
+                      <div className="flex items-center gap-2 bg-[#4F7DC3] text-white px-3 py-2 rounded-md">
+                        <Checkbox
+                          checked={allSelected}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              // seleciona todos da seção
+                              const novos = allKeys.filter(
+                                (key) =>
+                                  !tempSelectedLocations.some(
+                                    (loc) =>
+                                      loc.toLowerCase() === key.toLowerCase()
+                                  )
+                              );
+                              setTempSelectedLocations([
+                                ...tempSelectedLocations,
+                                ...novos,
+                              ]);
+                            } else {
+                              // remove todos da seção
+                              setTempSelectedLocations(
+                                tempSelectedLocations.filter(
+                                  (loc) =>
+                                    !lista.some(
+                                      (bairro) =>
+                                        loc.toLowerCase() ===
+                                        `${selectedCidade}:${bairro}`.toLowerCase()
+                                    )
+                                )
+                              );
+                            }
+                          }}
+                          // indeterminate={partiallySelected}
+                          className="border-white data-[state=checked]:bg-white data-[state=checked]:text-[#4F7DC3] data-[state=checked]:border-white"
+                        />
+                        <span className="font-medium">{titulo}</span>
+                      </div>
+
+                      {/* Lista de bairros */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-2 bg-white p-3 rounded-md">
+                        {lista.map((bairro) => {
+                          const locationKey = `${selectedCidade}:${bairro}`;
+                          return (
+                            <div
+                              key={bairro}
+                              className="flex items-center gap-2"
+                            >
+                              <Checkbox
+                                id={locationKey}
+                                checked={tempSelectedLocations.some(
+                                  (loc) =>
+                                    loc.toLowerCase() ===
+                                    locationKey.toLowerCase()
+                                )}
+                                onCheckedChange={(checked) =>
+                                  handleLocationChange(
+                                    locationKey,
+                                    checked as boolean
+                                  )
+                                }
+                              />
+                              <label
+                                htmlFor={locationKey}
+                                className="text-sm cursor-pointer"
+                              >
+                                {bairro}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
-                })}
-              </div>
-            </div>
-          );
-        };
+                };
 
-        return (
-          <>
-            {renderSecao("Principais Bairros", principais)}
-            {outros.length > 0 && renderSecao("Outros Bairros", outros)}
-          </>
-        );
-      })()}
-    </>
-  )}
-</div>
-
+                return (
+                  <>
+                    {renderSecao("Principais Bairros", principais)}
+                    {outros.length > 0 && renderSecao("Outros Bairros", outros)}
+                  </>
+                );
+              })()}
+            </>
+          )}
+        </div>
 
         {/* Footer */}
         <div className="flex justify-center pt-4 border-t">

@@ -50,9 +50,9 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     tipos: filtros.tipo
       ? filtros.tipo.map((t: string) => decodeURIComponent(t))
       : ([] as string[]),
-    locations: location,
-    cidade: filtros.cidade ?? "Piracicaba",
-    bairro: filtros.bairro ?? (["all"] as string[]),
+    locations: location || "",
+    cidade: filtros.cidade ?? "",
+    bairro: filtros.bairro ?? ([""] as string[]),
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
     quartos: filtros.quartos ?? "",
     area: filtros.areaMinima ?? "",
@@ -81,6 +81,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
+    console.log("aqui");
+    console.log(searchData);
 
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
@@ -284,7 +286,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="w-full content-center shadow-lg shadow-gray-200">
-        <div className="bg-white w-[full] max-w-7xl px-4 mx-auto py-4 border-t-2 ">
+        <div className="bg-white w-[full] max-w-7xl px-4 mx-auto py-4 border-t-1 ">
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
             <div className=" flex flex-row justify-between flex-wrap items-center gap-y-4 w-full">
               <Select
@@ -305,7 +307,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 onClick={() => openModal("type")}
-                className="justify-between bg-transparent has-[>svg]:px-0 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <span>
@@ -322,7 +324,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 onClick={() => openModal("location")}
-                className="justify-between bg-transparent has-[>svg]:px-0 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <span>
@@ -387,7 +389,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       onClick={() =>
                         setSearchData({
                           ...searchData,
-                          quartos: num.toString(),
+                          quartos:
+                            searchData.quartos === num.toString()
+                              ? "" 
+                              : num.toString(),
                         })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
@@ -404,7 +409,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               {/* Botão Filtros */}
               <Button
                 variant="outline"
-                className="bg-transparent border font-normal has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-12 lg:w-24 justify-between shadow-none cursor-pointer"
+                className="bg-transparent border font-normal has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
                 onClick={() => setShowFilters(!showFilters)}
               >
                 Filtros
@@ -412,7 +417,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </Button>
 
               {/* Busca por código */}
-              <div className="flex items-center border rounded-lg overflow-hidden w-full sm:w-fit h-9 lg:h-12">
+              <div className="flex items-center border rounded-lg overflow-hidden w-full sm:w-fit h-9 lg:h-10">
                 <Input
                   placeholder="Código"
                   value={codigo}
@@ -430,7 +435,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div
-          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-2 transition-all duration-500 ease-in-out ${
+          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${
             showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
           }`}
         >
@@ -466,7 +471,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                     <button
                       key={num}
                       onClick={() =>
-                        setSearchData({ ...searchData, suites: num.toString() })
+                        setSearchData({ ...searchData, suites: searchData.suites == num.toString() ? "" : num.toString() })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.suites === num.toString()
@@ -487,7 +492,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                     <button
                       key={num}
                       onClick={() =>
-                        setSearchData({ ...searchData, vagas: num.toString() })
+                        setSearchData({ ...searchData, vagas: searchData.vagas == num.toString() ? "" : num.toString() })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.vagas === num.toString()

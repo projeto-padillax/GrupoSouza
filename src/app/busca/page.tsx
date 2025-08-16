@@ -30,14 +30,14 @@ interface Props {
 export default async function Imoveis({ searchParams }: Props) {
   // Use await para garantir que os searchParams estejam prontos
   const awaitedSearchParams = await searchParams;
-  console.log(awaitedSearchParams)
+  
   const parseFiltroCidade = parseFiltroURL(awaitedSearchParams.cidade || "Piracicaba:all");
   const [cidade, bairros] = parseFiltroCidade.split(":");
   const initialFiltros: Filtros = {
     action: awaitedSearchParams.action ?? "comprar",
     tipo: awaitedSearchParams.tipos ? awaitedSearchParams.tipos.split("_") : [],
-    cidade: cidade || "Piracicaba",
-    bairro: bairros?.split("_") || ["all"],
+    cidade: awaitedSearchParams.cidade || "",
+    bairro: awaitedSearchParams.bairro?.split("_") || [],
     valorMin: awaitedSearchParams.valorMin || "",
     valorMax: awaitedSearchParams.valorMax || "",
     quartos: awaitedSearchParams.quartos || "",

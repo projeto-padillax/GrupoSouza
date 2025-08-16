@@ -101,9 +101,6 @@ const newSearchParams = new URLSearchParams();
         "bairro",
         searchData.locations.map((i) => i.split(":")[1]).join(",")
       );
-    } else {
-      newSearchParams.set("cidade", "Piracicaba");
-      newSearchParams.set("bairro", "all");
     }
     if (searchData.valueRange.min)
       newSearchParams.set("valorMin", searchData.valueRange.min);
