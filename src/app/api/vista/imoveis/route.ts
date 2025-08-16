@@ -188,6 +188,7 @@ interface VistaPropertyData {
 const processAndUpsertProperty = async (code: string, propertyData: VistaPropertyData): Promise<void> => {
   try {
     // ✨ Include 'CodigoImobiliaria' in the destructuring
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { Caracteristicas, Foto, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
 
     const validDataHoraAtualizacao: string =
@@ -248,12 +249,9 @@ const processAndUpsertProperty = async (code: string, propertyData: VistaPropert
       };
     }
 
-    const {
-      AreaTotal,
-      AreaTerreno,
-      AreaConstruida,
-      ...rest
-    } = restOfProperty;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { AreaTotal, AreaTerreno, AreaConstruida, ...rest } = restOfProperty;
+
 
     await prisma.imovel.upsert({
       where: { id: code },

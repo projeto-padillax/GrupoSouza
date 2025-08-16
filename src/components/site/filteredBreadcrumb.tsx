@@ -15,25 +15,26 @@ export default function BreadCrumb() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const capitalize = (s: string) =>
-    s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
-
-  const translateSegment = (segment: string) => {
-    switch (segment) {
-      case "favoritos":
-        return "Favoritos";
-      case "anuncie-seu-imovel":
-        return "Anuncie seu Imóvel";
-      case "politica-de-privacidade":
-        return "Política de Privacidade"
-      case "imovel":
-        return "Imóvel"
-      default:
-        return capitalize(segment.replace("-", " "));
-    }
-  };
-
   const breadcrumbItems = useMemo(() => {
+    // Moved capitalize and translateSegment inside useMemo
+    const capitalize = (s: string) =>
+      s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+    const translateSegment = (segment: string) => {
+      switch (segment) {
+        case "favoritos":
+          return "Favoritos";
+        case "anuncie-seu-imovel":
+          return "Anuncie seu Imóvel";
+        case "politica-de-privacidade":
+          return "Política de Privacidade"
+        case "imovel":
+          return "Imóvel"
+        default:
+          return capitalize(segment.replace("-", " "));
+      }
+    };
+
     const segments = pathname.split("/").filter(Boolean);
     const items: { name: string; href: string }[] = [];
 
@@ -134,7 +135,7 @@ export default function BreadCrumb() {
     }
 
     return items;
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams]); // No need to list capitalize or translateSegment here
 
   return (
     <Breadcrumb>

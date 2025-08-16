@@ -23,7 +23,7 @@ export default async function Header() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-4 text-sm text-gray-600">
-                <Link href={"/favoritos"} prefetch={true}>
+                <Link href={"/favoritos"}>
                   <FavoriteIcon />
                 </Link>
                 <div className="flex items-center">

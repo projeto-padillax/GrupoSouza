@@ -7,7 +7,7 @@ export type Destaque = {
   Categoria: string;
   InformacaoVenda: string;
   ObsVenda: string;
-  AreaTerreno: string;
+  AreaTerreno: number;
   Bairro: string;
   GMapsLatitude: string;
   GMapsLongitude: string;
@@ -19,7 +19,6 @@ export type Destaque = {
   Suites: string;
   Vagas: string;
   AreaTotal: number;
-  AreaPrivativa: number;
   AreaConstruida: number;
   Descricao: string;
   DataHoraAtualizacao: Date;

@@ -1,6 +1,6 @@
 "use client";
 import { Filtros } from "@/utils/parseFilter";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -18,7 +18,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { ImovelCard } from "./imovelcard";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Destaque } from "@/lib/types/destaque";
 import {
