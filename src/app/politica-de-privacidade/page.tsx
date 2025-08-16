@@ -2,6 +2,7 @@ import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import { Suspense } from "react";
 
 export default function PoliticaDePrivacidade() {
   return (
@@ -14,7 +15,9 @@ export default function PoliticaDePrivacidade() {
         <section className="relative w-full py-8 pb-0">
           <div className="w-[90%] mx-auto max-w-7xl">
             <div className="rounded-sm mb-7">
-              <BreadCrumb/>
+              <Suspense>
+                <BreadCrumb />
+              </Suspense>
             </div>
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image

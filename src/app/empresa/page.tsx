@@ -3,6 +3,7 @@ import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import { getSobreNos } from "@/lib/actions/config";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import { Suspense } from "react";
 
 export default async function Empresa() {
   const sobre = await getSobreNos();
@@ -17,7 +18,9 @@ export default async function Empresa() {
         <section className="relative w-full py-8">
           <div className="w-[90%] mx-auto max-w-7xl">
             <div className="rounded-sm mb-7">
-              <BreadCrumb />
+              <Suspense>
+                <BreadCrumb />
+              </Suspense>
             </div>
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image

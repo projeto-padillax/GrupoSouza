@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, Suspense, useMemo } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -138,7 +138,8 @@ export default function BreadCrumb() {
   }, [pathname, searchParams]); // No need to list capitalize or translateSegment here
 
   return (
-    <Breadcrumb>
+    <Suspense fallback={<p>Loading...</p>}>
+<Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Início</BreadcrumbLink>
@@ -156,5 +157,7 @@ export default function BreadCrumb() {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
+</Suspense>
+    
   );
 }

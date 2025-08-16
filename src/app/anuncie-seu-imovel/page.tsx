@@ -3,6 +3,7 @@ import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import AnuncieForm from "@/components/site/anuncieForm";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import { Suspense } from "react";
 
 export default function AnuncieImovel() {
   return (
@@ -15,7 +16,10 @@ export default function AnuncieImovel() {
         <section className="relative w-full py-8">
           <div className="w-[90%] mx-auto max-w-7xl">
             <div className="rounded-sm mb-8">
-              <BreadCrumb/>
+              <Suspense>
+                <BreadCrumb />
+
+              </Suspense>
             </div>
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image
