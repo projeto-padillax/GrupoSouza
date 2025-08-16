@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, Suspense, useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -48,7 +48,7 @@ export default function BreadCrumb() {
     // rota especial de busca
     if (pathname === "/busca") {
       const query = new URLSearchParams();
-      
+
       // Codigo
       const codigo = searchParams.get("codigo");
       if (codigo) {
@@ -138,8 +138,7 @@ export default function BreadCrumb() {
   }, [pathname, searchParams]); // No need to list capitalize or translateSegment here
 
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-<Breadcrumb>
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Início</BreadcrumbLink>
@@ -153,11 +152,10 @@ export default function BreadCrumb() {
               </BreadcrumbLink>
             </BreadcrumbItem>
             {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
-        </Fragment>
+          </Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-</Suspense>
-    
+
   );
 }
