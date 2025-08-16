@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useMemo } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,129 +8,139 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Home } from "lucide-react";
-
-const decodeLabel = (s: string) =>
-  decodeURIComponent(s).replace(/_/g, " ").replace(/-/g, " ").replace(/\s+/g, " ").trim();
-
-const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-
-const formatListWithCount = (items: string[], maxItems = 3) => {
-  if (items.length <= maxItems) return items.join(", ");
-  const remaining = items.length - maxItems;
-  return `${items.slice(0, maxItems).join(", ")} (+${remaining})`;
-};
+import { usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function BreadCrumb() {
-  const [path, setPath] = useState<string>("");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPath(window.location.pathname);
+  const capitalize = (s: string) =>
+    s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+  const translateSegment = (segment: string) => {
+    switch (segment) {
+      case "favoritos":
+        return "Favoritos";
+      case "anuncie-seu-imovel":
+        return "Anuncie seu Imóvel";
+      case "politica-de-privacidade":
+        return "Política de Privacidade"
+      case "imovel":
+        return "Imóvel"
+      default:
+        return capitalize(segment.replace("-", " "));
     }
-  }, []);
+  };
 
-  const segments = path.split("/").filter(Boolean);
+  const breadcrumbItems = useMemo(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    const items: { name: string; href: string }[] = [];
 
-  type Crumb = { label: string; href?: string };
-  const crumbs: Crumb[] = [];
+    // rota normal (mas ignoramos "busca")
+    segments.forEach((segment, index) => {
+      if (segment === "busca") return; // não inclui Busca
+      const href = "/" + segments.slice(0, index + 1).join("/");
+      items.push({ name: translateSegment(segment), href });
+    });
 
-  // Página "Anuncie seu Imóvel"
-  if (segments[0] === "anuncie-seu-imovel") {
-    crumbs.push({ label: "Início", href: "/" });
-    crumbs.push({ label: "Anunciar Imóvel" });
-  } else {
-    // Caso seja página de imóvel individual
-    const isSinglePropertyPage = segments[0] === "imovel" && segments.length >= 3;
-    if (isSinglePropertyPage) {
-      crumbs.push({ label: "Início", href: "/" });
-      crumbs.push({ label: "Imóveis", href: "/imoveis" });
-      crumbs.push({ label: decodeLabel(segments[1]) }); // nome do imóvel
-    } else {
-      // Página de listagem
-      const actionSeg = segments.find((s) => s === "comprar" || s === "alugar");
-      const action = actionSeg ? capitalize(decodeLabel(actionSeg)) : "Comprar";
+    // rota especial de busca
+    if (pathname === "/busca") {
+      const query = new URLSearchParams();
 
-      const tiposSeg = segments.find((s) => s.startsWith("tipo-"));
-      const tipos: string[] = tiposSeg
-        ? tiposSeg
-            .slice("tipo-".length)
-            .split("_")
-            .filter(Boolean)
-            .map((t) => capitalize(decodeLabel(t)))
-        : [];
-
-      const cidadeSegIndex = segments.findIndex((s) => s.startsWith("cidade-"));
-      let cidadeNome = "";
-      let bairros: string[] = [];
-      let cidadeHref = "/";
-      if (cidadeSegIndex >= 0) {
-        const raw = segments[cidadeSegIndex].slice("cidade-".length);
-        const pares = raw.split("_").filter(Boolean);
-        if (pares[0]) cidadeNome = capitalize(decodeLabel(pares[0].split(":")[0]));
-        bairros = pares.map((p) => capitalize(decodeLabel(p.split(":")[1] || ""))).filter(Boolean);
-
-        const cidadeLimpa = pares[0].split(":")[0];
-        const pathAteCidade = [...segments.slice(0, cidadeSegIndex), `cidade-${cidadeLimpa}`];
-        cidadeHref = "/" + pathAteCidade.join("/");
-      }
-
-      const lancamentos = segments.some((s) => /^lancamentos(-s|-true)?$/i.test(s));
-      const mobiliado = segments.some((s) => /^mobiliado(-sim|-true)?$/i.test(s));
-
-      // Início
-      crumbs.push({ label: "Início", href: "/" });
-
-      // Ação
-      if (actionSeg) {
-        crumbs.push({
-          label: action,
-          href: `/${segments.slice(0, segments.indexOf(actionSeg) + 1).join("/")}`,
-        });
-      }
-
-      // Tipos
-      if (tipos.length > 0) {
-        crumbs.push({
-          label: formatListWithCount(tipos),
-          href: `/${segments.slice(0, segments.indexOf(tiposSeg!) + 1).join("/")}`,
+      // Action
+      const action = searchParams.get("action");
+      if (action) {
+        query.set("action", action);
+        items.push({
+          name: action === "comprar" ? "Comprar" : "Alugar",
+          href: pathname + "?" + query.toString(),
         });
       }
 
       // Cidade
-      if (cidadeNome) {
-        crumbs.push({ label: cidadeNome, href: cidadeHref });
+      const cidade = searchParams.get("cidade");
+      if (cidade) {
+        query.set("cidade", cidade);
+        items.push({
+          name: capitalize(cidade),
+          href: pathname + "?" + query.toString(),
+        });
       }
 
       // Bairros
-      if (bairros.length > 0) {
-        crumbs.push({ label: formatListWithCount(bairros) });
+      const bairrosRaw = searchParams.get("bairro");
+      if (bairrosRaw) {
+        const bairros = bairrosRaw.split(",");
+        if (bairros.length > 0) {
+          let label: string;
+
+          if (bairros[0].toLowerCase() === "all") {
+            label = "Todos";
+          } else {
+            const first = capitalize(bairros[0].replace(/\+/g, " "));
+            label =
+              bairros.length > 1 ? `${first} (+${bairros.length - 1})` : first;
+          }
+
+          query.set("bairro", bairrosRaw);
+          items.push({
+            name: label,
+            href: pathname + "?" + query.toString(),
+          });
+        }
       }
 
-      // Lançamentos / Mobiliado
-      if (lancamentos) crumbs.push({ label: "Lançamentos" });
-      if (mobiliado) crumbs.push({ label: "Mobiliados" });
+      // Tipo
+      const tipo = searchParams.get("tipo");
+      if (tipo) {
+        query.set("tipo", tipo);
+        items.push({
+          name: capitalize(tipo),
+          href: pathname + "?" + query.toString(),
+        });
+      }
+
+      // Lançamentos
+      const lancamentos = searchParams.get("lancamentos");
+      if (lancamentos === "s" || lancamentos === "true") {
+        query.set("lancamentos", lancamentos);
+        items.push({
+          name: "Lançamentos",
+          href: pathname + "?" + query.toString(),
+        });
+      }
+
+      // Mobiliado
+      const mobiliado = searchParams.get("mobiliado");
+      if (mobiliado === "sim" || mobiliado === "true") {
+        query.set("mobiliado", mobiliado);
+        items.push({
+          name: "Mobiliados",
+          href: pathname + "?" + query.toString(),
+        });
+      }
     }
-  }
+
+    return items;
+  }, [pathname, searchParams]);
 
   return (
-    <Breadcrumb className="whitespace-nowrap">
+    <Breadcrumb>
       <BreadcrumbList>
-        {crumbs.map((c, i) => (
-          <Fragment key={`${c.label}-${i}`}>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Início</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        {breadcrumbItems.map(({ name, href }, index) => (
+          <Fragment key={index}>
             <BreadcrumbItem>
-              {c.href ? (
-                <BreadcrumbLink asChild>
-                  <a href={c.href}>{i === 0 ? <Home className="h-4 w-4" /> : c.label}</a>
-                </BreadcrumbLink>
-              ) : (
-                <BreadcrumbLink asChild>
-                  <a href="#">{c.label}</a>
-                </BreadcrumbLink>
-              )}
+              <BreadcrumbLink asChild>
+                <Link href={href}>{name}</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
-            {i < crumbs.length - 1 && <BreadcrumbSeparator />}
-          </Fragment>
+            {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
+        </Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>

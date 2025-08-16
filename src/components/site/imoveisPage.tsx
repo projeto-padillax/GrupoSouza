@@ -585,16 +585,16 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         </div>
       </div>
       <main className="flex-1 pb-8">
-        <div className="w-full py-4 justify-items-center">
-          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
-            <div className="h-6 rounded-sm select-none">
+        <div className="w-full py-4">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="h-6 rounded-sm select-none mt-3">
               <BreadCrumb />
             </div>
           </div>
         </div>
         <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
-            <div className="h-auto min-h-6  rounded-sm">
+          <div className="max-w-7xl mx-auto px-4 mt-2 mb-3 flex items-center justify-between">
+            <div className="h-auto min-h-6 rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
             <div>
