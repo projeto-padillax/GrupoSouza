@@ -215,7 +215,6 @@ model Imovel {
   Categoria                 String?
   InformacaoVenda           String?   @map("informacaoVenda")
   ObsVenda                  String?   @map("obsVenda")
-  AreaTerreno               String?   @map("areaTerreno")
   Bairro                    String?
   GMapsLatitude             String?   @map("gMapsLatitude")
   GMapsLongitude            String?   @map("gMapsLongitude")
@@ -226,8 +225,9 @@ model Imovel {
   Dormitorios               String?
   Suites                    String?
   Vagas                     String?
-  AreaTotal                 String?   @map("areaTotal")
-  AreaPrivativa             String?   @map("areaPrivativa")
+  AreaTotal                 Float?   @map("areaTotal")
+  AreaTerreno               Float?   @map("areaTerreno")
+  AreaConstruida            Float?   @map("areaConstruida")
   Descricao                 String?
   DataHoraAtualizacao       DateTime? @map("dataHoraAtualizacao")
   Lancamento                String?

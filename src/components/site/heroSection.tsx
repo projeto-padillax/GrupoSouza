@@ -90,34 +90,30 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const handleSearch = () => {
-    const parts = ["busca"];
+const newSearchParams = new URLSearchParams();
 
-    if (searchData.action) {
-      parts.push(searchData.action);
+    if (searchData.action) newSearchParams.set("action", searchData.action);
+    if (searchData.tipos?.length > 0)
+      newSearchParams.set("tipos", searchData.tipos.join(","));
+    if (searchData.locations.length > 0) {
+      newSearchParams.set("cidade", searchData.locations[0].split(":")[0]);
+      newSearchParams.set(
+        "bairro",
+        searchData.locations.map((i) => i.split(":")[1]).join(",")
+      );
     }
+    if (searchData.valueRange.min)
+      newSearchParams.set("valorMin", searchData.valueRange.min);
+    if (searchData.valueRange.max)
+      newSearchParams.set("valorMax", searchData.valueRange.max);
 
-    if (searchData.tipos?.length) {
-      parts.push(`tipos-${searchData.tipos.join("_")}`);
-    }
-
-    if (searchData.locations?.length) {
-      parts.push(`cidade-${searchData.locations.join("_")}`);
-    }
-
-    if (searchData.valueRange?.min) {
-      parts.push(`valorMin-${searchData.valueRange.min}`);
-    }
-
-    if (searchData.valueRange?.max) {
-      parts.push(`valorMax-${searchData.valueRange.max}`);
-    }
-    parts.push(`1`);
-
-    router.push(`/busca?${parts.filter(Boolean).join("/")}`);
+    router.push(`/busca?${decodeURIComponent(newSearchParams.toString())}`, {
+      scroll: false,
+    });
   };
 
   const handleSearchByCode = () => {
-    router.push(`/busca/codigo-${codigo.trim()}`);
+    router.push(`/busca?codigo=${codigo}`)
   };
 
   return (
@@ -171,7 +167,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     setSearchData({ ...searchData, action: value })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full font-medium border-0 shadow-none cursor-pointer">
                     <SelectValue placeholder="Comprar" />
                   </SelectTrigger>
                   <SelectContent>
@@ -187,16 +183,16 @@ export function HeroSection(banner: HeroSectionProps) {
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={
+                      className={`font-medium ${
                         searchData.tipos.length === 0
-                          ? "text-gray-500"
-                          : "text-gray-900"
+                          ? "text-black"
+                          : "text-black"}`
                       }
                     >
                       {getTypeDisplayText()}
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
                 </Button>
 
                 {/* Localização - Modal Select */}
@@ -207,16 +203,16 @@ export function HeroSection(banner: HeroSectionProps) {
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={
+                      className={`font-medium ${
                         searchData.locations.length === 0
-                          ? "text-gray-500"
-                          : "text-gray-900"
+                          ? "text-black"
+                          : "text-black"}`
                       }
                     >
                       Localização
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
                 </Button>
 
                 <Select
@@ -228,7 +224,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
                     <SelectValue placeholder="Valor de" />
                   </SelectTrigger>
                   <SelectContent>
@@ -250,7 +246,7 @@ export function HeroSection(banner: HeroSectionProps) {
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer">
+                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
                     <SelectValue placeholder="Valor até" />
                   </SelectTrigger>
                   <SelectContent>
