@@ -5,7 +5,7 @@ import { HeroSection } from "@/components/site/heroSection";
 import { MostSearched } from "@/components/site/mostSearched";
 import SlideSection from "@/components/site/slideSection";
 import { getRandomBannerImage } from "@/lib/actions/banner";
-import { getDestaques } from "@/lib/firebase/imoveis/destaques";
+import { getDestaques } from "@/lib/actions/destaques";
 import { getAllSlides } from "@/lib/actions/slide";
 import { DestaquesSection } from "@/components/site/destaquesSection";
 import ClientLayout from "@/components/client-layout";

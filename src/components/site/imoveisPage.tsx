@@ -35,7 +35,7 @@ import { ImovelCardSkeleton } from "./cardSkeleton";
 export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
-  const [page, setPage] = useState(filtros.page ?? 1);
+  const [page, setPage] = useState(filtros.page ? Number(filtros.page) : 1);
   const [imoveis, setImoveis] = useState<Destaque[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalImoveis, setTotalImoveis] = useState(0);
@@ -50,19 +50,19 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     tipos: filtros.tipo
       ? filtros.tipo.map((t: string) => decodeURIComponent(t))
       : ([] as string[]),
-    locations: location,
-    cidade: filtros.cidade ?? "Piracicaba",
-    bairro: filtros.bairro ?? ([] as string[]),
+    locations: location || "",
+    cidade: filtros.cidade ?? "",
+    bairro: filtros.bairro ?? ([""] as string[]),
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
-    quartos: filtros.quartos ?? "0",
-    area: filtros.areaMinima ?? "0",
-    suites: filtros.suites ?? "0",
-    vagas: filtros.vagas ?? "0",
+    quartos: filtros.quartos ?? "",
+    area: filtros.areaMinima ?? "",
+    suites: filtros.suites ?? "",
+    vagas: filtros.vagas ?? "",
     caracteristicas: filtros.caracteristicas ?? ([] as string[]),
     lancamentos: filtros.lancamentos ?? "",
     mobiliado: filtros.mobiliado ?? "",
   });
-  const [codigo, setCodigo] = useState("");
+  const [codigo, setCodigo] = useState(filtros.codigo ?? "");
   const [modals, setModals] = useState({
     location: false,
     type: false,
@@ -80,50 +80,31 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   ];
 
   useEffect(() => {
-    if (searchData.locations && searchData.locations.length > 0) {
-      const [cidade, ...rest] = searchData.locations[0].split(":");
-      console.log(...rest)
-      // Extrai os bairros de todas as localizações
-      const novosBairros = searchData.locations.map((loc) => loc.split(":")[1]);
-
-      // Atualiza o estado da cidade e bairros no searchData
-      setSearchData((prev) => ({
-        ...prev,
-        cidade: cidade,
-        bairro: novosBairros,
-      }));
-    } else {
-      // Caso não haja localizações, resetar a cidade e bairros para os valores padrão.
-      setSearchData((prev) => ({
-        ...prev,
-        cidade: "Piracicaba", // Valor padrão
-        bairro: ["all"],
-      }));
-    }
-  }, [searchData.locations]);
-
-  useEffect(() => {
     const newSearchParams = new URLSearchParams();
-    console.log(filtros.bairro);
+    console.log("aqui");
+    console.log(searchData);
+
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
       newSearchParams.set("tipos", searchData.tipos.join(","));
-    if (searchData.cidade !== "")
-      newSearchParams.set("cidade", searchData.cidade);
-    if (searchData.bairro?.length > 0)
-      newSearchParams.set("bairro", searchData.bairro.join(","));
+    if (searchData.locations.length > 0) {
+      newSearchParams.set("cidade", searchData.locations[0].split(":")[0]);
+      newSearchParams.set(
+        "bairro",
+        searchData.locations.map((i) => i.split(":")[1]).join(",")
+      );
+    }
     if (searchData.valueRange.min)
       newSearchParams.set("valorMin", searchData.valueRange.min);
     if (searchData.valueRange.max)
       newSearchParams.set("valorMax", searchData.valueRange.max);
-    if (searchData.quartos !== "0")
+    if (searchData.quartos !== "")
       newSearchParams.set("quartos", searchData.quartos);
-    if (searchData.area !== "0")
+    if (searchData.area !== "")
       newSearchParams.set("areaMinima", searchData.area);
-    if (searchData.suites !== "0")
+    if (searchData.suites !== "")
       newSearchParams.set("suites", searchData.suites);
-    if (searchData.vagas !== "0")
-      newSearchParams.set("vagas", searchData.vagas);
+    if (searchData.vagas !== "") newSearchParams.set("vagas", searchData.vagas);
     if (searchData.caracteristicas?.length > 0)
       newSearchParams.set(
         "caracteristicas",
@@ -138,10 +119,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     if (sortOrder) newSearchParams.set("sort", sortOrder);
     newSearchParams.set("page", String(page));
     // 2. Atualizar a URL do navegador
-    router.replace(`/busca?${decodeURIComponent(newSearchParams.toString())}`, {
+    router.push(`?${decodeURIComponent(newSearchParams.toString())}`, {
       scroll: false,
     });
-
+    console.log(newSearchParams.toString());
     // 3. Buscar os dados da API
     const fetchImoveis = async () => {
       setLoading(true);
@@ -185,28 +166,28 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     // }
 
     // Quartos
-    if (searchData.quartos !== "0") {
+    if (searchData.quartos !== "") {
       titulo += `, com ${searchData.quartos}+ quarto${
         searchData.quartos !== "1" ? "s" : ""
       }`;
     }
 
     // Suítes
-    if (searchData.suites !== "0") {
+    if (searchData.suites !== "") {
       titulo += `, com ${searchData.suites}+ suíte${
         searchData.suites !== "1" ? "s" : ""
       }`;
     }
 
     // Vagas
-    if (searchData.vagas !== "0") {
+    if (searchData.vagas !== "") {
       titulo += `, com ${searchData.vagas}+ vaga${
         searchData.vagas !== "1" ? "s" : ""
       }`;
     }
 
     // Área mínima
-    if (searchData.area !== "0") {
+    if (searchData.area !== "") {
       titulo += `, com área mínima de ${searchData.area}m²`;
     }
 
@@ -261,6 +242,17 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     setTitulo(titulo);
   }
 
+  function toSlug(text: string): string {
+    return text
+      .normalize("NFD") // separa acentos das letras
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // remove caracteres especiais
+      .trim() // remove espaços extras do começo/fim
+      .replace(/\s+/g, "-") // troca espaços por -
+      .replace(/-+/g, "-") // evita múltiplos hífens
+      .toLowerCase();
+  }
+
   const openModal = (modalType: "location" | "type") => {
     setModals({ ...modals, [modalType]: true });
   };
@@ -269,15 +261,32 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     setModals({ ...modals, [modalType]: false });
   };
 
-  const handleSearchByCode = (code: string) => {
+  const handleSearchByCode = async (code: string) => {
     if (!code) return;
-    router.replace(`/busca/codigo-${code}`);
+    router.push(`/busca?codigo=${code}`, {
+      scroll: false,
+    });
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/vista/imoveis?codigo=${code}`);
+      const data = await res.json();
+      setImoveis(data.imoveis);
+      setTotalPages(data.totalPages);
+      setTotalImoveis(data.totalItems);
+      gerarTitulo(data.totalItems);
+      // ... (atualize totalPages e totalImoveis)
+    } catch (error) {
+      console.error("Falha ao buscar imóveis:", error);
+      setImoveis([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="w-full content-center shadow-lg shadow-gray-200">
-        <div className="bg-white w-[full] max-w-7xl px-4 mx-auto py-4 border-t-2 ">
+        <div className="bg-white w-[full] max-w-7xl px-4 mx-auto py-4 border-t-1 ">
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
             <div className=" flex flex-row justify-between flex-wrap items-center gap-y-4 w-full">
               <Select
@@ -298,7 +307,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 onClick={() => openModal("type")}
-                className="justify-between bg-transparent has-[>svg]:px-0 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <span>
@@ -315,7 +324,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 onClick={() => openModal("location")}
-                className="justify-between bg-transparent has-[>svg]:px-0 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <span>
@@ -380,7 +389,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       onClick={() =>
                         setSearchData({
                           ...searchData,
-                          quartos: num.toString(),
+                          quartos:
+                            searchData.quartos === num.toString()
+                              ? "" 
+                              : num.toString(),
                         })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
@@ -397,7 +409,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               {/* Botão Filtros */}
               <Button
                 variant="outline"
-                className="bg-transparent border font-normal has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-12 lg:w-24 justify-between shadow-none cursor-pointer"
+                className="bg-transparent border font-normal has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
                 onClick={() => setShowFilters(!showFilters)}
               >
                 Filtros
@@ -405,7 +417,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </Button>
 
               {/* Busca por código */}
-              <div className="flex items-center border rounded-lg overflow-hidden w-full sm:w-fit h-9 lg:h-12">
+              <div className="flex items-center border rounded-lg overflow-hidden w-full sm:w-fit h-9 lg:h-10">
                 <Input
                   placeholder="Código"
                   value={codigo}
@@ -423,7 +435,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div
-          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-2 transition-all duration-500 ease-in-out ${
+          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${
             showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
           }`}
         >
@@ -459,7 +471,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                     <button
                       key={num}
                       onClick={() =>
-                        setSearchData({ ...searchData, suites: num.toString() })
+                        setSearchData({ ...searchData, suites: searchData.suites == num.toString() ? "" : num.toString() })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.suites === num.toString()
@@ -480,7 +492,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                     <button
                       key={num}
                       onClick={() =>
-                        setSearchData({ ...searchData, vagas: num.toString() })
+                        setSearchData({ ...searchData, vagas: searchData.vagas == num.toString() ? "" : num.toString() })
                       }
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.vagas === num.toString()
@@ -552,7 +564,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   onCheckedChange={(checked) =>
                     setSearchData({
                       ...searchData,
-                      lancamentos: checked ? "s" : "n",
+                      lancamentos: checked ? "s" : "",
                     })
                   }
                 />
@@ -568,7 +580,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   onCheckedChange={(checked) =>
                     setSearchData({
                       ...searchData,
-                      mobiliado: checked ? "sim" : "nao",
+                      mobiliado: checked ? "sim" : "",
                     })
                   }
                 />
@@ -580,14 +592,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       <main className="flex-1 pb-8">
         <div className="w-full py-4">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="h-6 rounded-sm select-none">
+            <div className="h-6 rounded-sm select-none mt-3">
               <BreadCrumb />
             </div>
           </div>
         </div>
         <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 mt-6 mb-6 flex items-center justify-between">
-            <div className="h-auto min-h-6  rounded-sm">
+          <div className="max-w-7xl mx-auto px-4 mt-2 mb-3 flex items-center justify-between">
+            <div className="h-auto min-h-6 rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
             <div>
@@ -625,7 +637,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 <Link
                   key={imovel.id}
                   href={`/imovel/${encodeURIComponent(
-                    imovel.TituloSite || imovel.Descricao
+                    toSlug(imovel.TituloSite) || toSlug(imovel.Descricao)
                   )}/${imovel.Codigo}`}
                 >
                   <ImovelCard imovel={imovel} activeTab={searchData.action} />
@@ -700,8 +712,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         isOpen={modals.location}
         onClose={() => closeModal("location")}
         selectedLocations={searchData.locations}
-        onSelectionChange={(locations) =>
-          setSearchData({ ...searchData, locations })
+        onSelectionChange={(location) =>
+          setSearchData({ ...searchData, locations: location })
         }
       />
 

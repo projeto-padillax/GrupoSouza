@@ -112,7 +112,7 @@ export function TypeSelectModal({
       <DialogContent className="lg:max-w-2xl w-[70vw] sm:w-full h-[80vh] p-0">
         <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="flex items-center gap-2">
-            Selecionar Tipos de Imóveis
+            Tipos de Imóveis
           </DialogTitle>
         </DialogHeader>
 
@@ -217,7 +217,7 @@ export function TypeSelectModal({
             <div className="grid grid-cols-2 gap-6">
               {/* Residenciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
+                <div className="p-4 pl-0 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -231,7 +231,7 @@ export function TypeSelectModal({
                   />
                   <h3 className="font-semibold text-lg">Residenciais</h3>
                 </div>
-                <div className="p-4 space-y-2">
+                <div className="p-4 space-y-2 pl-0">
                   {residenciaisTypes.map((type) => (
                     <div
                       key={type.id}
@@ -264,7 +264,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
+                <div className="p-4 pl-0 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -278,7 +278,7 @@ export function TypeSelectModal({
                   />
                   <h3 className="font-semibold text-lg">Comerciais</h3>
                 </div>
-                <div className="p-4 space-y-2">
+                <div className="p-4 space-y-2 pl-0">
                   {comerciaisTypes.map((type) => (
                     <div
                       key={type.id}

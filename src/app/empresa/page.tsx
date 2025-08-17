@@ -2,7 +2,8 @@ import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import { getSobreNos } from "@/lib/actions/config";
-// import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import { Suspense } from "react";
 
 export default async function Empresa() {
   const sobre = await getSobreNos();
@@ -16,9 +17,11 @@ export default async function Empresa() {
       <main className="flex-1">
         <section className="relative w-full py-8">
           <div className="w-[90%] mx-auto max-w-7xl">
-            {/* <div className="rounded-sm mb-5">
-              <BreadCrumb />
-            </div> */}
+            <div className="rounded-sm mb-7">
+              <Suspense>
+                <BreadCrumb />
+              </Suspense>
+            </div>
             <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
               <Image
                 src="/sobre.webp"

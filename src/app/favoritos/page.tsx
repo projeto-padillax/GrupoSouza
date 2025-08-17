@@ -2,6 +2,8 @@ import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import FavoritesList from "@/components/site/favoritosList";
+import BreadCrumb from "@/components/site/filteredBreadcrumb";
+import { Suspense } from "react";
 
 export default function Favoritos() {
     return (
@@ -11,7 +13,13 @@ export default function Favoritos() {
             </div>
             <main className="flex-1">
                 <section className="relative w-full py-8">
-                    <div className="mx-auto w-[90%] max-w-7xl"> {/* Container principal para alinhamento */}
+
+                    <div className="mx-auto w-[90%] max-w-7xl">
+                        <div className="h-6 rounded-sm select-none mb-7">
+                            <Suspense>
+                                <BreadCrumb />
+                            </Suspense>
+                        </div>
                         <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
                             <Image
                                 src="/Anuncie seu imovel.jpg"

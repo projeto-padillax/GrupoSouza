@@ -13,8 +13,8 @@ export default async function Header() {
   const logo = await getLogo()
   return (
     <>
-      <header className="bg-white h-28 content-center">
-        <div className="max-w-7xl mx-auto w-[90%]">
+      <header className="bg-white h-28 content-center justify-items-center">
+        <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">
@@ -23,7 +23,7 @@ export default async function Header() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-4 text-sm text-gray-600">
-                <Link href={"/favoritos"} prefetch={true}>
+                <Link href={"/favoritos"}>
                   <FavoriteIcon />
                 </Link>
                 <div className="flex items-center">
