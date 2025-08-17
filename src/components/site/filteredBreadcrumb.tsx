@@ -41,6 +41,10 @@ export default function BreadCrumb() {
     // rota normal (mas ignoramos "busca")
     segments.forEach((segment, index) => {
       if (segment === "busca") return; // não inclui Busca
+      if (segment === "imovel") {
+        items.push({ name: "Busca", href: "/busca"})
+        return;
+      }
       const href = "/" + segments.slice(0, index + 1).join("/");
       items.push({ name: translateSegment(segment), href });
     });

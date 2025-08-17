@@ -35,7 +35,7 @@ import { ImovelCardSkeleton } from "./cardSkeleton";
 export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
-  const [page, setPage] = useState(filtros.page ?? 1);
+  const [page, setPage] = useState(filtros.page ? Number(filtros.page) : 1);
   const [imoveis, setImoveis] = useState<Destaque[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalImoveis, setTotalImoveis] = useState(0);
