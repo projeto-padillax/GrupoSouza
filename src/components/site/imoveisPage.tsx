@@ -81,8 +81,6 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
-    console.log("aqui");
-    console.log(searchData);
 
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
@@ -122,8 +120,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     router.push(`?${decodeURIComponent(newSearchParams.toString())}`, {
       scroll: false,
     });
-    console.log(newSearchParams.toString());
-    // 3. Buscar os dados da API
+
     const fetchImoveis = async () => {
       setLoading(true);
       try {
@@ -295,7 +292,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   setSearchData({ ...searchData, action: value })
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 px-0 w-full sm:w-fit border-0 shadow-none cursor-pointer">
+                <SelectTrigger className="lg:data-[size=default]:h-12 px-0 w-full sm:w-fit border-0 shadow-none cursor-pointer font-medium">
                   <SelectValue placeholder="Comprar" />
                 </SelectTrigger>
                 <SelectContent>
@@ -309,7 +306,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 onClick={() => openModal("type")}
                 className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 font-medium">
                   <span>
                     Tipo
                     {searchData.tipos.length > 0
@@ -326,7 +323,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 onClick={() => openModal("location")}
                 className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 font-medium">
                   <span>
                     Localização
                     {searchData.locations.length > 0
@@ -346,7 +343,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   })
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 has-[>svg]:px-0 w-full sm:w-fit border-0 shadow-none cursor-pointer text-blac">
+                <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-3 w-full sm:w-fit border shadow-none cursor-pointer text-black font-medium">
                   <SelectValue placeholder="Valor de" className="text-black" />
                 </SelectTrigger>
                 <SelectContent>
@@ -368,7 +365,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   })
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-0 sm:w-fit border-0 shadow-none cursor-pointer">
+                <SelectTrigger className="lg:data-[size=default]:h-10 border w-full has-[>svg]:px-3 sm:w-fit shadow-none cursor-pointer font-medium">
                   <SelectValue placeholder="Valor até" />
                 </SelectTrigger>
                 <SelectContent>
@@ -381,7 +378,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 </SelectContent>
               </Select>
               <div className="flex items-center gap-4 w-full sm:w-fit h-9 lg:h-12 justify-between">
-                <span className="text-sm">Quartos</span>
+                <span className="text-sm font-medium">Quartos</span>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3].map((num) => (
                     <button
@@ -409,7 +406,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               {/* Botão Filtros */}
               <Button
                 variant="outline"
-                className="bg-transparent border font-normal has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
+                className="bg-transparent border font-medium has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
                 onClick={() => setShowFilters(!showFilters)}
               >
                 Filtros
@@ -447,7 +444,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   setSearchData({ ...searchData, area: value })
                 }
               >
-                <SelectTrigger className="data-[size=default]:h-12 p-0 border-0 shadow-none cursor-pointer w-full sm:w-fit">
+                <SelectTrigger className="data-[size=default]:h-12 p-0 border-0 shadow-none cursor-pointer w-full sm:w-fit font-medium">
                   <SelectValue placeholder="Area Mínima" />
                 </SelectTrigger>
                 <SelectContent>
@@ -465,7 +462,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </Select>
 
               <div className="flex items-center gap-4 h-12 w-full sm:w-fit justify-between text-sm">
-                <span>Suítes</span>
+                <span className="font-medium">Suítes</span>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3].map((num) => (
                     <button
@@ -486,7 +483,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </div>
 
               <div className="flex items-center justify-between gap-4 h-12 w-full sm:w-fit">
-                <span className="text-sm">Vagas</span>
+                <span className="text-sm font-medium">Vagas</span>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3].map((num) => (
                     <button
@@ -507,7 +504,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </div>
 
               <Popover>
-                <PopoverTrigger className="cursor-pointer h-12 w-full sm:w-fit text-start text-sm">
+                <PopoverTrigger className="cursor-pointer h-12 w-full sm:w-fit text-start text-sm font-medium">
                   Caracteristicas
                 </PopoverTrigger>
                 <PopoverContent className="cursor-pointer">

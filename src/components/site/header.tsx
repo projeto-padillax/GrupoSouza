@@ -26,11 +26,10 @@ export default async function Header() {
                 <Link href={"/favoritos"}>
                   <FavoriteIcon />
                 </Link>
-                <div className="flex items-center">
-                  <Phone className="h-4 w-4 mr-1" />
-                  <span>(19) 3417-8190</span>
-                </div>
-                <Link href='https://wa.me/5519992430041' className="flex items-center">
+                <Link href="tel:+551934178190" className="flex items-center hover:text-[#005a9e]">
+                  <Phone className="h-8 w-8 mr-1" />
+                </Link>
+                <Link href='https://wa.me/5519992430041' className="flex items-center hover:text-[#005a9e]">
                   <FaWhatsapp className='h-8 w-8'></FaWhatsapp>
                 </Link>
               </div>
