@@ -72,7 +72,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           className={`flex justify-between items-center mb-4 ${hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
             }`}
         >
-          <p className="text-sm text-gray-600 font-medium">
+          <p className="text-sm text-gray-600">
             {capitalizeCategory(imovel.Categoria)}
           </p>
           <p className="text-sm text-gray-600 flex items-center gap-1">

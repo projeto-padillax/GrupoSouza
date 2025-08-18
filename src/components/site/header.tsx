@@ -13,8 +13,8 @@ export default async function Header() {
   const logo = await getLogo()
   return (
     <>
-      <header className="bg-white h-28 content-center">
-        <div className="max-w-7xl mx-auto w-[90%]">
+      <header className="bg-white h-28 content-center justify-items-center">
+        <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">
@@ -26,11 +26,10 @@ export default async function Header() {
                 <Link href={"/favoritos"}>
                   <FavoriteIcon />
                 </Link>
-                <div className="flex items-center">
-                  <Phone className="h-4 w-4 mr-1" />
-                  <span>(19) 3417-8190</span>
-                </div>
-                <Link href='https://wa.me/5519992430041' className="flex items-center">
+                <Link href="tel:+551934178190" className="flex items-center hover:text-[#005a9e]">
+                  <Phone className="h-8 w-8 mr-1" />
+                </Link>
+                <Link href='https://wa.me/5519992430041' className="flex items-center hover:text-[#005a9e]">
                   <FaWhatsapp className='h-8 w-8'></FaWhatsapp>
                 </Link>
               </div>

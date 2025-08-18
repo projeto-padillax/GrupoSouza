@@ -479,12 +479,10 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const codigo = searchParams.get("codigo") || null;
 
-    // --- Special handling for 'codigo' ---
+    // --- Busca por código específico ---
     if (codigo) {
       const imovel = await prisma.imovel.findUnique({
-        where: {
-          id: codigo,
-        },
+        where: { id: codigo },
         include: {
           fotos: {
             select: {
@@ -494,16 +492,11 @@ export async function GET(request: NextRequest) {
               url: true,
               urlPequena: true,
             },
-            orderBy: {
-              id: 'asc'
-            }
+            orderBy: { id: "asc" },
           },
           caracteristicas: {
-            select: {
-              nome: true,
-              valor: true
-            }
-          }
+            select: { nome: true, valor: true },
+          },
         },
       });
 
@@ -513,19 +506,23 @@ export async function GET(request: NextRequest) {
           pageSize: 1,
           totalPages: 1,
           totalItems: 1,
-          imoveis: [imovel], // Return as an array for consistency
+          imoveis: [imovel],
         });
       } else {
-        return NextResponse.json({
-          currentPage: 1,
-          pageSize: 0,
-          totalPages: 0,
-          totalItems: 0,
-          imoveis: [],
-        }, { status: 404 }); // Return 404 if not found
+        return NextResponse.json(
+          {
+            currentPage: 1,
+            pageSize: 0,
+            totalPages: 0,
+            totalItems: 0,
+            imoveis: [],
+          },
+          { status: 404 }
+        );
       }
     }
 
+    // --- Params gerais ---
     const action = searchParams.get("action") ?? "comprar";
     const tipos = searchParams.get("tipos")?.split(",").filter(Boolean) || [];
     const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || [];
@@ -538,92 +535,127 @@ export async function GET(request: NextRequest) {
     const caracteristicas = searchParams.get("caracteristicas")?.split(",").filter(Boolean) || [];
     const lancamentosFilterValue = parseSimNao(searchParams.get("lancamentos"));
     const mobiliadoFilterValue = parseSimNao(searchParams.get("mobiliado"));
-    const areaMinima = searchParams.get("areaMinima") || null; // AreaTotal ainda é string
-    const sort = searchParams.get("sort") || "MaisRecente";
 
-    // "Paginacao"
+    // --- Áreas ---
+    const areaMin = Number(searchParams.get("areaMinima")) || null;
+    const areaMax = Number(searchParams.get("areaMaxima")) || null;
+
+    const sort = searchParams.get("sort") || "ImovelRecente";
+
+    // --- Paginação ---
     const pageSize = Number(searchParams.get("pageSize")) || 12;
     const page = Number(searchParams.get("page")) || 1;
     const skip = (page - 1) * pageSize;
 
+    // --- Campos dinâmicos ---
     const isAluguel = action.toLowerCase() === "alugar";
-    const valorField = isAluguel ? "ValorLocacao" : "ValorVenda"; // 'ValorLocacao' ou 'ValorVenda'
+    const valorField = isAluguel ? "ValorLocacao" : "ValorVenda";
 
+    // --- Filtros base ---
     const whereClause: any = {
       Status: isAluguel ? "ALUGUEL" : "VENDA",
     };
 
-    if (cidade) whereClause.Cidade = { equals: cidade, mode: 'insensitive' };
+    if (cidade) whereClause.Cidade = { equals: cidade, mode: "insensitive" };
     if (bairros.length > 0 && !(bairros.length === 1 && bairros[0].toLowerCase() === "all")) {
-      whereClause.Bairro = { in: bairros, mode: 'insensitive' };
+      whereClause.Bairro = { in: bairros, mode: "insensitive" };
     }
-    if (tipos.length > 0) {
-      whereClause.Categoria = { in: tipos, mode: 'insensitive' };
-    }
+    if (tipos.length > 0) whereClause.Categoria = { in: tipos, mode: "insensitive" };
     if (quartos) whereClause.Dormitorios = { gte: String(quartos) };
     if (suites) whereClause.Suites = { gte: String(suites) };
     if (vagas) whereClause.Vagas = { gte: String(vagas) };
-    if (lancamentosFilterValue !== null) {
-      whereClause.Lancamento = { equals: lancamentosFilterValue, mode: 'insensitive' };
-    }
-    if (mobiliadoFilterValue !== null) {
-      whereClause.Mobiliado = { equals: mobiliadoFilterValue, mode: 'insensitive' };
-    }
+    if (lancamentosFilterValue !== null)
+      whereClause.Lancamento = { equals: lancamentosFilterValue, mode: "insensitive" };
+    if (mobiliadoFilterValue !== null)
+      whereClause.Mobiliado = { equals: mobiliadoFilterValue, mode: "insensitive" };
 
-    if (valorMin !== null) {
+    // --- Valor com margem de 5% ---
+    if (valorMin !== null || valorMax !== null) {
+      const min = valorMin ? valorMin * 0.95 : undefined;
+      const max = valorMax ? valorMax * 1.05 : undefined;
+
       whereClause[valorField] = {
-        gte: valorMin,
-        ...whereClause[valorField],
-      };
-    }
-    if (valorMax !== null) {
-      whereClause[valorField] = {
-        lte: valorMax,
-        ...whereClause[valorField],
+        ...(min !== undefined ? { gte: min } : {}),
+        ...(max !== undefined ? { lte: max } : {}),
       };
     }
 
-    if (areaMinima !== null) {
-      const areaFilter = Number(areaMinima);
+    // --- Área com margem de 5% ---
+    if (areaMin !== null || areaMax !== null) {
+      const min = areaMin ? areaMin * 0.95 : undefined;
+      const max = areaMax ? areaMax * 1.05 : undefined;
 
       whereClause.OR = [
-        { AreaTotal: { gte: areaFilter } },
-        { AreaTerreno: { gte: areaFilter } },
-        { AreaConstruida: { gte: areaFilter } },
+        {
+          AreaTotal: {
+            ...(min !== undefined ? { gte: min } : {}),
+            ...(max !== undefined ? { lte: max } : {}),
+          },
+        },
+        {
+          AreaTerreno: {
+            ...(min !== undefined ? { gte: min } : {}),
+            ...(max !== undefined ? { lte: max } : {}),
+          },
+        },
+        {
+          AreaConstruida: {
+            ...(min !== undefined ? { gte: min } : {}),
+            ...(max !== undefined ? { lte: max } : {}),
+          },
+        },
       ];
     }
 
+    // --- Características ---
     if (caracteristicas.length > 0) {
       whereClause.caracteristicas = {
         some: {
-          AND: caracteristicas.map(carac => ({
-            nome: { equals: carac, mode: 'insensitive' },
-            valor: { equals: "sim", mode: 'insensitive' }
-          }))
-        }
+          AND: caracteristicas.map((carac) => ({
+            nome: { equals: carac, mode: "insensitive" },
+            valor: { equals: "sim", mode: "insensitive" },
+          })),
+        },
       };
     }
 
-    const sortByClause: any = {};
-    if (sort) {
-      switch (sort) {
-        case "MaiorValor":
-          sortByClause[valorField] = "desc";
-          break;
-        case "MenorValor":
-          sortByClause[valorField] = "asc";
-          break;
-        case "ImovelRecente":
-          sortByClause.DataHoraAtualizacao = "desc";
-          break;
-        default:
-          sortByClause[valorField] = "asc"; // Default pode ser por valor ou outro campo
-      }
-    } else {
-      // Valor padrão de ordenação se 'sort' não for fornecido
-      sortByClause[valorField] = "asc"; // ou DataHoraAtualizacao: 'desc'
+    whereClause.AND = [
+      { OR: [{ [valorField]: { gt: 0 } }, { [valorField]: null }, { [valorField]: 0 }] },
+    ];
+
+    let sortByClause: any = {};
+    switch (sort) {
+      case "MaiorValor":
+
+        sortByClause = [
+          { [valorField]: { sort: "desc", nulls: "last" } },
+          { DataHoraAtualizacao: "desc" },
+        ];
+        break;
+
+      case "MenorValor":
+        sortByClause = [
+          { [valorField]: { sort: "asc", nulls: "last" } },
+          { DataHoraAtualizacao: "desc" },
+        ];
+        break;
+
+      case "ImovelRecente":
+        sortByClause = [
+          { DataHoraAtualizacao: "desc" },
+        ];
+        break;
+
+      default:
+        sortByClause = [
+          { [valorField]: { sort: "asc", nulls: "last" } },
+          { DataHoraAtualizacao: "desc" },
+        ];
+        break;
     }
 
+
+    // --- Query ---
     const [imoveis, totalCount] = await prisma.$transaction([
       prisma.imovel.findMany({
         where: whereClause,
@@ -639,21 +671,14 @@ export async function GET(request: NextRequest) {
               url: true,
               urlPequena: true,
             },
-            orderBy: {
-              id: 'asc'
-            }
+            orderBy: { id: "asc" },
           },
           caracteristicas: {
-            select: {
-              nome: true,
-              valor: true
-            }
-          }
+            select: { nome: true, valor: true },
+          },
         },
       }),
-      prisma.imovel.count({
-        where: whereClause,
-      }),
+      prisma.imovel.count({ where: whereClause }),
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -667,9 +692,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("Erro ao buscar imóveis:", error.message);
-    return NextResponse.json({ error: "Erro interno no servidor ao buscar imóveis" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno no servidor ao buscar imóveis" },
+      { status: 500 }
+    );
   }
 }
+
 
 function parseSimNao(value: string | null): "Sim" | "Nao" | null {
   if (!value) return null;
