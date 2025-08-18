@@ -182,9 +182,6 @@ export function LocationSelectModal({
                   );
 
                   const allSelected = selecionados.length === allKeys.length;
-                  const partiallySelected =
-                    selecionados.length > 0 &&
-                    selecionados.length < allKeys.length;
 
                   return (
                     <div className="space-y-2">

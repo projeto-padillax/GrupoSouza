@@ -51,8 +51,6 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       ? filtros.tipo.map((t: string) => decodeURIComponent(t))
       : ([] as string[]),
     locations: location || "",
-    cidade: filtros.cidade ?? "",
-    bairro: filtros.bairro ?? ([""] as string[]),
     valueRange: { min: filtros.valorMin ?? "", max: filtros.valorMax ?? "" },
     quartos: filtros.quartos ?? "",
     area: filtros.areaMinima ?? "",
@@ -288,9 +286,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
             <div className=" flex flex-row justify-between flex-wrap items-center gap-y-4 w-full">
               <Select
                 value={searchData.action}
-                onValueChange={(value) =>
-                  setSearchData({ ...searchData, action: value })
-                }
+                onValueChange={(value) => {
+                  setSearchData({ ...searchData, action: value });
+                  setPage(1); // R}eset page to 1 when action changes
+                }}
               >
                 <SelectTrigger className="lg:data-[size=default]:h-12 px-0 w-full sm:w-fit border-0 shadow-none cursor-pointer font-medium">
                   <SelectValue placeholder="Comprar" />
@@ -336,11 +335,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
               <Select
                 value={searchData.valueRange.min}
-                onValueChange={(value) =>
-                  setSearchData({
-                    ...searchData,
-                    valueRange: { ...searchData.valueRange, min: value },
-                  })
+                onValueChange={
+                  (value) => {
+                    setSearchData({
+                      ...searchData,
+                      valueRange: { ...searchData.valueRange, min: value },
+                    });
+                    setPage(1);
+                  } // Reset page to 1 when value range changes
                 }
               >
                 <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-3 w-full sm:w-fit border shadow-none cursor-pointer text-black font-medium">
@@ -358,11 +360,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
               <Select
                 value={searchData.valueRange.max}
-                onValueChange={(value) =>
-                  setSearchData({
-                    ...searchData,
-                    valueRange: { ...searchData.valueRange, max: value },
-                  })
+                onValueChange={
+                  (value) => {
+                    setSearchData({
+                      ...searchData,
+                      valueRange: { ...searchData.valueRange, max: value },
+                    });
+                    setPage(1);
+                  } // Reset page to 1 when value range changes
                 }
               >
                 <SelectTrigger className="lg:data-[size=default]:h-10 border w-full has-[>svg]:px-3 sm:w-fit shadow-none cursor-pointer font-medium">
@@ -383,15 +388,16 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {[1, 2, 3].map((num) => (
                     <button
                       key={num}
-                      onClick={() =>
+                      onClick={() => {
                         setSearchData({
                           ...searchData,
                           quartos:
                             searchData.quartos === num.toString()
-                              ? "" 
+                              ? ""
                               : num.toString(),
-                        })
-                      }
+                        });
+                        setPage(1);
+                      }}
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.quartos === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
@@ -407,7 +413,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 className="bg-transparent border font-medium has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
-                onClick={() => setShowFilters(!showFilters)}
+                onClick={() => {
+                  setShowFilters(!showFilters);
+                  setPage(1);
+                }}
               >
                 Filtros
                 <Filter className="h-4 w-4 text-gray-500 mr-1" />
@@ -440,9 +449,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
             <div className=" flex flex-col gap-y-4 w-full sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid lg:auto-cols-auto lg:grid-flow-col lg:grid-cols-none lg:gap-x-1">
               <Select
                 value={searchData.area}
-                onValueChange={(value) =>
-                  setSearchData({ ...searchData, area: value })
-                }
+                onValueChange={(value) => {
+                  setSearchData({ ...searchData, area: value });
+                  setPage(1); // Reset page to 1 when area changes
+                }}
               >
                 <SelectTrigger className="data-[size=default]:h-12 p-0 border-0 shadow-none cursor-pointer w-full sm:w-fit font-medium">
                   <SelectValue placeholder="Area Mínima" />
@@ -467,9 +477,16 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {[1, 2, 3].map((num) => (
                     <button
                       key={num}
-                      onClick={() =>
-                        setSearchData({ ...searchData, suites: searchData.suites == num.toString() ? "" : num.toString() })
-                      }
+                      onClick={() => {
+                        setSearchData({
+                          ...searchData,
+                          suites:
+                            searchData.suites == num.toString()
+                              ? ""
+                              : num.toString(),
+                        });
+                        setPage(1); // Reset page to 1 when suites changes
+                      }}
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.suites === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
@@ -488,9 +505,16 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {[1, 2, 3].map((num) => (
                     <button
                       key={num}
-                      onClick={() =>
-                        setSearchData({ ...searchData, vagas: searchData.vagas == num.toString() ? "" : num.toString() })
-                      }
+                      onClick={() => {
+                        setSearchData({
+                          ...searchData,
+                          vagas:
+                            searchData.vagas == num.toString()
+                              ? ""
+                              : num.toString(),
+                        });
+                        setPage(1);
+                      }}
                       className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
                         searchData.vagas === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
@@ -527,6 +551,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                               )
                             : [...prev.caracteristicas, type.id],
                         }));
+                        setPage(1); // Reset page to 1 when caracteristicas changes
                       }}
                     >
                       <Checkbox
@@ -540,6 +565,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                                 )
                               : [...prev.caracteristicas, type.id],
                           }));
+                          setPage(1); // Reset page to 1 when caracteristicas changes
                         }}
                         onClick={(e) => e.stopPropagation()}
                       />
@@ -558,12 +584,13 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       ? false
                       : searchData.lancamentos === "s"
                   }
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked) => {
                     setSearchData({
                       ...searchData,
                       lancamentos: checked ? "s" : "",
-                    })
-                  }
+                    });
+                    setPage(1); // Reset page to 1 when lancamentos changes
+                  }}
                 />
               </div>
               <div className="flex items-center space-x-2 w-full h-12 sm:w-fit justify-between">
@@ -574,12 +601,13 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       ? false
                       : searchData.mobiliado === "sim"
                   }
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked) => {
                     setSearchData({
                       ...searchData,
                       mobiliado: checked ? "sim" : "",
-                    })
-                  }
+                    });
+                    setPage(1); // Reset page to 1 when mobiliado changes
+                  }}
                 />
               </div>
             </div>

@@ -4,7 +4,7 @@ import ImoveisPage from "@/components/site/imoveisPage";
 import Header from "@/components/site/header";
 import ClientLayout from "@/components/client-layout";
 import Footer from "@/components/site/footer";
-import { Filtros, parseFiltroURL } from "@/utils/parseFilter";
+import { Filtros } from "@/utils/parseFilter";
 
 interface Props {
   searchParams: Promise<{
@@ -31,8 +31,6 @@ export default async function Imoveis({ searchParams }: Props) {
   // Use await para garantir que os searchParams estejam prontos
   const awaitedSearchParams = await searchParams;
   
-  const parseFiltroCidade = parseFiltroURL(awaitedSearchParams.cidade || "Piracicaba:all");
-  const [cidade, bairros] = parseFiltroCidade.split(":");
   const initialFiltros: Filtros = {
     action: awaitedSearchParams.action ?? "comprar",
     tipo: awaitedSearchParams.tipos ? awaitedSearchParams.tipos.split("_") : [],
