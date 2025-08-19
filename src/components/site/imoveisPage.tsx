@@ -194,23 +194,20 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
     // Quartos
     if (searchData.quartos !== "") {
-      titulo += `, com ${searchData.quartos}+ quarto${
-        searchData.quartos !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.quartos}+ quarto${searchData.quartos !== "1" ? "s" : ""
+        }`;
     }
 
     // Suítes
     if (searchData.suites !== "") {
-      titulo += `, com ${searchData.suites}+ suíte${
-        searchData.suites !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.suites}+ suíte${searchData.suites !== "1" ? "s" : ""
+        }`;
     }
 
     // Vagas
     if (searchData.vagas !== "") {
-      titulo += `, com ${searchData.vagas}+ vaga${
-        searchData.vagas !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.vagas}+ vaga${searchData.vagas !== "1" ? "s" : ""
+        }`;
     }
 
     // Área mínima
@@ -434,7 +431,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.quartos === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -473,9 +470,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div
-          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${
-            showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
-          }`}
+          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
+            }`}
         >
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
             <div className=" flex flex-col gap-y-4 w-full sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid lg:auto-cols-auto lg:grid-flow-col lg:grid-cols-none lg:gap-x-1">
@@ -523,7 +519,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.suites === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -551,7 +547,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.vagas === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -567,11 +563,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {caracteristicas.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        searchData.caracteristicas.includes(type.id)
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${searchData.caracteristicas.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
-                      }`}
+                        }`}
                       onClick={() => {
                         setSearchData((prev) => ({
                           ...prev,
@@ -579,8 +574,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             type.id
                           )
                             ? prev.caracteristicas.filter(
-                                (id) => id !== type.id
-                              )
+                              (id) => id !== type.id
+                            )
                             : [...prev.caracteristicas, type.id],
                         }));
                         setPage(1); // Reset page to 1 when caracteristicas changes
@@ -593,8 +588,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             ...prev,
                             caracteristicas: checked
                               ? prev.caracteristicas.filter(
-                                  (id) => id !== type.id
-                                )
+                                (id) => id !== type.id
+                              )
                               : [...prev.caracteristicas, type.id],
                           }));
                           setPage(1); // Reset page to 1 when caracteristicas changes
@@ -709,7 +704,11 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {/* Botão Anterior */}
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() => setPage(Number(page) - 1)}
+                      href={`?page=${page - 1}`}
+                      onClick={(e) => {
+                        e.preventDefault(); // evita reload da página
+                        setPage(Number(page) - 1);
+                      }}
                       className={
                         page === 1
                           ? "pointer-events-none opacity-50 cursor-none"
@@ -736,9 +735,13 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       pages.push(
                         <PaginationItem key={i}>
                           <PaginationLink
+                            href={`?page=${i}`}
                             className="cursor-pointer"
                             isActive={page === i}
-                            onClick={() => setPage(i)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setPage(i);
+                            }}
                           >
                             {i}
                           </PaginationLink>
@@ -751,7 +754,11 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {/* Botão Próximo */}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => setPage(Number(page) + 1)}
+                      href={`?page=${page + 1}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(Number(page) + 1);
+                      }}
                       className={
                         page === totalPages
                           ? "pointer-events-none opacity-50 cursor-none"
