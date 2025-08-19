@@ -1,3 +1,4 @@
+import { VistaImovel } from "@/app/types/vista";
 import { prisma } from "@/lib/neon/db";
 import { NextResponse } from "next/server";
 
@@ -44,4 +45,157 @@ export async function GET(_: Request, { params }: { params: Promise<{ codigo: st
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma client after the request
   }
+}
+
+async function fetchFromVista(codigo: string): Promise<VistaImovel | null> {
+  const key = process.env.VISTA_KEY;
+  if (!key) throw new Error("VISTA_KEY não configurada no .env");
+
+
+  const base =
+    "https://gruposou-rest.vistahost.com.br/imoveis/detalhes";
+  const url =
+    `${base}?key=${encodeURIComponent(key)}` +
+    `&imovel=${encodeURIComponent(codigo)}` +
+    `&pesquisa={"fields":["Codigo","Categoria","Bairro","Cidade","ValorVenda","ValorLocacao","Dormitorios","Suites","Vagas","AreaTotal","AreaPrivativa",{"Foto":["Foto","FotoPequena","Destaque"]},"Caracteristicas","InfraEstrutura"]}`;
+
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Vista HTTP ${res.status} - ${text}`);
+  }
+
+  const data = await res.json().catch(() => null);
+  if (!data) return null;
+
+  console.log(data);
+
+  return data;
+}
+
+
+export async function PUT(_: Request, { params }: { params: Promise<{ codigo: string }> }) {
+  try {
+    const { codigo } = await params;
+
+    const vistaImovel = await fetchFromVista(codigo);
+    const imovelExistente = await prisma.imovel.findUnique({
+      where: { Codigo: codigo },
+    });
+
+    if (!vistaImovel) {
+      if (imovelExistente) {
+        await prisma.foto.deleteMany({ where: { imovelId: imovelExistente.id } });
+        await prisma.caracteristica.deleteMany({ where: { imovelId: imovelExistente.id } });
+        await prisma.imovel.delete({ where: { id: imovelExistente.id } });
+      }
+
+      return NextResponse.json(
+        { ok: false, message: "Imóvel não encontrado no Vista. Removido do banco." },
+        { status: 404 }
+      );
+    }
+
+    const data = mapVistaToDb(vistaImovel);
+
+    let imovel: typeof imovelExistente;
+
+    const { fotos, caracteristicas, ...dadosImovel } = data;
+
+    if (imovelExistente) {
+      await prisma.foto.deleteMany({ where: { imovelId: imovelExistente.id } });
+      await prisma.caracteristica.deleteMany({ where: { imovelId: imovelExistente.id } });
+
+      imovel = await prisma.imovel.update({
+        where: { id: imovelExistente.id },
+        data: dadosImovel,
+      });
+    } else {
+      imovel = await prisma.imovel.create({
+        data: dadosImovel,
+      });
+    }
+
+    if (fotos?.length) {
+      await prisma.foto.createMany({
+        data: fotos.map((f) => ({ ...f, imovelId: imovel.id })),
+      });
+    }
+
+    if (caracteristicas?.length) {
+      await prisma.caracteristica.createMany({
+        data: caracteristicas.map((c) => ({ ...c, imovelId: imovel.id })),
+      });
+    }
+
+    return NextResponse.json({ ok: true, imovel });
+
+  } catch (err: any) {
+    console.error("PUT /api/vista/imoveis/[codigo] error:", err);
+    return NextResponse.json(
+      { ok: false, message: err?.message ?? "Erro inesperado" },
+      { status: 500 }
+    );
+  }
+}
+
+function mapVistaToDb(v: VistaImovel) {
+  return {
+    Codigo: v.Codigo,
+    Categoria: v.Categoria,
+    Bairro: v.Bairro,
+    Cidade: v.Cidade,
+    ValorVenda: v.ValorVenda ? Number(v.ValorVenda) : 0,
+    ValorLocacao: v.ValorLocacao ? Number(v.ValorLocacao) : 0,
+    Dormitorios: v.Dormitorios,
+    Suites: v.Suites,
+    Vagas: v.Vagas,
+    AreaTotal: v.AreaTotal ? parseFloat(v.AreaTotal) : 0,
+    AreaConstruida: v.AreaPrivativa ? parseFloat(v.AreaPrivativa) : 0,
+    DataHoraAtualizacao: new Date(),
+
+    DescricaoWeb: v.DescricaoWeb,
+    ValorIptu: v.ValorIptu,
+    ValorCondominio: v.ValorCondominio,
+    InformacaoVenda: v.InformacaoVenda,
+    ObsVenda: v.ObservacoesVenda,
+    GMapsLatitude: v.GMapsLatitude,
+    GMapsLongitude: v.GMapsLongitude,
+    Lancamento: v.Lancamento,
+    Finalidade: v.Finalidade,
+    Status: v.Status,
+    Empreendimento: v.Empreendimento,
+    Endereco: v.Endereco,
+    Numero: v.Numero,
+    Complemento: v.Complemento,
+    UF: v.UF,
+    CEP: v.CEP,
+    DestaqueWeb: v.DestaqueWeb,
+    FotoDestaque: v.FotoDestaque,
+    Latitude: v.Latitude,
+    Longitude: v.Longitude,
+    TituloSite: v.TituloSite,
+    FotoDestaqueEmpreendimento: v.FotoDestaqueEmpreendimento,
+    VideoDestaque: v.VideoDestaque,
+    Mobiliado: v.Mobiliado,
+
+    fotos: Object.values(v.Foto ?? {}).map((f: any) => ({
+      codigo: f.Codigo,
+      url: f.Foto,
+      urlPequena: f.FotoPequena,
+      destaque: f.Destaque,
+    })),
+
+    caracteristicas: Object.entries(v.Caracteristicas ?? {}).map(
+      ([nome, valor]) => ({
+        nome,
+        valor,
+      })
+    ),
+  };
 }
