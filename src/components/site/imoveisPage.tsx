@@ -18,7 +18,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { ImovelCard } from "./imovelcard";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Destaque } from "@/lib/types/destaque";
 import {
@@ -34,6 +34,7 @@ import { ImovelCardSkeleton } from "./cardSkeleton";
 
 export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(filtros.page ? Number(filtros.page) : 1);
   const [imoveis, setImoveis] = useState<Destaque[]>([]);
@@ -76,6 +77,37 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     { id: "sacada", label: "Sacada" },
     { id: "saloa", label: "Salão de festa" },
   ];
+
+    useEffect(() => {
+    const newData = {
+      action: searchParams.get("action") ?? "comprar",
+      tipos: searchParams.get("tipos")
+        ? searchParams.get("tipos")!.split(",")
+        : [],
+      locations: searchParams.get("cidade")
+        ? (searchParams.get("bairro")?.split(",") || []).map(
+            (b) => `${searchParams.get("cidade")}:${b}`
+          )
+        : [],
+      valueRange: {
+        min: searchParams.get("valorMin") ?? "",
+        max: searchParams.get("valorMax") ?? "",
+      },
+      quartos: searchParams.get("quartos") ?? "",
+      area: searchParams.get("areaMinima") ?? "",
+      suites: searchParams.get("suites") ?? "",
+      vagas: searchParams.get("vagas") ?? "",
+      caracteristicas: searchParams.get("caracteristicas")
+        ? searchParams.get("caracteristicas")!.split(",")
+        : [],
+      lancamentos: searchParams.get("lancamentos") ?? "",
+      mobiliado: searchParams.get("mobiliado") ?? "",
+    };
+
+    setSearchData(newData);
+    setPage(Number(searchParams.get("page") ?? 1));
+    setSortOrder(searchParams.get("sort") ?? "");
+  }, [searchParams]);
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
