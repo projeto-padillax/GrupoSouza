@@ -71,7 +71,7 @@ export default function CorretoresListClient({ initialCorretores }: Props) {
                         onSelect={handleSelectOne}
                         renderActions={(item) => (
                             <Link href={`/admin/corretores/${item.id}/edit`}>
-                                <Button variant="outline" size="sm" className="bg-transparent">
+                                <Button variant="outline" size="sm" className="bg-transparent cursor-pointer hover:opacity-90">
                                     <Edit className="h-4 w-4 mr-1" />
                                     Editar
                                 </Button>
