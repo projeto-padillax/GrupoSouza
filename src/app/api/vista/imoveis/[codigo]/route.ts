@@ -57,7 +57,13 @@ async function fetchFromVista(codigo: string): Promise<VistaImovel | null> {
   const url =
     `${base}?key=${encodeURIComponent(key)}` +
     `&imovel=${encodeURIComponent(codigo)}` +
-    `&pesquisa={"fields":["Codigo","Categoria","Bairro","Cidade","ValorVenda","ValorLocacao","Dormitorios","Suites","Vagas","AreaTotal","AreaPrivativa",{"Foto":["Foto","FotoPequena","Destaque"]},"Caracteristicas","InfraEstrutura"]}`;
+    `&pesquisa={"fields":["Codigo","ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda",
+                          "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
+                          "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal",
+                          "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento",
+                          "Finalidade", "Status", "Empreendimento", "Endereco",
+                          "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
+                          "TituloSite", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado", "AreaConstruida",{"Foto":["Foto","FotoPequena","Destaque"]}]}`;
 
   const res = await fetch(url, {
     cache: "no-store",
@@ -72,8 +78,7 @@ async function fetchFromVista(codigo: string): Promise<VistaImovel | null> {
 
   const data = await res.json().catch(() => null);
   if (!data) return null;
-
-  console.log(data);
+  if (Array.isArray(data) && data.length === 0) return null;
 
   return data;
 }
@@ -117,7 +122,10 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
       });
     } else {
       imovel = await prisma.imovel.create({
-        data: dadosImovel,
+        data: {
+      id: codigo,
+      ...dadosImovel,
+    },
       });
     }
 

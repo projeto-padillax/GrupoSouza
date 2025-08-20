@@ -70,6 +70,46 @@ export default async function ImovelPage({
     );
   }
 
+  function gerarTitulo() {
+    
+    const capitalizar = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+
+    const area =
+      imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
+        ? `${imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida}m²`
+        : "";
+
+    const quartos = imovel.Dormitorios && imovel.Dormitorios !== "0"
+      ? `${imovel.Dormitorios} quarto${imovel.Dormitorios === "1" ? "" : "s"}`
+      : "";
+
+    const suites = imovel.Suites && imovel.Suites !== "0"
+      ? `${imovel.Suites} suíte${imovel.Suites === "1" ? "" : "s"}`
+      : "";
+
+    const vagas = imovel.Vagas && imovel.Vagas !== "0"
+      ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
+      : "";
+
+    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
+
+    const partes = [
+      categoria,
+      area && `com ${area}`,
+      quartos,
+      suites,
+      vagas,
+      bairro,
+      cidade,
+    ];
+
+    return partes.filter(Boolean).join(", ").replace(", no bairro", " no bairro");
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -100,7 +140,7 @@ export default async function ImovelPage({
               <div className="space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                    {limparTitulo(imovel.TituloSite) || imovel.Descricao}
+                    {limparTitulo(imovel.TituloSite) || gerarTitulo()}
                   </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
@@ -126,7 +166,7 @@ export default async function ImovelPage({
 
                     {(imovel.ValorCondominio &&
                       parseFloat(imovel.ValorCondominio) > 0.0) ||
-                    (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
+                      (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
                       <div className="flex items-center gap-2 text-xs text-black whitespace-nowrap">
                         {imovel.ValorCondominio &&
                           parseFloat(imovel.ValorCondominio) > 0 && (
@@ -210,9 +250,8 @@ export default async function ImovelPage({
                             {imovel.Dormitorios} quarto
                             {imovel.Dormitorios > 1 ? "s" : ""}
                             {imovel.Suites > 0
-                              ? ` (${imovel.Suites} suíte${
-                                  imovel.Suites > 1 ? "s" : ""
-                                })`
+                              ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? "s" : ""
+                              })`
                               : ""}
                           </span>
                         </div>
