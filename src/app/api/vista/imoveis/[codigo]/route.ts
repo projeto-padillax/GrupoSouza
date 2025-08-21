@@ -143,10 +143,9 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
 
     return NextResponse.json({ ok: true, imovel });
 
-  } catch (err: any) {
+  } catch (err) {
     console.error("PUT /api/vista/imoveis/[codigo] error:", err);
     return NextResponse.json(
-      { ok: false, message: err?.message ?? "Erro inesperado" },
       { status: 500 }
     );
   }
@@ -192,7 +191,7 @@ function mapVistaToDb(v: VistaImovel) {
     VideoDestaque: v.VideoDestaque,
     Mobiliado: v.Mobiliado,
 
-    fotos: Object.values(v.Foto ?? {}).map((f: any) => ({
+    fotos: Object.values(v.Foto ?? {}).map((f) => ({
       codigo: f.Codigo,
       url: f.Foto,
       urlPequena: f.FotoPequena,

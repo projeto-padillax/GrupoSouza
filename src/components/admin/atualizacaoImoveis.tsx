@@ -48,8 +48,9 @@ export default function AtualizacaoImoveis() {
                 }
 
                 toast.success(json.message || 'Imóvel atualizado com sucesso!')
-            } catch (err: any) {
-                toast.error(err?.message || 'Erro inesperado')
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Erro inesperado'
+                toast.error(errorMessage)
             }
         })
     }
