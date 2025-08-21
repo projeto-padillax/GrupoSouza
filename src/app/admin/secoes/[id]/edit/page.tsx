@@ -1,6 +1,5 @@
 import SecaoForm from "@/components/admin/secaoForm";
-import { Secao } from "@/lib/types/secao";
-import { secoes } from "@/lib/utils";
+import { getSecao } from "@/lib/actions/secoes";
 import { notFound } from "next/navigation";
 
 interface EditSecoesPage {
@@ -11,8 +10,7 @@ export default async function EditSecoesPage({
   params,
 }: EditSecoesPage) {
   const secoesId = (await params).id;
-
-  const secao: Secao | undefined = secoes.find((secao) => secao.id == parseInt(secoesId));
+  const secao = await getSecao(parseInt(secoesId));
 
   if (!secao) {
     return notFound();
