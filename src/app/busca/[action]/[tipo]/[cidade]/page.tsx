@@ -7,6 +7,11 @@ import Footer from "@/components/site/footer";
 import { Filtros } from "@/utils/parseFilter";
 
 interface Props {
+    params: Promise<{
+    action?: string;
+    tipos?: string;
+    cidade?: string;
+  }>;
   searchParams: Promise<{
     action?: string;
     tipos?: string;
@@ -34,7 +39,7 @@ export default async function Imoveis({ searchParams }: Props) {
   const initialFiltros: Filtros = {
     action: awaitedSearchParams.action ?? "comprar",
     tipo: awaitedSearchParams.tipos ? awaitedSearchParams.tipos.split("_") : [],
-    cidade: awaitedSearchParams.cidade || "",
+    cidade: awaitedSearchParams.cidade || "Piracicaba",
     bairro: awaitedSearchParams.bairro?.split("_") || [],
     valorMin: awaitedSearchParams.valorMin || "",
     valorMax: awaitedSearchParams.valorMax || "",

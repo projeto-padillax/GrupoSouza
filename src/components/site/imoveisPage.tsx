@@ -41,7 +41,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const [totalPages, setTotalPages] = useState(0);
   const [totalImoveis, setTotalImoveis] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState(filtros.sort);
+  const [sortOrder, setSortOrder] = useState(filtros.sort || "ImovelRecente");
   const [titulo, setTitulo] = useState("");
   const location =
     filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ??
@@ -111,7 +111,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
-
+    const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0]: "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
       newSearchParams.set("tipos", searchData.tipos.join(","));
@@ -147,9 +147,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     if (sortOrder) newSearchParams.set("sort", sortOrder);
     newSearchParams.set("page", String(page));
     // 2. Atualizar a URL do navegador
-    router.push(`?${decodeURIComponent(newSearchParams.toString())}`, {
-      scroll: false,
-    });
+    router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
 
     const fetchImoveis = async () => {
       setLoading(true);
@@ -232,14 +230,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
     if (
       filtros.bairro &&
-      (filtros.bairro.length > 1 || filtros.bairro[0] === "all")
+      (filtros.bairro[0]?.split(",").length > 1)
     ) {
       titulo += ` em alguns bairros`;
     }
     // Localizações
     if (filtros.cidade) {
-      titulo += ` de ${filtros.cidade}`;
-      if (filtros.bairro?.length === 1 && filtros.bairro[0] !== "all") {
+      titulo += ` em ${filtros.cidade}`;
+      if (filtros.bairro && filtros.bairro[0]?.split(",").length === 1) {
         titulo += ` no bairro ${filtros.bairro[0]}`;
       }
     }
@@ -287,18 +285,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   const handleSearchByCode = async (code: string) => {
     if (!code) return;
-    router.push(`/busca?codigo=${code}`, {
-      scroll: false,
-    });
-    setLoading(true);
     try {
-      const res = await fetch(`/api/vista/imoveis?codigo=${code}`);
-      const data = await res.json();
-      setImoveis(data.imoveis);
-      setTotalPages(data.totalPages);
-      setTotalImoveis(data.totalItems);
-      gerarTitulo(data.totalItems);
-      // ... (atualize totalPages e totalImoveis)
+      router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${code}`);
     } catch (error) {
       console.error("Falha ao buscar imóveis:", error);
       setImoveis([]);
