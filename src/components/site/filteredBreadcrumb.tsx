@@ -152,7 +152,7 @@ export default function BreadCrumb() {
           <Fragment key={index}>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href={href}>{name}</Link>
+                <Link href={href}>{decodeURIComponent(name)}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}

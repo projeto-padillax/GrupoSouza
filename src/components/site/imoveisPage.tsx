@@ -18,7 +18,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { ImovelCard } from "./imovelcard";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Destaque } from "@/lib/types/destaque";
 import {
@@ -34,13 +34,14 @@ import { ImovelCardSkeleton } from "./cardSkeleton";
 
 export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(filtros.page ? Number(filtros.page) : 1);
   const [imoveis, setImoveis] = useState<Destaque[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalImoveis, setTotalImoveis] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState(filtros.sort);
+  const [sortOrder, setSortOrder] = useState(filtros.sort || "ImovelRecente");
   const [titulo, setTitulo] = useState("");
   const location =
     filtros.bairro?.map((i) => `${filtros.cidade}:${i.replaceAll("-", " ")}`) ??
@@ -77,9 +78,40 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     { id: "saloa", label: "Salão de festa" },
   ];
 
+    useEffect(() => {
+    const newData = {
+      action: searchParams.get("action") ?? "comprar",
+      tipos: searchParams.get("tipos")
+        ? searchParams.get("tipos")!.split(",")
+        : [],
+      locations: searchParams.get("cidade")
+        ? (searchParams.get("bairro")?.split(",") || []).map(
+            (b) => `${searchParams.get("cidade")}:${b}`
+          )
+        : [],
+      valueRange: {
+        min: searchParams.get("valorMin") ?? "",
+        max: searchParams.get("valorMax") ?? "",
+      },
+      quartos: searchParams.get("quartos") ?? "",
+      area: searchParams.get("areaMinima") ?? "",
+      suites: searchParams.get("suites") ?? "",
+      vagas: searchParams.get("vagas") ?? "",
+      caracteristicas: searchParams.get("caracteristicas")
+        ? searchParams.get("caracteristicas")!.split(",")
+        : [],
+      lancamentos: searchParams.get("lancamentos") ?? "",
+      mobiliado: searchParams.get("mobiliado") ?? "",
+    };
+
+    setSearchData(newData);
+    setPage(Number(searchParams.get("page") ?? 1));
+    setSortOrder(searchParams.get("sort") ?? "");
+  }, [searchParams]);
+
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
-
+    const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0]: "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
       newSearchParams.set("tipos", searchData.tipos.join(","));
@@ -115,9 +147,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     if (sortOrder) newSearchParams.set("sort", sortOrder);
     newSearchParams.set("page", String(page));
     // 2. Atualizar a URL do navegador
-    router.push(`?${decodeURIComponent(newSearchParams.toString())}`, {
-      scroll: false,
-    });
+    router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
 
     const fetchImoveis = async () => {
       setLoading(true);
@@ -162,23 +192,20 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
     // Quartos
     if (searchData.quartos !== "") {
-      titulo += `, com ${searchData.quartos}+ quarto${
-        searchData.quartos !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.quartos}+ quarto${searchData.quartos !== "1" ? "s" : ""
+        }`;
     }
 
     // Suítes
     if (searchData.suites !== "") {
-      titulo += `, com ${searchData.suites}+ suíte${
-        searchData.suites !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.suites}+ suíte${searchData.suites !== "1" ? "s" : ""
+        }`;
     }
 
     // Vagas
     if (searchData.vagas !== "") {
-      titulo += `, com ${searchData.vagas}+ vaga${
-        searchData.vagas !== "1" ? "s" : ""
-      }`;
+      titulo += `, com ${searchData.vagas}+ vaga${searchData.vagas !== "1" ? "s" : ""
+        }`;
     }
 
     // Área mínima
@@ -203,14 +230,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
     if (
       filtros.bairro &&
-      (filtros.bairro.length > 1 || filtros.bairro[0] === "all")
+      (filtros.bairro[0]?.split(",").length > 1)
     ) {
       titulo += ` em alguns bairros`;
     }
     // Localizações
     if (filtros.cidade) {
-      titulo += ` de ${filtros.cidade}`;
-      if (filtros.bairro?.length === 1 && filtros.bairro[0] !== "all") {
+      titulo += ` em ${filtros.cidade}`;
+      if (filtros.bairro && filtros.bairro[0]?.split(",").length === 1) {
         titulo += ` no bairro ${filtros.bairro[0]}`;
       }
     }
@@ -258,18 +285,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   const handleSearchByCode = async (code: string) => {
     if (!code) return;
-    router.push(`/busca?codigo=${code}`, {
-      scroll: false,
-    });
-    setLoading(true);
     try {
-      const res = await fetch(`/api/vista/imoveis?codigo=${code}`);
-      const data = await res.json();
-      setImoveis(data.imoveis);
-      setTotalPages(data.totalPages);
-      setTotalImoveis(data.totalItems);
-      gerarTitulo(data.totalItems);
-      // ... (atualize totalPages e totalImoveis)
+      router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${code}`);
     } catch (error) {
       console.error("Falha ao buscar imóveis:", error);
       setImoveis([]);
@@ -402,7 +419,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.quartos === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -441,9 +458,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div
-          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${
-            showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
-          }`}
+          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
+            }`}
         >
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
             <div className=" flex flex-col gap-y-4 w-full sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid lg:auto-cols-auto lg:grid-flow-col lg:grid-cols-none lg:gap-x-1">
@@ -491,7 +507,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.suites === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -519,7 +535,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.vagas === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -535,11 +551,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {caracteristicas.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
-                        searchData.caracteristicas.includes(type.id)
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${searchData.caracteristicas.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
-                      }`}
+                        }`}
                       onClick={() => {
                         setSearchData((prev) => ({
                           ...prev,
@@ -547,8 +562,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             type.id
                           )
                             ? prev.caracteristicas.filter(
-                                (id) => id !== type.id
-                              )
+                              (id) => id !== type.id
+                            )
                             : [...prev.caracteristicas, type.id],
                         }));
                         setPage(1); // Reset page to 1 when caracteristicas changes
@@ -561,8 +576,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             ...prev,
                             caracteristicas: checked
                               ? prev.caracteristicas.filter(
-                                  (id) => id !== type.id
-                                )
+                                (id) => id !== type.id
+                              )
                               : [...prev.caracteristicas, type.id],
                           }));
                           setPage(1); // Reset page to 1 when caracteristicas changes
@@ -677,7 +692,11 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {/* Botão Anterior */}
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() => setPage(Number(page) - 1)}
+                      href={`?page=${page - 1}`}
+                      onClick={(e) => {
+                        e.preventDefault(); // evita reload da página
+                        setPage(Number(page) - 1);
+                      }}
                       className={
                         page === 1
                           ? "pointer-events-none opacity-50 cursor-none"
@@ -704,9 +723,13 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       pages.push(
                         <PaginationItem key={i}>
                           <PaginationLink
+                            href={`?page=${i}`}
                             className="cursor-pointer"
                             isActive={page === i}
-                            onClick={() => setPage(i)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setPage(i);
+                            }}
                           >
                             {i}
                           </PaginationLink>
@@ -719,7 +742,11 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   {/* Botão Próximo */}
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => setPage(Number(page) + 1)}
+                      href={`?page=${page + 1}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(Number(page) + 1);
+                      }}
                       className={
                         page === totalPages
                           ? "pointer-events-none opacity-50 cursor-none"

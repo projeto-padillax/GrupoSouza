@@ -13,6 +13,17 @@ interface DestaquesSectionProps {
   };
 }
 
+function toSlug(text: string): string {
+    return text
+      .normalize("NFD") // separa acentos das letras
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // remove caracteres especiais
+      .trim() // remove espaços extras do começo/fim
+      .replace(/\s+/g, "-") // troca espaços por -
+      .replace(/-+/g, "-") // evita múltiplos hífens
+      .toLowerCase();
+  }
+
 export function DestaquesSection({ destaques }: DestaquesSectionProps) {
   const [activeTab, setActiveTab] = useState<string>("Alugar");
   const [todosImoveis, setTodosImoveis] = useState<Destaque[]>([]);
@@ -73,9 +84,7 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
           {todosImoveis.map((imovel: Destaque) => (
             <Link
               key={imovel.id}
-              href={`/imovel/${encodeURIComponent(
-                imovel.TituloSite || imovel.Descricao
-              )}/${imovel.Codigo}`}
+              href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(imovel.Descricao))}/${imovel.Codigo}`}
             >
               <ImovelCard
                 key={imovel.id}

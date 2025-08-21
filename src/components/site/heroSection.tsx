@@ -106,14 +106,19 @@ const newSearchParams = new URLSearchParams();
       newSearchParams.set("valorMin", searchData.valueRange.min);
     if (searchData.valueRange.max)
       newSearchParams.set("valorMax", searchData.valueRange.max);
+    const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
 
-    router.push(`/busca?${decodeURIComponent(newSearchParams.toString())}`, {
-      scroll: false,
-    });
+    router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
+
   };
 
-  const handleSearchByCode = () => {
-    router.push(`/busca?codigo=${codigo}`)
+  const handleSearchByCode = async () => {
+    if (!codigo) return;
+    try {
+      router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${codigo}`);
+    } catch (error) {
+      console.error("Falha ao buscar imóveis:", error);
+    } 
   };
 
   return (

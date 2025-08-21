@@ -12,6 +12,17 @@ type ApiSemelhantes = {
     semelhantes: Destaque[];
 };
 
+function toSlug(text: string): string {
+    return text
+      .normalize("NFD") // separa acentos das letras
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // remove caracteres especiais
+      .trim() // remove espaços extras do começo/fim
+      .replace(/\s+/g, "-") // troca espaços por -
+      .replace(/-+/g, "-") // evita múltiplos hífens
+      .toLowerCase();
+  }
+
 export default async function SemelhantesSection({ codigo }: { codigo: string }) {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/vista/imoveis/${codigo}/semelhante`,
@@ -34,7 +45,7 @@ export default async function SemelhantesSection({ codigo }: { codigo: string })
                 {itens.map((imovel) => (
                     <Link
                         key={imovel.Codigo}
-                        href={`/imovel/${encodeURIComponent(imovel.TituloSite || imovel.Descricao)}/${imovel.Codigo}`}
+                        href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(imovel.Descricao))}/${imovel.Codigo}`}
                         className="block"
                     >
                         <ImovelCard imovel={imovel} activeTab={activeTab} />
