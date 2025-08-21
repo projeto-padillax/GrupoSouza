@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -36,11 +36,11 @@ const SecaoZod = z.object({
   descricao: z
     .string()
     .min(1, "Descrição é obrigatória.")
-    .max(255, "A descrição deve ter no máximo 255 caracteres."),
+    .max(350, "A descrição deve ter no máximo 255 caracteres."),
   palavrasChave: z
     .string()
     .min(1, "Palavras Chaves são obrigatórias.")
-    .max(100, "As palavras chaves deve ter no máximo 255 caracteres."),
+    .max(350, "As palavras chaves deve ter no máximo 350 caracteres."),
   url: z.string(),
   publicId: z.string().optional(),
   imagem: z.string().optional(),
@@ -55,15 +55,10 @@ interface SecaoFormProps {
   mode: "edit";
 }
 
-export default function SecaoForm({
-  secao,
-  mode,
-}: SecaoFormProps) {
+export default function SecaoForm({ secao, mode }: SecaoFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [previewImage, setPreviewImage] = useState<string>(
-    secao?.imagem ?? ""
-  );
+  const [previewImage, setPreviewImage] = useState<string>(secao?.imagem ?? "");
 
   const isEditing = mode === "edit";
 
@@ -85,26 +80,26 @@ export default function SecaoForm({
   });
 
   const formatPageUrl = (titulo: string) => {
-    return `${process.env.NEXT_PUBLIC_BASE_URL || ""}/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
+    return `${
+      process.env.NEXT_PUBLIC_BASE_URL || ""
+    }/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
   };
 
   const onSubmit = (values: SecaoInput) => {
     startTransition(async () => {
       try {
         // Limpar campos não utilizados baseado no tipo
-        const data = { ...values }
+        const data = { ...values };
         if (isEditing) {
           await updateSecao(secao.id, data);
           toast.success("Página editada com sucesso!");
-        } 
+        }
 
         router.push("/admin/secoes");
       } catch (error) {
         console.error(error);
         const errorMessage =
-          error instanceof Error
-            ? error.message
-            : `Erro ao editar página`;
+          error instanceof Error ? error.message : `Erro ao editar página`;
         toast.error(errorMessage);
       }
     });
@@ -138,7 +133,10 @@ export default function SecaoForm({
                         className="flex items-center space-x-6"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="true" id="exibir-sitemap-sim" />
+                          <RadioGroupItem
+                            value="true"
+                            id="exibir-sitemap-sim"
+                          />
                           <Label
                             htmlFor="exibir-sitemap-sim"
                             className="text-gray-700 text-base font-medium cursor-pointer"
@@ -147,7 +145,10 @@ export default function SecaoForm({
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="false" id="exibir-sitemap-nao" />
+                          <RadioGroupItem
+                            value="false"
+                            id="exibir-sitemap-nao"
+                          />
                           <Label
                             htmlFor="exibir-sitemap-nao"
                             className="text-gray-700 text-base font-medium cursor-pointer"
@@ -171,7 +172,10 @@ export default function SecaoForm({
                       Título:
                     </Label>
                     <FormControl>
-                      <Input placeholder="Digite o título da seção" {...field} />
+                      <Input
+                        placeholder="Digite o título da seção"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -231,11 +235,19 @@ export default function SecaoForm({
                           <FormControl>
                             <CldUploadWidget
                               options={{
-                                clientAllowedFormats: ["png", "jpeg", "jpg", "webp"],
+                                clientAllowedFormats: [
+                                  "png",
+                                  "jpeg",
+                                  "jpg",
+                                  "webp",
+                                ],
                               }}
                               uploadPreset="grupo-souze-unsigned"
                               onSuccess={(result) => {
-                                if (result?.info && typeof result.info !== "string") {
+                                if (
+                                  result?.info &&
+                                  typeof result.info !== "string"
+                                ) {
                                   const url = result.info.secure_url;
                                   const publicId = result.info.public_id;
                                   field.onChange(url);
@@ -244,7 +256,10 @@ export default function SecaoForm({
                                 }
                               }}
                               onError={(error) => {
-                                console.error("Cloudinary upload error:", error);
+                                console.error(
+                                  "Cloudinary upload error:",
+                                  error
+                                );
                               }}
                             >
                               {({ open }: { open: () => void }) => (
@@ -282,10 +297,9 @@ export default function SecaoForm({
                 </>
               )}
 
-
               <FormField
                 control={form.control}
-                name="titulo"
+                name="tituloh1"
                 render={({ field }) => (
                   <FormItem className="flex items-center gap-8">
                     <Label className="text-gray-900 font-medium text-lg w-28">
@@ -298,7 +312,6 @@ export default function SecaoForm({
                   </FormItem>
                 )}
               />
-
 
               <FormField
                 control={form.control}
@@ -319,45 +332,41 @@ export default function SecaoForm({
                   </FormItem>
                 )}
               />
-
             </div>
 
             {/* Buttons */}
-            <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={isPending}
-                    className="cursor-pointer"
-                  >
-                    {isPending ? (
-                      <>
-                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        {isEditing ? "Salvando..." : "Criando..."}
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4 mr-2" />
-                        {isEditing ? "Salvar" : "Criar"}
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    type="button"
-                    className="cursor-pointer"
-                    variant="outline"
-                    onClick={handleBack}
-                    size="lg"
-                    disabled={isPending}
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Voltar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+
+            <div className="flex gap-4 items-center justify-center">
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isPending}
+                className="cursor-pointer"
+              >
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    {isEditing ? "Salvando..." : "Criando..."}
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {isEditing ? "Salvar" : "Criar"}
+                  </>
+                )}
+              </Button>
+              <Button
+                type="button"
+                className="cursor-pointer"
+                variant="outline"
+                onClick={handleBack}
+                size="lg"
+                disabled={isPending}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </form>
