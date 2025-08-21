@@ -18,19 +18,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { PaginasConteudo } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { createPagina, updatePagina } from "@/lib/actions/contentPages";
 import { CldUploadWidget } from "next-cloudinary";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import Image from "next/image";
-import { Secao } from "@/lib/types/secao";
+import { updateSecao } from "@/lib/actions/secoes";
+import { Secao } from "@prisma/client";
 
 const SecaoZod = z.object({
   sitemap: z.boolean(),
-  editarTextoFundo: z.boolean(),
+  edicaoTextoFundo: z.boolean(),
   // ordem: z.number().min(0, "Ordem deve ser positiva."),
-  // imagem: z.string().optional(),
   titulo: z
     .string()
     .min(1, "Título é obrigatório.")
@@ -44,8 +42,10 @@ const SecaoZod = z.object({
     .min(1, "Palavras Chaves são obrigatórias.")
     .max(100, "As palavras chaves deve ter no máximo 255 caracteres."),
   url: z.string(),
-  // publicId: z.string().optional(),
-  // conteudo: z.string().optional(),
+  publicId: z.string().optional(),
+  imagem: z.string().optional(),
+  tituloh1: z.string().optional(),
+  textoPagina: z.string().optional(),
 });
 
 export type SecaoInput = z.infer<typeof SecaoZod>;
@@ -61,9 +61,9 @@ export default function SecaoForm({
 }: SecaoFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  // const [previewImage, setPreviewImage] = useState<string>(
-  //   paginaDeConteudo?.imagem ?? ""
-  // );
+  const [previewImage, setPreviewImage] = useState<string>(
+    secao?.imagem ?? ""
+  );
 
   const isEditing = mode === "edit";
 
@@ -71,14 +71,16 @@ export default function SecaoForm({
     resolver: zodResolver(SecaoZod),
     defaultValues: {
       sitemap: secao?.sitemap ?? true,
-      editarTextoFundo: secao?.sitemap ?? false,
+      edicaoTextoFundo: secao?.edicaoTextoFundo ?? false,
       url: secao?.url ?? "",
       titulo: secao?.titulo ?? "",
       descricao: secao?.descricao ?? "",
       palavrasChave: secao?.palavrasChave ?? "",
       // ordem: secao?.ordem ?? 1,
-      // imagem: secao?.imagem ?? "",
-      // publicId: paginaDeConteudo?.publicId ?? "",
+      imagem: secao?.imagem ?? "",
+      publicId: secao?.publicId ?? "",
+      tituloh1: secao?.tituloh1 ?? "",
+      textoPagina: secao?.textoPagina ?? "",
     },
   });
 
@@ -90,15 +92,11 @@ export default function SecaoForm({
     startTransition(async () => {
       try {
         // Limpar campos não utilizados baseado no tipo
-
-        // if (isEditing) {
-        //   await updatePagina(paginaDeConteudo.id, dataToSubmit);
-        //   toast.success("Página editada com sucesso!");
-        // } else {
-        //   console.log("URL que vai ser salva:", dataToSubmit.url);
-        //   await createPagina(dataToSubmit);
-        //   toast.success("Página criada com sucesso!" + dataToSubmit.url);
-        // }
+        const data = { ...values }
+        if (isEditing) {
+          await updateSecao(secao.id, data);
+          toast.success("Página editada com sucesso!");
+        } 
 
         router.push("/admin/secoes");
       } catch (error) {
@@ -211,6 +209,108 @@ export default function SecaoForm({
                     <FormControl>
                       <Textarea
                         placeholder="Palavras Chaves minúsculas e separadas por vírgula"
+                        className="min-h-[200px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {secao.edicaoTextoFundo && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="imagem"
+                    render={({ field }) => (
+                      <FormItem className="flex items-start gap-8">
+                        <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                          Nova Foto:
+                        </Label>
+                        <div className="flex-1">
+                          <FormControl>
+                            <CldUploadWidget
+                              options={{
+                                clientAllowedFormats: ["png", "jpeg", "jpg", "webp"],
+                              }}
+                              uploadPreset="grupo-souze-unsigned"
+                              onSuccess={(result) => {
+                                if (result?.info && typeof result.info !== "string") {
+                                  const url = result.info.secure_url;
+                                  const publicId = result.info.public_id;
+                                  field.onChange(url);
+                                  setPreviewImage(url);
+                                  form.setValue("publicId", publicId);
+                                }
+                              }}
+                              onError={(error) => {
+                                console.error("Cloudinary upload error:", error);
+                              }}
+                            >
+                              {({ open }: { open: () => void }) => (
+                                <div className="relative w-fit">
+                                  <button
+                                    type="button"
+                                    onClick={() => open()}
+                                    className="text-sm text-blue-700 font-semibold bg-blue-50 hover:bg-blue-100 
+                                 rounded-md px-3 py-1.5 cursor-pointer"
+                                  >
+                                    Enviar imagem
+                                  </button>
+                                  <ImageIcon className="absolute right-[-24px] top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                                </div>
+                              )}
+                            </CldUploadWidget>
+                          </FormControl>
+                          <p className="text-blue-600 font-medium mt-2 text-sm">
+                            (JPG/PNG 1920x750px)
+                          </p>
+                          {previewImage && (
+                            <Image
+                              width={300}
+                              height={200}
+                              src={previewImage}
+                              alt="Pré-visualização"
+                              className="mt-4 rounded-lg shadow-sm border border-gray-300 max-h-48 object-cover"
+                            />
+                          )}
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+
+              <FormField
+                control={form.control}
+                name="titulo"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28">
+                      Título H1:
+                    </Label>
+                    <FormControl>
+                      <Input placeholder="Digite o título H1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+
+              <FormField
+                control={form.control}
+                name="textoPagina"
+                render={({ field }) => (
+                  <FormItem className="flex items-start gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                      Texto da Página:
+                    </Label>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Utilize tags HTML para formatação"
                         className="min-h-[200px]"
                         {...field}
                       />

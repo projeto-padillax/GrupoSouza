@@ -1,7 +1,9 @@
 import { PrismaClient, PerfilUsuario } from "@prisma/client";
+import { Secoes } from "./secoes";
 const prisma = new PrismaClient();
 
 async function main() {
+  // superadmin
   const danton = await prisma.user.create({
     data: {
       name: "Danton",
@@ -12,8 +14,14 @@ async function main() {
       senha: "samurai",
     },
   });
-  console.log(danton);
+
+  const secoes = Secoes;
+
+  await prisma.secao.createMany({
+    data: secoes
+  })
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect();

@@ -103,16 +103,17 @@ model PaginasConteudo {
 }
 
 model Secao {
-  id             Int     @id @default(autoincrement())
-  tituloMetadado String?
-  isOnSiteMap    Boolean @default(true)
-  ordemSiteMap   Int?
-  descricao      String?
-  palavrasChaves String?
-  tituloH1       String?
-  textoPagina    String?
-  imagem         String?
-  publicId       String?
+  id               Int     @id @default(autoincrement())
+  titulo           String
+  url              String
+  sitemap          Boolean @default(true)
+  edicaoTextoFundo Boolean @default(false)
+  descricao        String
+  palavrasChave    String
+  tituloh1         String?
+  textoPagina      String?
+  imagem           String?
+  publicId         String?
 }
 
 model ConfiguracaoPagina {
@@ -206,52 +207,49 @@ enum PerfilUsuario {
   SUPERADMIN
 }
 
-
 model Imovel {
-  id                        String    @id @default(uuid()) @map("id")
-  Codigo                    String?   @unique
-  ValorIptu                 String?   @map("valorIptu")
-  ValorCondominio           String?   @map("valorCondominio")
-  Categoria                 String?
-  InformacaoVenda           String?   @map("informacaoVenda")
-  ObsVenda                  String?   @map("obsVenda")
-  Bairro                    String?
-  GMapsLatitude             String?   @map("gMapsLatitude")
-  GMapsLongitude            String?   @map("gMapsLongitude")
-  DescricaoWeb              String?   @map("descricaoWeb")
-  Cidade                    String?
-  ValorVenda                Int?      @map("valorVenda")
-  ValorLocacao              Int?      @map("valorLocacao")
-  Dormitorios               String?
-  Suites                    String?
-  Vagas                     String?
-  AreaTotal                 Float?   @map("areaTotal")
-  AreaTerreno               Float?   @map("areaTerreno")
-  AreaConstruida            Float?   @map("areaConstruida")
-  Descricao                 String?
-  DataHoraAtualizacao       DateTime? @map("dataHoraAtualizacao")
-  Lancamento                String?
-  Finalidade                String?
-  Status                    String?
-  Empreendimento            String?
-  Endereco                  String?
-  Numero                    String?
-  Complemento               String?
-  UF                        String?
-  CEP                       String?
-  DestaqueWeb               String?   @map("destaqueWeb")
-  FotoDestaque              String?   @map("fotoDestaque")
-  Latitude                  String?
-  Longitude                 String?
-  TituloSite                String?   @map("tituloSite")
-  FotoDestaqueEmpreendimento String?  @map("fotoDestaqueEmpreendimento")
-  VideoDestaque             String?   @map("videoDestaque")
-  Mobiliado                 String?
+  id                         String    @id @default(uuid()) @map("id")
+  Codigo                     String?   @unique
+  ValorIptu                  String?   @map("valorIptu")
+  ValorCondominio            String?   @map("valorCondominio")
+  Categoria                  String?
+  InformacaoVenda            String?   @map("informacaoVenda")
+  ObsVenda                   String?   @map("obsVenda")
+  Bairro                     String?
+  GMapsLatitude              String?   @map("gMapsLatitude")
+  GMapsLongitude             String?   @map("gMapsLongitude")
+  DescricaoWeb               String?   @map("descricaoWeb")
+  Cidade                     String?
+  ValorVenda                 Int?      @map("valorVenda")
+  ValorLocacao               Int?      @map("valorLocacao")
+  Dormitorios                String?
+  Suites                     String?
+  Vagas                      String?
+  AreaTotal                  Float?    @map("areaTotal")
+  AreaTerreno                Float?    @map("areaTerreno")
+  AreaConstruida             Float?    @map("areaConstruida")
+  Descricao                  String?
+  DataHoraAtualizacao        DateTime? @map("dataHoraAtualizacao")
+  Lancamento                 String?
+  Finalidade                 String?
+  Status                     String?
+  Empreendimento             String?
+  Endereco                   String?
+  Numero                     String?
+  Complemento                String?
+  UF                         String?
+  CEP                        String?
+  DestaqueWeb                String?   @map("destaqueWeb")
+  FotoDestaque               String?   @map("fotoDestaque")
+  Latitude                   String?
+  Longitude                  String?
+  TituloSite                 String?   @map("tituloSite")
+  FotoDestaqueEmpreendimento String?   @map("fotoDestaqueEmpreendimento")
+  VideoDestaque              String?   @map("videoDestaque")
+  Mobiliado                  String?
 
   fotos           Foto[]
   caracteristicas Caracteristica[]
-
-  @@map("imoveis")
 
   @@index([Cidade, Status])
   @@index([Bairro])
@@ -261,6 +259,7 @@ model Imovel {
   @@index([DataHoraAtualizacao])
   @@index([Lancamento])
   @@index([Mobiliado])
+  @@map("imoveis")
 }
 
 model Foto {
@@ -271,30 +270,27 @@ model Foto {
   urlPequena String?
 
   imovelId String
-  imovel   Imovel   @relation(fields: [imovelId], references: [id])
-
-  @@map("fotos")
+  imovel   Imovel @relation(fields: [imovelId], references: [id])
 
   @@index([imovelId, id])
+  @@map("fotos")
 }
 
 model Caracteristica {
-  id       Int    @id @default(autoincrement())
-  nome     String
-  valor    String
+  id    Int    @id @default(autoincrement())
+  nome  String
+  valor String
 
   imovelId String
-  imovel   Imovel   @relation(fields: [imovelId], references: [id])
-
-  @@map("caracteristicas")
+  imovel   Imovel @relation(fields: [imovelId], references: [id])
 
   @@index([imovelId])
   @@index([nome, valor])
+  @@map("caracteristicas")
 }
 
-
 model Finalidade {
-  id       Int    @id @default(autoincrement())
-  nome     String
-  tipo     String
+  id   Int    @id @default(autoincrement())
+  nome String
+  tipo String
 }

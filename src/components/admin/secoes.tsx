@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { ExternalLink, Edit } from "lucide-react";
-import { Secao } from "@/lib/types/secao";
+import { Edit } from "lucide-react";
+import { Secao } from "@prisma/client";
 
 interface Props {
   secoes: Secao[];
@@ -33,15 +33,10 @@ export default function Secoes({ secoes }: Props) {
       header: "URL",
       accessor: "url",
       cell: (item: Secao) => (
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium text-base bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors duration-200"
-        >
-          Abrir URL
-          <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        <span
+          className="text-gray-900 font-medium text-base"
+          dangerouslySetInnerHTML={{ __html: item.url }}
+        />
       ),
     },
     {
