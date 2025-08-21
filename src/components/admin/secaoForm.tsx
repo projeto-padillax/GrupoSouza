@@ -116,80 +116,151 @@ export default function SecaoForm({
     router.push("/admin/paginas");
   };
 
-return (
-  <Form {...form}>
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Card>
-        <CardContent className="p-8 space-y-8">
-          <div className="space-y-6">
-            {/* All your FormField components */}
-            <FormField
-              control={form.control}
-              name="sitemap"
-              render={({ field }) => (
-                <FormItem className="flex items-center gap-8">
-                  <Label className="text-gray-900 font-medium text-lg w-28">
-                    Exibir no Sitemap:
-                  </Label>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) =>
-                        field.onChange(value === "true")
-                      }
-                      value={field.value ? "true" : "false"}
-                      className="flex items-center space-x-6"
-                    >
-                      {/* Radio options */}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Card>
+          <CardContent className="p-8 space-y-8">
+            <div className="space-y-6">
+              {/* All your FormField components */}
+              <FormField
+                control={form.control}
+                name="sitemap"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28">
+                      Exibir no Sitemap:
+                    </Label>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === "true")
+                        }
+                        value={field.value ? "true" : "false"}
+                        className="flex items-center space-x-6"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="true" id="exibir-sitemap-sim" />
+                          <Label
+                            htmlFor="exibir-sitemap-sim"
+                            className="text-gray-700 text-base font-medium cursor-pointer"
+                          >
+                            Sim
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="false" id="exibir-sitemap-nao" />
+                          <Label
+                            htmlFor="exibir-sitemap-nao"
+                            className="text-gray-700 text-base font-medium cursor-pointer"
+                          >
+                            Não
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Other FormFields (titulo, descricao, palavrasChave) */}
+              <FormField
+                control={form.control}
+                name="titulo"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28">
+                      Título:
+                    </Label>
+                    <FormControl>
+                      <Input placeholder="Digite o título da seção" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          </div> {/* <-- Closing div added here */}
+              <FormField
+                control={form.control}
+                name="descricao"
+                render={({ field }) => (
+                  <FormItem className="flex items-start gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                      Descrição da Página:
+                    </Label>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Digite a descrição da página para Google/SEO"
+                        className="min-h-[200px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Buttons */}
-          <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
-            <CardContent className="p-6">
-              <div className="flex gap-4">
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={isPending}
-                  className="cursor-pointer"
-                >
-                  {isPending ? (
-                    <>
-                      <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      {isEditing ? "Salvando..." : "Criando..."}
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      {isEditing ? "Salvar" : "Criar"}
-                    </>
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  className="cursor-pointer"
-                  variant="outline"
-                  onClick={handleBack}
-                  size="lg"
-                  disabled={isPending}
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card>
-    </form>
-  </Form>
-);
+              <FormField
+                control={form.control}
+                name="palavrasChave"
+                render={({ field }) => (
+                  <FormItem className="flex items-start gap-8">
+                    <Label className="text-gray-900 font-medium text-lg w-28 mt-2">
+                      Palavras Chaves:
+                    </Label>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Palavras Chaves minúsculas e separadas por vírgula"
+                        className="min-h-[200px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+            </div>
+
+            {/* Buttons */}
+            <Card className="border border-gray-200 rounded-xl shadow-sm bg-white mt-6">
+              <CardContent className="p-6">
+                <div className="flex gap-4">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isPending}
+                    className="cursor-pointer"
+                  >
+                    {isPending ? (
+                      <>
+                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        {isEditing ? "Salvando..." : "Criando..."}
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        {isEditing ? "Salvar" : "Criar"}
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    className="cursor-pointer"
+                    variant="outline"
+                    onClick={handleBack}
+                    size="lg"
+                    disabled={isPending}
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Voltar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
+        </Card>
+      </form>
+    </Form>
+  );
 }
