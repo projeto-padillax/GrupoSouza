@@ -25,7 +25,7 @@ export default async function Home() {
         {/* Header */}
         <Header></Header>
         <main className="flex-1 pb-8">
-          <HeroSection imageUrl={imageHero.imagem} subtitulo={imageHero.subtitulo} titulo={imageHero.titulo} url={imageHero.url}></HeroSection>
+          <HeroSection imageUrl={imageHero?.imagem} subtitulo={imageHero?.subtitulo} titulo={imageHero?.titulo} url={imageHero?.url}></HeroSection>
           <SlideSection slides={slides}></SlideSection>
           <ChamadasNaHomeSection ></ChamadasNaHomeSection>
           <DestaquesSection destaques={destaques} />
