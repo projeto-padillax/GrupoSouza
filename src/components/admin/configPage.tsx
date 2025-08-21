@@ -87,8 +87,6 @@ const siteConfigSchema = z.object({
     .or(z.literal("")),
   whatsappNumber: z
     .string()
-    .min(1, "Número do WhatsApp é obrigatório.")
-    .max(20, "Número do WhatsApp deve ter no máximo 20 caracteres.")
     .nullable(),
   enderecos: z.array(enderecoSchema),
 });
@@ -110,6 +108,12 @@ export default function SiteConfigForm({
       CRECI: "",
       sobreNos: "",
       logoUrl: "",
+      linkedInUrl: "",
+      facebookUrl: "",
+      instagramUrl: "",
+      youtubeUrl: "",
+      twitterUrl: "",
+      whatsappNumber: "",
       enderecos: [
         {
           rua: "",
@@ -138,6 +142,7 @@ export default function SiteConfigForm({
   });
 
   const onSubmit = (values: SiteConfigSchema) => {
+    console.log("teste")
     startTransition(async () => {
       if (!defaultValues) {
         await createConfiguracaoPagina(values);

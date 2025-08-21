@@ -63,8 +63,6 @@ const configuracaoServerSchema = z.object({
     .or(z.literal("")),
   whatsappNumber: z
     .string()
-    .min(1, "Número do WhatsApp é obrigatório.")
-    .max(20, "Número do WhatsApp deve ter no máximo 20 caracteres.")
     .nullable(),
   linkedInUrl: z
     .string()
