@@ -3,6 +3,18 @@ import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 import { Suspense } from "react";
+import { Metadata } from "next/types";
+import { getSecao } from "@/lib/actions/secoes";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const secao = await getSecao(5)
+ 
+  return {
+    title: secao?.titulo,
+    description: secao?.descricao,
+    keywords: secao?.palavrasChave
+  }
+}
 
 export default function PoliticaDePrivacidade() {
   return (

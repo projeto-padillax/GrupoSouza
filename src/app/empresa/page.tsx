@@ -4,6 +4,18 @@ import Footer from "@/components/site/footer";
 import { getSobreNos } from "@/lib/actions/config";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 import { Suspense } from "react";
+import { Metadata } from "next/types";
+import { getSecao } from "@/lib/actions/secoes";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const secao = await getSecao(2)
+ 
+  return {
+    title: secao?.titulo,
+    description: secao?.descricao,
+    keywords: secao?.palavrasChave
+  }
+}
 
 export default async function Empresa() {
   const sobre = await getSobreNos();

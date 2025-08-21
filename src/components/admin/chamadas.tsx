@@ -105,7 +105,7 @@ export default function ChamadasListClient({ initialChamadas }: Props) {
             ]}
             renderActions={(item) => (
               <Link href={`/admin/chamadas/${item.id}/edit`}>
-                <Button variant="outline" size="sm" className="bg-transparent">
+                <Button variant="outline" size="sm" className="bg-transparent cursor-pointer hover:opacity-90">
                   <Edit className="h-4 w-4 mr-1" />
                   Editar
                 </Button>

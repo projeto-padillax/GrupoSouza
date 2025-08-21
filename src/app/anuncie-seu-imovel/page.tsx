@@ -4,6 +4,18 @@ import Footer from "@/components/site/footer";
 import AnuncieForm from "@/components/site/anuncieForm";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 import { Suspense } from "react";
+import { getSecao } from "@/lib/actions/secoes";
+import { Metadata } from "next/types";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const secao = await getSecao(3)
+ 
+  return {
+    title: secao?.titulo,
+    description: secao?.descricao,
+    keywords: secao?.palavrasChave
+  }
+}
 
 export default function AnuncieImovel() {
   return (

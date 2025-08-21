@@ -90,7 +90,7 @@ export function AdminTable<T extends Banners | Slides | Chamadas | MaisAcessado>
                                 />
                             </TableCell>
                             <TableCell className="py-5">
-                                <span className="text-gray-900 font-medium text-base" dangerouslySetInnerHTML={{__html: item.titulo}}></span>
+                                <span className="text-gray-900 font-medium text-base" dangerouslySetInnerHTML={{ __html: item.titulo }}></span>
                             </TableCell>
                             <TableCell className="py-5">
                                 <a
@@ -113,8 +113,8 @@ export function AdminTable<T extends Banners | Slides | Chamadas | MaisAcessado>
                                     <Badge
                                         variant={item.status ? "default" : "secondary"}
                                         className={`px-3 py-1 text-xs font-medium rounded-full ${item.status
-                                                ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                                                : "bg-gray-100 text-gray-700 border border-gray-200"
+                                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                            : "bg-gray-100 text-gray-700 border border-gray-200"
                                             }`}
                                     >
                                         {item.status ? "Ativo" : "Inativo"}
