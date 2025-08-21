@@ -18,7 +18,7 @@ export default async function Header() {
           <div className="flex justify-between items-center h-16 lg:h-20">
             <div className="flex-shrink-0">
               <Link href="/">
-                <Image src={logo ?? ''} alt={'Logo do Site'} width={200} height={69}></Image>
+                {logo && <Image src={logo} alt={'Logo do Site'} width={200} height={69}></Image>}
               </Link>
             </div>
             <div className="flex items-center space-x-4">
