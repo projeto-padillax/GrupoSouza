@@ -6,7 +6,9 @@ import Image from "next/image";
 import { Suspense } from "react";
 import EspecialList from "@/components/site/especialList";
 
-export default async function EspecialPage({ params }: { params: { id: string } }) {
+type Params = { id: string };
+
+export default async function EspecialPage({ params }: { params: Promise<Params> }) {
     const { id } = await params;
     return (
         <div className="min-h-screen flex flex-col bg-white">
