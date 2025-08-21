@@ -153,7 +153,7 @@ export default async function Footer() {
                         }
                         className="flex items-center justify-start w-max"
                       >
-                        <span className="lg:ml-2">
+                        <span className="lg:ml-2 flex items-center gap-0.5">
                           {endereco.tituloTelefone3 != "" ? (
                             <strong>{endereco.tituloTelefone3}</strong>
                           ) : endereco.isWhatsApp3 ? (
