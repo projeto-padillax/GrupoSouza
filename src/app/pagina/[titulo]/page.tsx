@@ -11,8 +11,9 @@ interface DynamicPageProps {
 
 export default async function DynamicPage({ params }: DynamicPageProps) {
   const tituloOriginal = await params.then((p) => p.titulo);
-  const pageData = await getPaginaByTitle(tituloOriginal);
-
+  const titulo = decodeURIComponent(tituloOriginal).replaceAll("-", " ");
+  const pageData = await getPaginaByTitle(titulo);
+  console.log(pageData);
   if (!pageData) notFound();
 
   return (
@@ -29,14 +30,14 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         </div>
 
         {pageData.imagem ? (
-          <section
-            className="relative w-full pt-6 pb-4"
-          >
+          <section className="relative w-full pt-6 pb-4">
             <div className="max-w-7xl mx-auto px-4">
               <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
                 <div
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 40%),url(${pageData.imagem})` }}
+                  style={{
+                    backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.938813025210084) 0%, rgba(0,0,0,0) 40%),url(${pageData.imagem})`,
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-y-0 left-0 flex items-center z-10 px-6">
