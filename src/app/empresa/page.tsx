@@ -1,24 +1,25 @@
 import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
-import { getSobreNos } from "@/lib/actions/config";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 import { Suspense } from "react";
 import { Metadata } from "next/types";
 import { getSecao } from "@/lib/actions/secoes";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const secao = await getSecao(2)
- 
+  const secao = await getSecao(2);
+
   return {
     title: secao?.titulo,
     description: secao?.descricao,
-    keywords: secao?.palavrasChave
-  }
+    keywords: secao?.palavrasChave,
+  };
 }
 
-export default async function Empresa() {
-  const sobre = await getSobreNos();
+export default async function PaginaDinamicaSecao() {
+  const secao = await getSecao(2);
+
+  if (!secao) return null;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -34,34 +35,41 @@ export default async function Empresa() {
                 <BreadCrumb />
               </Suspense>
             </div>
-            <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
-              <Image
-                src="/sobre.webp"
-                alt="grupo souza"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-              <div className="absolute inset-y-0 left-0 flex items-center z-10 px-6">
-                <h1 className="text-white text-2xl md:text-4xl font-semibold ml-10">
-                  A Empresa
-                </h1>
+
+            {secao.imagem ? (
+              <div className="relative w-full h-[200px] md:h-[240px] rounded-lg overflow-hidden">
+                <Image
+                  src={secao.imagem}
+                  alt={secao.tituloh1 || secao.titulo}
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+                <div className="absolute inset-y-0 left-0 flex items-center z-10 px-6">
+                  <h1 className="text-white text-2xl md:text-4xl font-semibold ml-10">
+                    {secao.tituloh1 || secao.titulo}
+                  </h1>
+                </div>
               </div>
-            </div>
+            ) : (
+              <h1 className="text-2xl md:text-4xl font-semibold text-gray-900 ml-10">
+                {secao.tituloh1 || secao.titulo}
+              </h1>
+            )}
           </div>
         </section>
 
         <section className="py-8 md:py-12">
           <div className="max-w-4xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-semibold text-[#333] mb-6">
-              Ajudamos você a ter qualidade de vida morando em Piracicaba
+              {secao.tituloh1 || "Título indisponível"}
             </h2>
 
             <p className="text-lg text-[#444] leading-relaxed whitespace-pre-line">
-              {sobre && sobre.trim().length > 0
-                ? sobre
+              {secao.textoPagina?.trim()?.length
+                ? secao.textoPagina
                 : "Conteúdo indisponível no momento."}
             </p>
           </div>
