@@ -15,4 +15,5 @@ export function slugify(text: string): string {
       .replace(/-+/g, "-") // evita múltiplos hífens
       .toLowerCase();
   }
+  
 export const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
