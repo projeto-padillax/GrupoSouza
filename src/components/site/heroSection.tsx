@@ -106,6 +106,8 @@ const newSearchParams = new URLSearchParams();
       newSearchParams.set("valorMin", searchData.valueRange.min);
     if (searchData.valueRange.max)
       newSearchParams.set("valorMax", searchData.valueRange.max);
+
+    newSearchParams.set("page", String("1"));
     const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
 
     router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
