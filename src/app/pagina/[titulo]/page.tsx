@@ -22,7 +22,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
       <main className="flex-1 bg-white">
         <div className="w-full py-3">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="h-6 bg-gray-100 rounded-sm select-none">
+            <div className="h-6 rounded-sm select-none">
               <BreadCrumb />
             </div>
           </div>
