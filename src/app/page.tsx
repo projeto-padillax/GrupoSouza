@@ -9,8 +9,20 @@ import { getDestaques } from "@/lib/actions/destaques";
 import { getAllSlides } from "@/lib/actions/slide";
 import { DestaquesSection } from "@/components/site/destaquesSection";
 import ClientLayout from "@/components/client-layout";
+import { Metadata } from "next/types";
+import { getSecao } from "@/lib/actions/secoes";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const secao = await getSecao(1)
+ 
+  return {
+    title: secao?.titulo,
+    description: secao?.descricao,
+    keywords: secao?.palavrasChave
+  }
+}
 
 export default async function Home() {
   const [imageHero, slides, destaques] = await Promise.all([

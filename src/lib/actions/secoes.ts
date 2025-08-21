@@ -72,3 +72,12 @@ export async function getAllSecoes() {
     throw new Error("Não foi possível buscar as seções");
   }
 }
+
+export async function getSecao(id: number) {
+  try {
+    return await prisma.secao.findUnique({ where: { id } });
+  } catch (error) {
+    console.error("Erro ao buscar seções:", error);
+    throw new Error("Não foi possível buscar as seções");
+  }
+}

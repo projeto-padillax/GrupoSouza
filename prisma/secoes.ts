@@ -1,6 +1,7 @@
 const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}`
 
 export const Secoes = [{
+    id: 1,
     titulo: "Página Inicial",
     url: `${baseUrl}`,
     sitemap: true,
@@ -9,6 +10,7 @@ export const Secoes = [{
     palavrasChave: "template site imobiliário, site para imobiliária, integração Vista, integração Jetimob, integração Loft, site integrado CRM imobiliário, site para corretores, modelo de site imobiliário, site para venda de imóveis, site responsivo imobiliária, sistema para imobiliária, site profissional imobiliária, template imóveis, site com integração CRM, site com Jetimob, site com Vista Software, site com Loft"
 },
 {
+    id: 2,
     titulo: "Sobre a Empresa",
     url: `${baseUrl}/empresa`,
     sitemap: true,
@@ -17,6 +19,7 @@ export const Secoes = [{
     palavrasChave: "imobiliária Lead Link, Lead Link, gestão de imóveis, administração de condomínios, aluguel de imóveis, venda de imóveis, imobiliária moderna, imobiliária Porto Alegre, locação residencial, locação comercial, gestão imobiliária, tecnologia imobiliária, imobiliária com CRM, atendimento personalizado imóveis, Lead Link RS"
 },
 {
+    id: 3,
     titulo: "Anuncie seu Imóvel",
     url: `${baseUrl}/anuncie-seu-imovel`,
     sitemap: true,
@@ -29,6 +32,7 @@ export const Secoes = [{
     textoPagina: "Anuncie de graça! Na Lead Link seu imóvel ganha visibilidade no maior portal de Porto Alegre e nos melhores portais imobiliários do mercado nacional.",
 },
 {
+    id: 4,
     titulo: "Contato",
     url: `${baseUrl}/contato`,
     sitemap: true,
@@ -41,6 +45,7 @@ export const Secoes = [{
     textoPagina: "Escolha a melhor forma para falar conosco."
 },
 {
+    id: 5,
     titulo: "Política de Privacidade",
     url: `${baseUrl}/politica-de-privacidade`,
     sitemap: true,
@@ -71,6 +76,7 @@ Tomamos medidas de segurança para proteger suas informações contra acesso nã
 Se você tiver alguma dúvida sobre nossa política de privacidade, entre em contato conosco pela página de Fale Conosco.`
 },
 {
+    id: 6,
     titulo: "Favoritos",
     url: `${baseUrl}/favoritos`,
     sitemap: false,

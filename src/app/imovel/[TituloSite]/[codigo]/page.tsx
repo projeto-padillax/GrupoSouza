@@ -11,6 +11,29 @@ import SemelhantesSection from "@/components/site/semelhantesSection";
 import FavoriteButton from "@/components/site/favoritosButton";
 import BreadCrumb from "@/components/site/filteredBreadcrumb";
 import LocalizacaoBox from "@/components/site/localizacaobox";
+import { Metadata } from "next/dist/types";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ tituloSite: string; codigo: string }>;
+}): Promise<Metadata> {
+  const { codigo} = await params;
+
+   const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/vista/imoveis/${codigo}`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  const imovel = await res.json();
+ 
+  return {
+    title: imovel.TituloSite,
+    description: imovel.Descricao,
+  }
+}
 
 export default async function ImovelPage({
   params,
