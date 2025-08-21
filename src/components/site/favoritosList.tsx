@@ -4,6 +4,7 @@ import { useFavoriteStore } from "@/lib/stores/useFavoriteStore";
 import { Destaque } from "@/lib/types/destaque";
 import Link from "next/link";
 import { ImovelCard } from "./imovelcard";
+import { Imovel } from "@prisma/client";
 
 export default function FavoritesList() {
   const favoritos = useFavoriteStore((state) => state.favorites);
@@ -17,6 +18,59 @@ export default function FavoritesList() {
         Nenhum imóvel favoritado.
       </p>
     );
+  }
+
+  function toSlug(text: string): string {
+    return text
+      .normalize("NFD") // separa acentos das letras
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // remove caracteres especiais
+      .trim() // remove espaços extras do começo/fim
+      .replace(/\s+/g, "-") // troca espaços por -
+      .replace(/-+/g, "-") // evita múltiplos hífens
+      .toLowerCase();
+  }
+
+  function gerarTitulo(imovel: Imovel) {
+    const capitalizar = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+
+    const area =
+      imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
+        ? `${imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida}m²`
+        : "";
+
+    const quartos =
+      imovel.Dormitorios && imovel.Dormitorios !== "0"
+        ? `${imovel.Dormitorios} quarto${imovel.Dormitorios === "1" ? "" : "s"}`
+        : "";
+
+    const suites =
+      imovel.Suites && imovel.Suites !== "0"
+        ? `${imovel.Suites} suíte${imovel.Suites === "1" ? "" : "s"}`
+        : "";
+
+    const vagas =
+      imovel.Vagas && imovel.Vagas !== "0"
+        ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
+        : "";
+
+    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
+
+    const detalhes = [area && `com ${area}`, quartos, suites, vagas]
+      .filter(Boolean)
+      .join(", ");
+
+    const localizacao = [bairro, cidade].filter(Boolean).join(" ");
+
+    if (!detalhes) {
+      return [categoria, localizacao].filter(Boolean).join(" ");
+    }
+
+    return [categoria, detalhes, localizacao].filter(Boolean).join(", ");
   }
 
   return (
@@ -33,9 +87,7 @@ export default function FavoritesList() {
             {comprar.map((favorito: Destaque) => (
               <Link
                 key={favorito.id}
-                href={`/imovel/${encodeURIComponent(
-                  favorito.TituloSite || favorito.Descricao
-                )}/${favorito.Codigo}`}
+                href={`/imovel/${encodeURIComponent(toSlug(favorito.TituloSite) || toSlug(gerarTitulo(favorito)))}/${favorito.Codigo}`}
               >
                 <ImovelCard
                   imovel={favorito}
@@ -57,9 +109,7 @@ export default function FavoritesList() {
             {alugar.map((favorito: Destaque) => (
               <Link
                 key={favorito.id}
-                href={`/imovel/${encodeURIComponent(
-                  favorito.TituloSite || favorito.Descricao
-                )}/${favorito.Codigo}`}
+                href={`/imovel/${encodeURIComponent(toSlug(favorito.TituloSite) || toSlug(gerarTitulo(favorito)))}/${favorito.Codigo}`}
               >
                 <ImovelCard
                   imovel={favorito}

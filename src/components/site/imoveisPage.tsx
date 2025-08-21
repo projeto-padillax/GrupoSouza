@@ -31,6 +31,7 @@ import {
 } from "../ui/pagination";
 import BreadCrumb from "./filteredBreadcrumb";
 import { ImovelCardSkeleton } from "./cardSkeleton";
+import { Imovel } from "@prisma/client";
 
 export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const router = useRouter();
@@ -273,6 +274,48 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       .replace(/\s+/g, "-") // troca espaços por -
       .replace(/-+/g, "-") // evita múltiplos hífens
       .toLowerCase();
+  }
+
+  function gerarTitulos(imovel : Imovel) {
+    const capitalizar = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+
+    const area =
+      imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
+        ? `${imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida}m²`
+        : "";
+
+    const quartos =
+      imovel.Dormitorios && imovel.Dormitorios !== "0"
+        ? `${imovel.Dormitorios} quarto${imovel.Dormitorios === "1" ? "" : "s"}`
+        : "";
+
+    const suites =
+      imovel.Suites && imovel.Suites !== "0"
+        ? `${imovel.Suites} suíte${imovel.Suites === "1" ? "" : "s"}`
+        : "";
+
+    const vagas =
+      imovel.Vagas && imovel.Vagas !== "0"
+        ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
+        : "";
+
+    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
+
+    const detalhes = [area && `com ${area}`, quartos, suites, vagas]
+      .filter(Boolean)
+      .join(", ");
+
+    const localizacao = [bairro, cidade].filter(Boolean).join(" ");
+
+    if (!detalhes) {
+      return [categoria, localizacao].filter(Boolean).join(" ");
+    }
+
+    return [categoria, detalhes, localizacao].filter(Boolean).join(", ");
   }
 
   const openModal = (modalType: "location" | "type") => {
@@ -676,9 +719,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               imoveis.map((imovel: Destaque) => (
                 <Link
                   key={imovel.id}
-                  href={`/imovel/${encodeURIComponent(
-                    toSlug(imovel.TituloSite) || toSlug(imovel.Descricao)
-                  )}/${imovel.Codigo}`}
+                  href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(gerarTitulos(imovel)))}/${imovel.Codigo}`}
                 >
                   <ImovelCard imovel={imovel} activeTab={searchData.action} />
                 </Link>

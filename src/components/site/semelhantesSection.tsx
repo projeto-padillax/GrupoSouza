@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ImovelCard } from "./imovelcard";
 import { Destaque } from "@/lib/types/destaque";
+import { Imovel } from "@prisma/client";
 
 type ApiSemelhantes = {
     base?: {
@@ -21,6 +22,48 @@ function toSlug(text: string): string {
       .replace(/\s+/g, "-") // troca espaços por -
       .replace(/-+/g, "-") // evita múltiplos hífens
       .toLowerCase();
+  }
+
+  function gerarTitulo(imovel: Imovel) {
+    const capitalizar = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+
+    const area =
+      imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
+        ? `${imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida}m²`
+        : "";
+
+    const quartos =
+      imovel.Dormitorios && imovel.Dormitorios !== "0"
+        ? `${imovel.Dormitorios} quarto${imovel.Dormitorios === "1" ? "" : "s"}`
+        : "";
+
+    const suites =
+      imovel.Suites && imovel.Suites !== "0"
+        ? `${imovel.Suites} suíte${imovel.Suites === "1" ? "" : "s"}`
+        : "";
+
+    const vagas =
+      imovel.Vagas && imovel.Vagas !== "0"
+        ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
+        : "";
+
+    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
+
+    const detalhes = [area && `com ${area}`, quartos, suites, vagas]
+      .filter(Boolean)
+      .join(", ");
+
+    const localizacao = [bairro, cidade].filter(Boolean).join(" ");
+
+    if (!detalhes) {
+      return [categoria, localizacao].filter(Boolean).join(" ");
+    }
+
+    return [categoria, detalhes, localizacao].filter(Boolean).join(", ");
   }
 
 export default async function SemelhantesSection({ codigo }: { codigo: string }) {
@@ -45,7 +88,7 @@ export default async function SemelhantesSection({ codigo }: { codigo: string })
                 {itens.map((imovel) => (
                     <Link
                         key={imovel.Codigo}
-                        href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(imovel.Descricao))}/${imovel.Codigo}`}
+                        href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(gerarTitulo(imovel)))}/${imovel.Codigo}`}
                         className="block"
                     >
                         <ImovelCard imovel={imovel} activeTab={activeTab} />
