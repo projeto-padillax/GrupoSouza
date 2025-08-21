@@ -79,12 +79,6 @@ export default function SecaoForm({ secao, mode }: SecaoFormProps) {
     },
   });
 
-  const formatPageUrl = (titulo: string) => {
-    return `${
-      process.env.NEXT_PUBLIC_BASE_URL || ""
-    }/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
-  };
-
   const onSubmit = (values: SecaoInput) => {
     startTransition(async () => {
       try {

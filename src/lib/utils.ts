@@ -15,20 +15,3 @@ export function slugify(text: string): string {
       .replace(/-+/g, "-") // evita múltiplos hífens
       .toLowerCase();
   }
-
-type SearchData = {
-    action: string;
-    tipos: string[];
-    locations: string[];
-    valueRange: {
-        min: string;
-        max: string;
-    };
-    quartos: string;
-    area: string;
-    suites: string;
-    vagas: string;
-    caracteristicas: string[];
-    lancamentos: string;
-    mobiliado: string;
-}
