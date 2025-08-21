@@ -27,12 +27,31 @@ const formularioServerSchema = z.object({
   finalidade: z.string().optional(),
 });
 
+const idsSchema = z.array(z.cuid());
+
+
 export type FormularioInput = z.infer<typeof formularioServerSchema>;
 
-export async function getAllFormularios(): Promise<Formulario[]> {
-  return await prisma.formulario.findMany({
+export type FormularioPlain = Omit<
+  Formulario,
+  "dataEnvio" | "DataVisita" | "valorDesejado"
+> & {
+  dataEnvio: string;
+  DataVisita: string | null;
+  valorDesejado: number | null;
+};
+
+export async function getAllFormularios(): Promise<FormularioPlain[]> {
+  const leads = await prisma.formulario.findMany({
     orderBy: { dataEnvio: "desc" },
   });
+
+  return leads.map((f) => ({
+    ...f,
+    dataEnvio: f.dataEnvio.toISOString(),
+    DataVisita: f.DataVisita ? f.DataVisita.toISOString() : null,
+    valorDesejado: f.valorDesejado ? Number(f.valorDesejado) : null,
+  }));
 }
 
 export async function findFormulario(id: string): Promise<Formulario | null> {
@@ -65,8 +84,9 @@ export async function createFormulario(input: FormularioInput): Promise<void> {
   });
 }
 
-export async function deleteFormulario(id: string): Promise<void> {
-  await prisma.formulario.delete({
-    where: { id },
+export async function deleteFormularios(ids: string[]): Promise<void> {
+  const validIds = idsSchema.parse(ids);
+  await prisma.formulario.deleteMany({
+    where: { id: { in: validIds } },
   });
 }
