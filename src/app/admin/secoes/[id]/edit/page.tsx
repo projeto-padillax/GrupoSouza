@@ -1,4 +1,6 @@
 import SecaoForm from "@/components/admin/secaoForm";
+import { Secao } from "@/lib/types/secao";
+import { secoes } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
 interface EditSecoesPage {
@@ -8,22 +10,13 @@ interface EditSecoesPage {
 export default async function EditSecoesPage({
   params,
 }: EditSecoesPage) {
-    const secoes = [
-    {
-        id: "1",
-        titulo: "Página Inicial",
-        url: "https://www.template.leadlink.com.br/",
-        edicao: "Não",
-        sitemap: "Sim",
-    },
-];
   const secoesId = (await params).id;
 
-  const secao = secoes.filter((secao) => secao.id == secoesId);
+  const secao: Secao | undefined = secoes.find((secao) => secao.id == parseInt(secoesId));
 
   if (!secao) {
     return notFound();
   }
 
-  return <SecaoForm secao={secao} />;
+  return <SecaoForm secao={secao} mode="edit"/>;
 }

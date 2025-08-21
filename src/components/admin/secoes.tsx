@@ -11,14 +11,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { ExternalLink, Edit } from "lucide-react";
-
-type Secao = {
-  id: string;
-  titulo: string;
-  url: string;
-  edicao: string;
-  sitemap: string;
-};
+import { Secao } from "@/lib/types/secao";
 
 interface Props {
   secoes: Secao[];
@@ -55,7 +48,7 @@ export default function Secoes({ secoes }: Props) {
       header: "Edição de Texto/Fundo",
       accessor: "edicao",
       cell: (item: Secao) => (
-        <span className="text-gray-700 text-base">{item.edicao}</span>
+        <span className="text-gray-700 text-base">{item.edicaoTextoFundo}</span>
       ),
     },
     {

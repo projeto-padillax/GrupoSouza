@@ -1,14 +1,6 @@
 import Secoes from "@/components/admin/secoes";
+import { secoes } from "@/lib/utils";
 
 export default async function SecoesListPage() {
-    const secoes = [
-        {
-            id: "1",
-            titulo: "Página Inicial",
-            url: "https://www.template.leadlink.com.br/",
-            edicao: "Não",
-            sitemap: "Sim",
-        },
-    ];
     return <Secoes secoes={secoes} />
 }
