@@ -48,14 +48,14 @@ export default function Secoes({ secoes }: Props) {
       header: "Edição de Texto/Fundo",
       accessor: "edicao",
       cell: (item: Secao) => (
-        <span className="text-gray-700 text-base">{item.edicaoTextoFundo}</span>
+        <span className="text-gray-700 text-base">{item.edicaoTextoFundo === true ? "Sim" : "Não"}</span>
       ),
     },
     {
       header: "Sitemap",
       accessor: "sitemap",
       cell: (item: Secao) => (
-        <span className="text-gray-700 text-base">{item.sitemap}</span>
+        <span className="text-gray-700 text-base">{item.sitemap === true ? "Sim" : "Não"}</span>
       ),
     },
     {
