@@ -76,8 +76,9 @@ export default function PaginaDeConteudoForm({
 
   const tipoPagina = form.watch("tipo");
 
+
   const formatPageUrl = (titulo: string) => {
-    return `${process.env.NEXT_PUBLIC_BASE_URL || ""}/pagina/${encodeURIComponent(titulo.toLowerCase())}`;
+    return `${process.env.NEXT_PUBLIC_BASE_URL || ""}/pagina/${(titulo).replaceAll(" ", "-")}`;
   };
 
   const onSubmit = (values: PaginaDeConteudoInput) => {
@@ -309,7 +310,12 @@ export default function PaginaDeConteudoForm({
                         <FormControl>
                           <CldUploadWidget
                             options={{
-                              clientAllowedFormats: ["png", "jpeg", "jpg", "webp"],
+                              clientAllowedFormats: [
+                                "png",
+                                "jpeg",
+                                "jpg",
+                                "webp",
+                              ],
                             }}
                             uploadPreset="grupo-souze-unsigned"
                             onSuccess={(result) => {
