@@ -29,6 +29,7 @@ export type PaginaInput = z.infer<typeof paginaSchema>;
 
 export async function createPagina(data: PaginaInput) {
   try {
+    console.log(data)
     const validatedData = paginaSchema.parse(data);
 
     const pagina = await prisma.paginasConteudo.create({
@@ -153,6 +154,18 @@ export async function getAllPaginasConteudo() {
   }
 }
 
+export async function getAllActivesPaginasConteudo() {
+  try {
+    return await prisma.paginasConteudo.findMany({
+      orderBy: { ordem: 'asc' },
+      where: { status: true, isOnMenu: true }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar páginas:', error);
+    throw new Error('Erro ao buscar páginas');
+  }
+}
+
 export async function getPaginaById(id: number) {
   try {
     return await prisma.paginasConteudo.findUnique({
@@ -166,8 +179,12 @@ export async function getPaginaById(id: number) {
 
 export async function getPaginaByTitle(titulo: string) {
   try {
+    console.log(titulo)
     return await prisma.paginasConteudo.findFirst({
-      where: { titulo }
+      where: { titulo: {
+        equals: titulo,
+        mode: 'insensitive'
+      } }
     });
   } catch (error) {
     console.error('Erro ao buscar página:', error);
