@@ -2,16 +2,20 @@ import { VistaImovel } from "@/app/types/vista";
 import { prisma } from "@/lib/neon/db";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: Promise<{ codigo: string }> }) {
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ codigo: string }> }
+) {
   try {
     const { codigo } = await params; // Destructure codigo directly from params
 
-    const imovel = await prisma.imovel.findUnique({
+    let imovel = await prisma.imovel.findUnique({
       where: {
         id: codigo, // Query by the 'Codigo' field in your Prisma schema
       },
       include: {
-        fotos: { // Include related photos
+        fotos: {
+          // Include related photos
           select: {
             id: true,
             destaque: true,
@@ -20,28 +24,67 @@ export async function GET(_: Request, { params }: { params: Promise<{ codigo: st
             urlPequena: true,
           },
           orderBy: {
-            id: 'asc'
-          }
+            id: "asc",
+          },
         },
-        caracteristicas: { // Include related characteristics
+        caracteristicas: {
+          // Include related characteristics
           select: {
             nome: true,
-            valor: true
-          }
-        }
-      }
+            valor: true,
+          },
+        },
+      },
     });
 
+    // if (!imovel) {
+    //   imovel = await prisma.imovel.findFirst({
+    //     where: {
+    //       Empreendimento: {
+    //         equals: codigo,
+    //         mode: "insensitive",
+    //       }, 
+    //     },
+    //     include: {
+    //       fotos: {
+    //         select: {
+    //           id: true,
+    //           destaque: true,
+    //           codigo: true,
+    //           url: true,
+    //           urlPequena: true,
+    //         },
+    //         orderBy: {
+    //           id: "asc",
+    //         },
+    //       },
+    //       caracteristicas: {
+    //         select: {
+    //           nome: true,
+    //           valor: true,
+    //         },
+    //       },
+    //     },
+    //   });
+    // }
+
     if (!imovel) {
-      return NextResponse.json({ error: "Imóvel não encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Imóvel não encontrado" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(imovel); // Return the found property
-  } catch (error) { // Add type annotation for error
+  } catch (error) {
+    // Add type annotation for error
     if (error instanceof Error) {
       console.error("Erro ao buscar imóvel:", error.message); // Log error message
     }
-    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma client after the request
   }
@@ -51,9 +94,7 @@ async function fetchFromVista(codigo: string): Promise<VistaImovel | null> {
   const key = process.env.VISTA_KEY;
   if (!key) throw new Error("VISTA_KEY não configurada no .env");
 
-
-  const base =
-    "https://gruposou-rest.vistahost.com.br/imoveis/detalhes";
+  const base = "https://gruposou-rest.vistahost.com.br/imoveis/detalhes";
   const url =
     `${base}?key=${encodeURIComponent(key)}` +
     `&imovel=${encodeURIComponent(codigo)}` +
@@ -83,8 +124,10 @@ async function fetchFromVista(codigo: string): Promise<VistaImovel | null> {
   return data;
 }
 
-
-export async function PUT(_: Request, { params }: { params: Promise<{ codigo: string }> }) {
+export async function PUT(
+  _: Request,
+  { params }: { params: Promise<{ codigo: string }> }
+) {
   try {
     const { codigo } = await params;
 
@@ -95,13 +138,20 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
 
     if (!vistaImovel) {
       if (imovelExistente) {
-        await prisma.foto.deleteMany({ where: { imovelId: imovelExistente.id } });
-        await prisma.caracteristica.deleteMany({ where: { imovelId: imovelExistente.id } });
+        await prisma.foto.deleteMany({
+          where: { imovelId: imovelExistente.id },
+        });
+        await prisma.caracteristica.deleteMany({
+          where: { imovelId: imovelExistente.id },
+        });
         await prisma.imovel.delete({ where: { id: imovelExistente.id } });
       }
 
       return NextResponse.json(
-        { ok: false, message: "Imóvel não encontrado no Vista. Removido do banco." },
+        {
+          ok: false,
+          message: "Imóvel não encontrado no Vista. Removido do banco.",
+        },
         { status: 404 }
       );
     }
@@ -114,7 +164,9 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
 
     if (imovelExistente) {
       await prisma.foto.deleteMany({ where: { imovelId: imovelExistente.id } });
-      await prisma.caracteristica.deleteMany({ where: { imovelId: imovelExistente.id } });
+      await prisma.caracteristica.deleteMany({
+        where: { imovelId: imovelExistente.id },
+      });
 
       imovel = await prisma.imovel.update({
         where: { id: imovelExistente.id },
@@ -123,9 +175,9 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
     } else {
       imovel = await prisma.imovel.create({
         data: {
-      id: codigo,
-      ...dadosImovel,
-    },
+          id: codigo,
+          ...dadosImovel,
+        },
       });
     }
 
@@ -142,12 +194,9 @@ export async function PUT(_: Request, { params }: { params: Promise<{ codigo: st
     }
 
     return NextResponse.json({ ok: true, imovel });
-
   } catch (err) {
     console.error("PUT /api/vista/imoveis/[codigo] error:", err);
-    return NextResponse.json(
-      { status: 500 }
-    );
+    return NextResponse.json({ status: 500 });
   }
 }
 
