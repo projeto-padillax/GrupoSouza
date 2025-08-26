@@ -6,7 +6,7 @@ export async function MostSearched() {
     const links = await getAllMaisAcessados();    
 
   return (
-    <section className="py-12 justify-items-center">
+    <section className="py-8 justify-items-center">
       <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         <h1 className="text-center md:text-start text-4xl mb-8 font-semibold text-[#313131]">Mais buscados</h1>
 

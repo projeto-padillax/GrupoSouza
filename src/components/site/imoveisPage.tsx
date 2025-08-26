@@ -373,7 +373,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       : ""}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
               </Button>
 
               {/* Localização - Modal Select */}
@@ -390,7 +390,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       : ""}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
               </Button>
 
               <Select
@@ -405,7 +405,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   } // Reset page to 1 when value range changes
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-3 w-full sm:w-fit border shadow-none cursor-pointer text-black font-medium">
+                <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-3 w-full border-0 sm:w-fit shadow-none cursor-pointer text-black font-medium">
                   <SelectValue placeholder="Valor de" className="text-black" />
                 </SelectTrigger>
                 <SelectContent>
@@ -430,7 +430,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   } // Reset page to 1 when value range changes
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-10 border w-full has-[>svg]:px-3 sm:w-fit shadow-none cursor-pointer font-medium">
+                <SelectTrigger className="lg:data-[size=default]:h-10 w-full has-[>svg]:px-3 sm:w-fit shadow-none border-0 cursor-pointer font-medium">
                   <SelectValue placeholder="Valor até" />
                 </SelectTrigger>
                 <SelectContent>
@@ -673,15 +673,15 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         </div>
       </div>
       <main className="flex-1 pb-8">
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4">
+        <div className="py-8 justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
             <div className="h-6 rounded-sm select-none mt-3">
               <BreadCrumb />
             </div>
           </div>
         </div>
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 mt-2 mb-3 flex items-center justify-between">
+        <div className="justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl flex items-center justify-between">
             <div className="h-auto min-h-6 rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
@@ -690,8 +690,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 value={sortOrder}
                 onValueChange={(value) => setSortOrder(value)}
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">
-                  <SelectValue placeholder={"Filtro"} />
+                <SelectTrigger className="lg:data-[size=default]:h-12 border w-full has-[>svg]:px-3 sm:w-fit shadow-none cursor-pointer">
+                  <SelectValue placeholder={"Mais recentes"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ImovelRecente">Mais recentes</SelectItem>
@@ -702,8 +702,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
             </div>
           </div>
         </div>
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5">
+        <div className="py-8 justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5">
             {loading ? (
               // Se estiver carregando, mostre os skeletons
               Array.from({ length: 8 }).map((_, index) => (

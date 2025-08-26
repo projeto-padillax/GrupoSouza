@@ -22,7 +22,7 @@ export default async function Footer() {
   }
 
   return (
-    <section className="py-12 justify-items-center">
+    <section className="py-8 justify-items-center">
       <footer className="text-black px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         {/* Container principal */}
         <div className="py-6 border-t border-b">
@@ -171,7 +171,7 @@ export default async function Footer() {
             </div>
           </div>
         </div>
-        <div className="justify-between pt-4 flex flex-row items-center w-full pb-16">
+        <div className="justify-center sm:justify-between pt-4 flex flex-col sm:flex-row items-center w-full pb-16 gap-2">
           <a
             href="https://www.leadlink.com.br/templatepro/gruposouza/"
             style={{ color: "#4d4d4d", fontWeight: 400 }}

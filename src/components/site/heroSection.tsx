@@ -132,7 +132,7 @@ const newSearchParams = new URLSearchParams();
     >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className={`z-10 px-8 sm:px-10 md:px-12 w-full h-full flex flex-col max-w-7xl ${!banner.subtitulo ? "items-center" : ""}`}>
+      <div className={`z-10 py-8 px-8 sm:px-10 md:px-12 w-full h-full flex flex-col max-w-7xl ${!banner.subtitulo ? "items-center" : ""}`}>
         <div className="">
           <Link
             href={banner.url}
