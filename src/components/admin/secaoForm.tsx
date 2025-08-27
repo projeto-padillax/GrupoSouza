@@ -100,7 +100,7 @@ export default function SecaoForm({ secao, mode }: SecaoFormProps) {
   };
 
   const handleBack = () => {
-    router.push("/admin/paginas");
+    router.push("/admin/secoes");
   };
 
   return (

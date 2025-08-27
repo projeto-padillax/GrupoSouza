@@ -30,7 +30,7 @@ export default async function AnuncieImovel() {
 
       <main className="flex-1">
         <section className="relative w-full py-8">
-          <div className="w-[90%] mx-auto max-w-7xl">
+          <div className="w-full max-w-7xl mx-auto px-8 sm:px-10 md:px-12">
             <div className="rounded-sm mb-8">
               <Suspense>
                 <BreadCrumb />
@@ -48,25 +48,26 @@ export default async function AnuncieImovel() {
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-                <div className="absolute inset-y-0 left-0 flex items-center z-10 px-6">
-                  <h1 className="text-white text-2xl ml-10 md:text-4xl font-semibold">
-                    {secao.tituloh1 || secao.titulo}
-                  </h1>
+                <div className="absolute inset-y-0 left-0 flex items-center z-10 px-4 sm:px-6 md:px-10">
+                  <h2 className="text-white text-2xl md:text-4xl font-semibold">
+                    {secao.titulo || secao.tituloh1}
+                  </h2>
                 </div>
               </div>
             ) : (
-              <h1 className="text-2xl md:text-4xl font-semibold text-gray-900 ml-10">
-                {secao.tituloh1 || secao.titulo}
-              </h1>
+              <h2 className="text-2xl md:text-4xl font-semibold text-gray-900">
+                {secao.titulo || secao.tituloh1}
+              </h2>
             )}
           </div>
         </section>
 
+
         <section className="py-8 md:py-12">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-semibold text-[#111] mb-4">
+            <h1 className="text-2xl md:text-3xl font-semibold text-[#111] mb-4">
               {secao.tituloh1 || "Anuncie seu imóvel"}
-            </h2>
+            </h1>
             <p className="text-lg text-[#444] leading-relaxed text-justify whitespace-pre-line">
               {secao.textoPagina?.trim()
                 ? secao.textoPagina
