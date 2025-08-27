@@ -11,148 +11,174 @@ import {
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+const TRANSLATIONS: Record<string, string> = {
+  comprar: "Comprar",
+  alugar: "Alugar",
+  s: "Lançamentos",
+  true: "Lançamentos",
+  sim: "Mobiliados",
+};
+
 export default function BreadCrumb() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const breadcrumbItems = useMemo(() => {
-    // Moved capitalize and translateSegment inside useMemo
-    const capitalize = (s: string) =>
-      s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
-
-    const translateSegment = (segment: string) => {
-      switch (segment) {
-        case "favoritos":
-          return "Favoritos";
-        case "anuncie-seu-imovel":
-          return "Anuncie seu Imóvel";
-        case "politica-de-privacidade":
-          return "Política de Privacidade"
-        case "imovel":
-          return "Imóvel"
-        default:
-          return capitalize(segment.replace("-", " "));
-      }
-    };
-
-    const segments = pathname.split("/").filter(Boolean);
     const items: { name: string; href: string }[] = [];
-
-    // rota normal (mas ignoramos "busca")
-    segments.forEach((segment, index) => {
-      if (segment === "busca") return; // não inclui Busca
-      if (segment === "imovel") {
-        items.push({ name: "Busca", href: "/busca"})
-        return;
-      }
-      const href = "/" + segments.slice(0, index + 1).join("/");
-      items.push({ name: translateSegment(segment), href });
-    });
-
-    // rota especial de busca
-    if (pathname === "/busca") {
-      const query = new URLSearchParams();
-
-      // Codigo
-      const codigo = searchParams.get("codigo");
-      if (codigo) {
-        query.set("codigo", codigo);
+    
+    // Verificar se é uma rota de imóvel individual
+    const segments = pathname.split("/").filter(Boolean);
+    const isImovelRoute = segments[0] === "imovel";
+    
+    if (isImovelRoute && segments.length >= 3) {
+      // Rota: /imovel/apartamento-com-86m-3-quartos-1-suite-1-vaga-no-bairro-paulista-em-piracicaba/21736
+      const slugImovel = segments[1];
+      const idImovel = segments[2];
+      
+      // Extrair informações do slug
+      const decodedSlug = decodeURIComponent(slugImovel.replace(/\+/g, " "));
+      
+      // Extrair tipo (primeira palavra antes do primeiro hífen)
+      const tipo = decodedSlug.split("-")[0];
+      
+      // Extrair cidade (após "em-")
+      const cidadeMatch = decodedSlug.match(/em-([^-]+)(?:-|$)/);
+      const cidade = cidadeMatch ? cidadeMatch[1] : "";
+      
+      // Extrair bairro (após "bairro-" e antes de "-em-")
+      const bairroMatch = decodedSlug.match(/bairro-([^-]+(?:-[^-]+)*)-em-/);
+      const bairro = bairroMatch ? bairroMatch[1].replace(/-/g, " ") : "";
+      
+      // Extrair quartos
+      const quartosMatch = decodedSlug.match(/(\d+)-quartos?/);
+      const quartos = quartosMatch ? quartosMatch[1] : "";
+      
+      // 1. Tipo à venda/aluguel em Cidade
+      if (tipo && cidade) {
+        const tipoCapitalized = capitalize(tipo);
+        const cidadeCapitalized = capitalize(cidade);
         items.push({
-          name: codigo,
-          href: pathname + "?" + query.toString(),
-        });
-        return items;
-      }
-
-      // Action
-      const action = searchParams.get("action");
-      if (action) {
-        query.set("action", action);
-        items.push({
-          name: action === "comprar" ? "Comprar" : "Alugar",
-          href: pathname + "?" + query.toString(),
-        });
-      }
-
-      // Cidade
-      const cidade = searchParams.get("cidade");
-      if (cidade) {
-        query.set("cidade", cidade);
-        items.push({
-          name: capitalize(cidade),
-          href: pathname + "?" + query.toString(),
+          name: `${tipoCapitalized} em ${cidadeCapitalized}`,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}`,
         });
       }
+      
+      // 2. Bairro
+      if (bairro) {
+        const bairroCapitalized = capitalize(bairro);
+        items.push({
+          name: bairroCapitalized,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}&bairro=${bairro}`,
+        });
+      }
+      
+      // 3. Quartos
+      if (quartos) {
+        items.push({
+          name: `${quartos} quartos`,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}&bairro=${bairro}&quartos=${quartos}`,
+        });
+      }
+      
+      // 4. ID do imóvel
+      items.push({
+        name: idImovel,
+        href: pathname,
+      });
+      
+      return items;
+    }
+    
+    // Lógica original para outras rotas
+    // Pegar os parâmetros de query
+    const action = searchParams.get("action") ?? "";
+    const cidadeParam = searchParams.get("cidade") ?? "";
+    const bairroParam = searchParams.get("bairro") ?? "";
+    const tiposParam = searchParams.get("tipos") ?? ""; // Array de tipos
+    
+    // Construir query string base
+    const baseQuery = new URLSearchParams();
+    let currentPath = pathname;
 
-      // Bairros
-      const bairrosRaw = searchParams.get("bairro");
-      if (bairrosRaw) {
-        const bairros = bairrosRaw.split(",");
-        if (bairros.length > 0) {
-          let label: string;
+    // 1. Adicionar Action (Comprar/Alugar)
+    if (action) {
+      baseQuery.set("action", action);
+      const actionName = TRANSLATIONS[action.toLowerCase()] || capitalize(action);
+      items.push({
+        name: actionName,
+        href: `${currentPath}?${baseQuery.toString()}`,
+      });
+    }
 
-          if (bairros[0].toLowerCase() === "all") {
-            label = "Todos";
-          } else {
-            const first = capitalize(bairros[0].replace(/\+/g, " "));
-            label =
-              bairros.length > 1 ? `${first} (+${bairros.length - 1})` : first;
-          }
-
-          query.set("bairro", bairrosRaw);
-          items.push({
-            name: label,
-            href: pathname + "?" + query.toString(),
-          });
+    // 2. Adicionar tipo específico ou "Imóveis" após action
+    if (action) {
+      let tipoName = "Imóveis"; // padrão
+      
+      if (tiposParam) {
+        // Se tipos é um array, pegar o primeiro tipo
+        const tiposArray = tiposParam.split(",").map(t => t.trim()).filter(Boolean);
+        if (tiposArray.length > 0) {
+          tipoName = capitalize(decodeURIComponent(tiposArray[0].replace(/\+/g, " ")));
         }
       }
+      
+      items.push({
+        name: tipoName,
+        href: `${currentPath}?${baseQuery.toString()}`,
+      });
+    }
 
-      // Tipo
-      const tipo = searchParams.get("tipo");
-      if (tipo) {
-        query.set("tipo", tipo);
-        items.push({
-          name: capitalize(tipo),
-          href: pathname + "?" + query.toString(),
-        });
-      }
+    // 3. Adicionar cidade se existir
+    if (cidadeParam) {
+      const cityName = decodeURIComponent(cidadeParam.replace(/\+/g, " "));
+      baseQuery.set("cidade", cidadeParam);
+      
+      items.push({
+        name: capitalize(cityName),
+        href: `${currentPath}?${baseQuery.toString()}`,
+      });
+    }
 
-      // Lançamentos
-      const lancamentos = searchParams.get("lancamentos");
-      if (lancamentos === "s" || lancamentos === "true") {
-        query.set("lancamentos", lancamentos);
-        items.push({
-          name: "Lançamentos",
-          href: pathname + "?" + query.toString(),
-        });
+    // 4. Adicionar bairro se existir
+    if (bairroParam) {
+      const bairroName = decodeURIComponent(bairroParam.replace(/\+/g, " "));
+      // Separar múltiplos bairros por vírgula
+      const bairros = bairroName.split(",").map(b => b.trim()).filter(Boolean);
+      const firstBairro = bairros[0];
+      
+      // Se há mais de um bairro, mostrar contador
+      let displayName = capitalize(firstBairro);
+      if (bairros.length > 1) {
+        displayName += ` (+${bairros.length - 1})`;
       }
-
-      // Mobiliado
-      const mobiliado = searchParams.get("mobiliado");
-      if (mobiliado === "sim" || mobiliado === "true") {
-        query.set("mobiliado", mobiliado);
-        items.push({
-          name: "Mobiliados",
-          href: pathname + "?" + query.toString(),
-        });
-      }
+      
+      baseQuery.set("bairro", bairroParam);
+      
+      items.push({
+        name: displayName,
+        href: `${currentPath}?${baseQuery.toString()}`,
+      });
     }
 
     return items;
-  }, [pathname, searchParams]); // No need to list capitalize or translateSegment here
+  }, [pathname, searchParams]);
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Início</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link href="/">Início</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        {breadcrumbItems.length > 0 && <BreadcrumbSeparator />}
         {breadcrumbItems.map(({ name, href }, index) => (
-          <Fragment key={index}>
+          <Fragment key={`${name}-${index}`}>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href={href}>{decodeURIComponent(name)}</Link>
+                <Link href={href}>{name}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
@@ -160,6 +186,5 @@ export default function BreadCrumb() {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-
   );
 }

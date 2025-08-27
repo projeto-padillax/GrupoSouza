@@ -46,7 +46,9 @@ export function LocationSelectModal({
 
   useEffect(() => {
     if (isOpen) {
+      console.log(selectedLocations)
       setTempSelectedLocations(selectedLocations);
+      setSelectedCidade(selectedLocations[0].split(":")[0] || ""); // Define a cidade selecionada com base na primeira localização selecionada
     }
   }, [isOpen, selectedLocations]);
 
@@ -66,7 +68,7 @@ export function LocationSelectModal({
           })
         );
 
-        const cidadesOrdenadas : LocationOption[] = cidadesMapeadas.sort(
+        const cidadesOrdenadas: LocationOption[] = cidadesMapeadas.sort(
           (a: LocationOption, b: LocationOption) => {
             if (a.cidade.toLowerCase() === "piracicaba") return -1;
             if (b.cidade.toLowerCase() === "piracicaba") return 1;
@@ -128,7 +130,7 @@ export function LocationSelectModal({
         </DialogHeader>
 
         {/* Select de Cidades */}
-        <div className="mb-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Select
             value={selectedCidade}
             onValueChange={(value) => {
@@ -147,18 +149,19 @@ export function LocationSelectModal({
               ))}
             </SelectContent>
           </Select>
+
+          <div className="relative mb-4 w-full sm:w-96">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Buscar bairro..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 focus-visible:ring-[0px]"
+            />
+          </div>
         </div>
 
         {/* Search só para bairros */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Buscar bairro..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 focus-visible:ring-[0px]"
-          />
-        </div>
 
         {/* Lista de bairros */}
         {/* Lista de bairros */}

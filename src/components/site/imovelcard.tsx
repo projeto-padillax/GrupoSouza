@@ -47,14 +47,16 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
 
   return (
     // Adicionando a classe hover:bg-gray-50 e transition para uma animação suave
-    <div className="w-full overflow-hidden shadow-lg bg-white rounded-md transition-colors duration-200 hover:bg-gray-50 cursor-pointer">
-      <div className="relative w-full h-48">
-        <Image
-          src={imovel.FotoDestaque || "/placeholder.svg"}
-          alt={imovel.Bairro}
-          fill
-          className="object-cover rounded-t-xl rounded-b-xl"
-        />
+  <div className="w-full overflow-hidden shadow-lg bg-white rounded-md transition-colors duration-200 hover:bg-gray-50 cursor-pointer">
+  {/* Container da imagem maior */}
+  <div className="relative w-full aspect-[4/3]"> {/* altura maior que 16:9 */}
+    <Image
+      src={imovel.FotoDestaque || "/placeholder.svg"}
+      alt={imovel.Bairro}
+      fill
+      className="object-cover rounded-t-xl rounded-b-xl"
+    />
+
         { /* alterar o black/90 para mais ou pra menos para mudar a intensidade da sombra*/}
         <div className="absolute bottom-0 left-0 w-full 
                   h-16 sm:h-20 md:h-24 lg:h-28 

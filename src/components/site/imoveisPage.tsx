@@ -79,7 +79,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
     { id: "saloa", label: "Salão de festa" },
   ];
 
-    useEffect(() => {
+  useEffect(() => {
     const newData = {
       action: searchParams.get("action") ?? "comprar",
       tipos: searchParams.get("tipos")
@@ -112,7 +112,15 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
-    const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0]: "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
+    const path = `/busca/${searchData.action}/${
+      searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"
+    }/${
+      searchData.locations.length > 0
+        ? searchData.locations[0].split(":")[0] +
+          "+" +
+          searchData.locations[0].split(":")[1]
+        : "Piracicaba"
+    }`;
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
       newSearchParams.set("tipos", searchData.tipos.join(","));
@@ -193,20 +201,23 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
 
     // Quartos
     if (searchData.quartos !== "") {
-      titulo += `, com ${searchData.quartos}+ quarto${searchData.quartos !== "1" ? "s" : ""
-        }`;
+      titulo += `, com ${searchData.quartos}+ quarto${
+        searchData.quartos !== "1" ? "s" : ""
+      }`;
     }
 
     // Suítes
     if (searchData.suites !== "") {
-      titulo += `, com ${searchData.suites}+ suíte${searchData.suites !== "1" ? "s" : ""
-        }`;
+      titulo += `, com ${searchData.suites}+ suíte${
+        searchData.suites !== "1" ? "s" : ""
+      }`;
     }
 
     // Vagas
     if (searchData.vagas !== "") {
-      titulo += `, com ${searchData.vagas}+ vaga${searchData.vagas !== "1" ? "s" : ""
-        }`;
+      titulo += `, com ${searchData.vagas}+ vaga${
+        searchData.vagas !== "1" ? "s" : ""
+      }`;
     }
 
     // Área mínima
@@ -229,10 +240,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       titulo += `, mobiliado`;
     }
 
-    if (
-      filtros.bairro &&
-      (filtros.bairro[0]?.split(",").length > 1)
-    ) {
+    if (filtros.bairro && filtros.bairro[0]?.split(",").length > 1) {
       titulo += ` em alguns bairros`;
     }
     // Localizações
@@ -276,11 +284,13 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       .toLowerCase();
   }
 
-  function gerarTitulos(imovel : Imovel) {
+  function gerarTitulos(imovel: Imovel) {
     const capitalizar = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+    const categoria = imovel.Categoria
+      ? capitalizar(imovel.Categoria)
+      : "Imóvel";
 
     const area =
       imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
@@ -302,7 +312,9 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
         : "";
 
-    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const bairro = imovel.Bairro
+      ? `no bairro ${capitalizar(imovel.Bairro)}`
+      : "";
     const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
 
     const detalhes = [area && `com ${area}`, quartos, suites, vagas]
@@ -329,7 +341,15 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
   const handleSearchByCode = async (code: string) => {
     if (!code) return;
     try {
-      router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${code}`);
+      router.push(
+        `/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${
+          searchData.locations.length > 0
+            ? searchData.locations[0].split(":")[0] +
+              "+" +
+              searchData.locations[0].split(":")[1]
+            : "Piracicaba"
+        }/${code}`
+      );
     } catch (error) {
       console.error("Falha ao buscar imóveis:", error);
       setImoveis([]);
@@ -343,7 +363,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       <div className="w-full content-center shadow-lg shadow-gray-200">
         <div className="bg-white w-[full] max-w-7xl px-4 mx-auto py-4 border-t-1 ">
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
-            <div className=" flex flex-row justify-between flex-wrap items-center gap-y-4 w-full">
+            <div className="grid grid-cols-2 gap-4 md:flex md:flex-row md:gap-2 md:flex-wrap md:justify-between w-full justify-start items-center">
               <Select
                 value={searchData.action}
                 onValueChange={(value) => {
@@ -351,7 +371,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   setPage(1); // R}eset page to 1 when action changes
                 }}
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 px-0 w-full sm:w-fit border-0 shadow-none cursor-pointer font-medium">
+                <SelectTrigger className="lg:data-[size=default]:h-12 px-0 w-full md:w-fit border-0 shadow-none cursor-pointer font-medium">
                   <SelectValue placeholder="Comprar" />
                 </SelectTrigger>
                 <SelectContent>
@@ -363,7 +383,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               <Button
                 variant="outline"
                 onClick={() => openModal("type")}
-                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:px-0 md:has-[>svg]:pl-3 font-normal w-full md:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2 font-medium">
                   <span>
@@ -373,14 +393,14 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       : ""}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
               </Button>
 
               {/* Localização - Modal Select */}
               <Button
                 variant="outline"
                 onClick={() => openModal("location")}
-                className="justify-between bg-transparent has-[>svg]:pl-0 sm:has-[>svg]:pl-3 font-normal w-full sm:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
+                className="justify-between bg-transparent has-[>svg]:px-0 md:has-[>svg]:pl-3 font-normal w-full md:w-fit lg:h-12 border-0 shadow-none cursor-pointer"
               >
                 <div className="flex items-center gap-2 font-medium">
                   <span>
@@ -390,8 +410,36 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                       : ""}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground opacity-50" />
               </Button>
+
+              <div className="flex items-center gap-2 sm:gap-4 w-full md:w-fit h-9 lg:h-12 justify-between">
+                <span className="text-sm font-medium">Quartos</span>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => {
+                        setSearchData({
+                          ...searchData,
+                          quartos:
+                            searchData.quartos === num.toString()
+                              ? ""
+                              : num.toString(),
+                        });
+                        setPage(1);
+                      }}
+                      className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
+                        searchData.quartos === num.toString()
+                          ? "bg-[#4F7DC3] text-white font-bold"
+                          : "bg-white text-black font-normal"
+                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                    >
+                      {num}+
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <Select
                 value={searchData.valueRange.min}
@@ -405,7 +453,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   } // Reset page to 1 when value range changes
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-3 w-full sm:w-fit border shadow-none cursor-pointer text-black font-medium">
+                <SelectTrigger className="lg:data-[size=default]:h-10 has-[>svg]:px-0 md:has-[>svg]:pl-3 w-full border-0 md:w-fit shadow-none cursor-pointer text-black font-medium">
                   <SelectValue placeholder="Valor de" className="text-black" />
                 </SelectTrigger>
                 <SelectContent>
@@ -430,7 +478,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   } // Reset page to 1 when value range changes
                 }
               >
-                <SelectTrigger className="lg:data-[size=default]:h-10 border w-full has-[>svg]:px-3 sm:w-fit shadow-none cursor-pointer font-medium">
+                <SelectTrigger className="lg:data-[size=default]:h-10 w-full has-[>svg]:px-0 md:has-[>svg]:pl-3 md:w-fit shadow-none border-0 cursor-pointer font-medium">
                   <SelectValue placeholder="Valor até" />
                 </SelectTrigger>
                 <SelectContent>
@@ -442,37 +490,10 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   <SelectItem value="999999999">Sem limite</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center gap-4 w-full sm:w-fit h-9 lg:h-12 justify-between">
-                <span className="text-sm font-medium">Quartos</span>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => {
-                        setSearchData({
-                          ...searchData,
-                          quartos:
-                            searchData.quartos === num.toString()
-                              ? ""
-                              : num.toString(),
-                        });
-                        setPage(1);
-                      }}
-                      className={`w-[30px] h-[30px] border border-gray-300 rounded-[4px] cursor-pointer ${
-                        searchData.quartos === num.toString()
-                          ? "bg-[#4F7DC3] text-white font-bold"
-                          : "bg-white text-black font-normal"
-                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
-                    >
-                      {num}+
-                    </button>
-                  ))}
-                </div>
-              </div>
               {/* Botão Filtros */}
               <Button
                 variant="outline"
-                className="bg-transparent border font-medium has-[>svg]:pr-2 pl-3 pr-1.5 w-full sm:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
+                className="bg-transparent border font-medium has-[>svg]:pr-2 pl-3 pr-1.5 w-full md:w-fit lg:h-10 lg:w-24 justify-between shadow-none cursor-pointer"
                 onClick={() => {
                   setShowFilters(!showFilters);
                   setPage(1);
@@ -483,7 +504,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </Button>
 
               {/* Busca por código */}
-              <div className="flex items-center border rounded-lg overflow-hidden w-full sm:w-fit h-9 lg:h-10">
+              <div className="flex items-center border rounded-lg overflow-hidden w-full md:w-fit h-9 lg:h-10">
                 <Input
                   placeholder="Código"
                   value={codigo}
@@ -501,11 +522,12 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div
-          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
-            }`}
+          className={`bg-white max-w-7xl mx-auto px-4 overflow-hidden border-t-1 transition-all duration-500 ease-in-out ${
+            showFilters ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0"
+          }`}
         >
           <div className="flex flex-col md:flex-row w-[full] justify-start items-center md:gap-2">
-            <div className=" flex flex-col gap-y-4 w-full sm:grid sm:grid-cols-2 md:grid md:grid-cols-3 lg:grid lg:auto-cols-auto lg:grid-flow-col lg:grid-cols-none lg:gap-x-1">
+            <div className="gap-4 w-full grid grid-cols-2 md:grid md:grid-cols-3 lg:grid lg:auto-cols-auto lg:grid-flow-col lg:grid-cols-none lg:gap-x-1">
               <Select
                 value={searchData.area}
                 onValueChange={(value) => {
@@ -513,7 +535,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   setPage(1); // Reset page to 1 when area changes
                 }}
               >
-                <SelectTrigger className="data-[size=default]:h-12 p-0 border-0 shadow-none cursor-pointer w-full sm:w-fit font-medium">
+                <SelectTrigger className="data-[size=default]:h-12 p-0 border-0 shadow-none cursor-pointer w-full md:w-fit font-medium">
                   <SelectValue placeholder="Area Mínima" />
                 </SelectTrigger>
                 <SelectContent>
@@ -530,7 +552,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 </SelectContent>
               </Select>
 
-              <div className="flex items-center gap-4 h-12 w-full sm:w-fit justify-between text-sm">
+              <div className="flex items-center gap-4 h-12 w-full md:w-fit justify-between text-sm">
                 <span className="font-medium">Suítes</span>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3].map((num) => (
@@ -550,7 +572,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.suites === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -558,7 +580,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4 h-12 w-full sm:w-fit">
+              <div className="flex items-center justify-between gap-4 h-12 w-full md:w-fit">
                 <span className="text-sm font-medium">Vagas</span>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3].map((num) => (
@@ -578,7 +600,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                         searchData.vagas === num.toString()
                           ? "bg-[#4F7DC3] text-white font-bold"
                           : "bg-white text-black font-normal"
-                        }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
+                      }  hover:bg-[#4F7DC3] hover:text-white hover:font-bold`}
                     >
                       {num}+
                     </button>
@@ -587,17 +609,18 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               </div>
 
               <Popover>
-                <PopoverTrigger className="cursor-pointer h-12 w-full sm:w-fit text-start text-sm font-medium">
+                <PopoverTrigger className="cursor-pointer h-12 w-full md:w-fit text-start text-sm font-medium">
                   Caracteristicas
                 </PopoverTrigger>
                 <PopoverContent className="cursor-pointer">
                   {caracteristicas.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${searchData.caracteristicas.includes(type.id)
+                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
+                        searchData.caracteristicas.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
-                        }`}
+                      }`}
                       onClick={() => {
                         setSearchData((prev) => ({
                           ...prev,
@@ -605,8 +628,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             type.id
                           )
                             ? prev.caracteristicas.filter(
-                              (id) => id !== type.id
-                            )
+                                (id) => id !== type.id
+                              )
                             : [...prev.caracteristicas, type.id],
                         }));
                         setPage(1); // Reset page to 1 when caracteristicas changes
@@ -619,8 +642,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                             ...prev,
                             caracteristicas: checked
                               ? prev.caracteristicas.filter(
-                                (id) => id !== type.id
-                              )
+                                  (id) => id !== type.id
+                                )
                               : [...prev.caracteristicas, type.id],
                           }));
                           setPage(1); // Reset page to 1 when caracteristicas changes
@@ -634,7 +657,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   ))}
                 </PopoverContent>
               </Popover>
-              <div className="flex items-center space-x-2 h-12 w-full sm:w-fit justify-between">
+              <div className="flex items-center space-x-2 h-12 w-full md:w-fit justify-between">
                 <Label htmlFor="lancamentos">Lançamentos</Label>
                 <Switch
                   checked={
@@ -651,7 +674,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                   }}
                 />
               </div>
-              <div className="flex items-center space-x-2 w-full h-12 sm:w-fit justify-between">
+              <div className="flex items-center space-x-2 w-full h-12 md:w-fit justify-between">
                 <Label htmlFor="mobiliado">Mobiliado</Label>
                 <Switch
                   checked={
@@ -673,15 +696,15 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         </div>
       </div>
       <main className="flex-1 pb-8">
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4">
+        <div className="py-8 justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
             <div className="h-6 rounded-sm select-none mt-3">
               <BreadCrumb />
             </div>
           </div>
         </div>
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 mt-2 mb-3 flex items-center justify-between">
+        <div className="justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl flex items-center justify-between">
             <div className="h-auto min-h-6 rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>
@@ -690,8 +713,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 value={sortOrder}
                 onValueChange={(value) => setSortOrder(value)}
               >
-                <SelectTrigger className="lg:data-[size=default]:h-12 w-full has-[>svg]:px-3 sm:w-fit border-0 shadow-none cursor-pointer">
-                  <SelectValue placeholder={"Filtro"} />
+                <SelectTrigger className="lg:data-[size=default]:h-12 border w-full has-[>svg]:px-3 md:w-fit shadow-none cursor-pointer">
+                  <SelectValue placeholder={"Mais recentes"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ImovelRecente">Mais recentes</SelectItem>
@@ -702,8 +725,8 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
             </div>
           </div>
         </div>
-        <div className="w-full py-4">
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5">
+        <div className="py-8 justify-items-center">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-5">
             {loading ? (
               // Se estiver carregando, mostre os skeletons
               Array.from({ length: 8 }).map((_, index) => (
@@ -719,7 +742,9 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
               imoveis.map((imovel: Destaque) => (
                 <Link
                   key={imovel.id}
-                  href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(gerarTitulos(imovel)))}/${imovel.Codigo}`}
+                  href={`/imovel/${encodeURIComponent(
+                    toSlug(imovel.TituloSite) || toSlug(gerarTitulos(imovel))
+                  )}/${imovel.Codigo}`}
                 >
                   <ImovelCard imovel={imovel} activeTab={searchData.action} />
                 </Link>

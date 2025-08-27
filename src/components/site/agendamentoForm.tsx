@@ -112,107 +112,115 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
                 </p>
             </div>
 
-            <div className="flex items-center gap-2">
-                <button
-                    type="button"
-                    onClick={() => setStartOffset((prev) => Math.max(prev - 5, 1))}
-                    className={[
-                        "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
-                        canGoBack ? "" : "invisible"
-                    ].join(" ")}
-                    aria-label="Voltar datas"
-                >
-                    <ChevronLeft size={16} />
-                </button>
+            <div className="w-full space-y-4">
+                <div className="flex items-center gap-2 w-full">
+                    <button
+                        type="button"
+                        onClick={() => setStartOffset((prev) => Math.max(prev - 5, 1))}
+                        className={[
+                            "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
+                            canGoBack ? "" : "opacity-40 pointer-events-none"
+                        ].join(" ")}
+                        aria-label="Voltar datas"
+                    >
+                        <ChevronLeft size={16} />
+                    </button>
 
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                    {datas.map((data, idx) => {
-                        const dia = labelDia(data)
-                        const dataFormatada = format(data, 'dd/MM')
-                        const isSelecionado = dataSelecionada.toDateString() === data.toDateString()
-                        return (
-                            <button
-                                key={idx}
-                                type="button"
-                                onClick={() => { setDataSelecionada(data); setValue('data', data) }}
-                                className={[
-                                    'min-w-[80px] rounded-md px-3 py-2 text-[12px] text-center font-semibold',
-                                    'border transition-colors',
-                                    isSelecionado
-                                        ? 'bg-[#4f7dc3] border-[#4f7dc3] text-white'
-                                        : 'bg-white border-gray-400 text-gray-800 hover:bg-gray-50'
-                                ].join(' ')}
-                            >
-                                <div className="leading-4">{dia}</div>
-                                <div className="mt-1 font-medium font-semibold text-[15px]">{dataFormatada}</div>
-                            </button>
-                        )
-                    })}
-                </div>
-
-                <button
-                    type="button"
-                    onClick={() => setStartOffset((prev) => Math.min(prev + 5, 14))}
-                    className={[
-                        "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
-                        canGoForward ? "" : "invisible"
-                    ].join(" ")}
-                    aria-label="Avançar datas"
-                >
-                    <ChevronRight size={16} />
-                </button>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2">
-                <div className="relative">
-                    <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
-                        NOME
-                    </label>
-                    <input
-                        {...register('nome')}
-                        className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
-                 focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
-                    />
-                    {errors.nome && <p className="mt-1 text-xs text-red-500">{errors.nome.message}</p>}
-                </div>
-
-                <div className="relative">
-                    <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
-                        CELULAR
-                    </label>
-                    <input
-                        {...register('celular')}
-                        className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
-                 focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
-                    />
-                    {errors.celular && <p className="mt-1 text-xs text-red-500">{errors.celular.message}</p>}
-                </div>
-
-                <div className="flex gap-2">
-                    <div className="relative flex-1">
-                        <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
-                            E-MAIL
-                        </label>
-                        <input
-                            {...register('email')}
-                            className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
-                   focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
-                        />
-                        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                    <div className="flex-1 overflow-x-auto pb-3 md:pb-0">
+                        <div className="flex w-max gap-2 mx-auto">
+                            {datas.map((data, idx) => {
+                                const dia = labelDia(data)
+                                const dataFormatada = format(data, 'dd/MM')
+                                const isSelecionado = dataSelecionada.toDateString() === data.toDateString()
+                                return (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        onClick={() => {
+                                            setDataSelecionada(data)
+                                            setValue('data', data)
+                                        }}
+                                        className={[
+                                            'min-w-[85px] rounded-md px-3 py-2 text-[12px] text-center font-semibold',
+                                            'border transition-colors',
+                                            isSelecionado
+                                                ? 'bg-[#4f7dc3] border-[#4f7dc3] text-white'
+                                                : 'bg-white border-gray-400 text-gray-800 hover:bg-gray-50'
+                                        ].join(' ')}
+                                    >
+                                        <div className="leading-4">{dia}</div>
+                                        <div className="mt-1 font-medium font-semibold text-[15px]">{dataFormatada}</div>
+                                    </button>
+                                )
+                            })}
+                        </div>
                     </div>
 
                     <button
-                        type="submit"
-                        disabled={isPending}
-                        className="grid place-items-center rounded-xl bg-[#4f7dc3] px-4 py-3 text-white hover:bg-[#41659c] disabled:opacity-70"
+                        type="button"
+                        onClick={() => setStartOffset((prev) => Math.min(prev + 5, 14))}
+                        className={[
+                            "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
+                            canGoForward ? "" : "opacity-40 pointer-events-none"
+                        ].join(" ")}
+                        aria-label="Avançar datas"
                     >
-                        {isPending
-                            ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            : <SendHorizonal className="h-4 w-4" />
-                        }
+                        <ChevronRight size={16} />
                     </button>
                 </div>
-            </form>
+
+                {/* FORMULÁRIO */}
+                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2 w-full">
+                    <div className="relative">
+                        <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
+                            NOME
+                        </label>
+                        <input
+                            {...register('nome')}
+                            className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
+                focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
+                        />
+                        {errors.nome && <p className="mt-1 text-xs text-red-500">{errors.nome.message}</p>}
+                    </div>
+
+                    <div className="relative">
+                        <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
+                            CELULAR
+                        </label>
+                        <input
+                            {...register('celular')}
+                            className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
+                focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
+                        />
+                        {errors.celular && <p className="mt-1 text-xs text-red-500">{errors.celular.message}</p>}
+                    </div>
+
+                    <div className="flex gap-2">
+                        <div className="relative flex-1">
+                            <label className="absolute left-3 top-1.5 text-[12px] font-semibold text-black pointer-events-none">
+                                E-MAIL
+                            </label>
+                            <input
+                                {...register('email')}
+                                className="w-full rounded-md border border-gray-400 bg-white px-3 pt-5 pb-2 text-sm text-gray-900
+                    focus:border-[#4f7dc3] focus:outline-none focus:ring-2 focus:ring-[#4f7dc3]/20"
+                            />
+                            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="grid place-items-center rounded-xl bg-[#4f7dc3] px-4 py-3 text-white hover:bg-[#41659c] disabled:opacity-70"
+                        >
+                            {isPending
+                                ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                : <SendHorizonal className="h-4 w-4" />
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

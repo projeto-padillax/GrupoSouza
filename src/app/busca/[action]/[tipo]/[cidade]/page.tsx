@@ -31,35 +31,80 @@ interface Props {
 const buildUrl = (filtros: Filtros) => {
   let titulo = "";
 
-  const tipoPrincipal = (filtros.tipo || []).length > 0
-  ? capitalize(filtros.tipo![0])
-  : "Imóveis";
+  // Tipos de imóvel - mostrar apenas o primeiro tipo
+  let tipoTexto = "Imóveis";
 
-  titulo += filtros.action === "comprar"
-    ? `${tipoPrincipal} à venda`
-    : `${tipoPrincipal} para alugar`;
+ const primeiroTipo = filtros.tipo?.[0]?.split(",")?.map(t => t.trim())?.[0];
+  if (primeiroTipo) {
+    tipoTexto = capitalize(primeiroTipo);
+  }
 
-  if (filtros.quartos) titulo += `, com ${filtros.quartos}+ quarto${filtros.quartos !== "1" ? "s" : ""}`;
-  if (filtros.suites) titulo += `, com ${filtros.suites}+ suíte${filtros.suites !== "1" ? "s" : ""}`;
-  if (filtros.vagas) titulo += `, com ${filtros.vagas}+ vaga${filtros.vagas !== "1" ? "s" : ""}`;
-  if (filtros.areaMinima) titulo += `, com área mínima de ${filtros.areaMinima}m²`;
-  if ((filtros.caracteristicas || []).length > 0) titulo += `, com ${filtros.caracteristicas!.join(", ")}`;
-  if (filtros.lancamentos === "s") titulo += `, lançamento`;
-  if (filtros.mobiliado === "sim") titulo += `, mobiliado`;
+  // Tipo de ação
+  const acaoTexto = filtros.action === "comprar" ? "à venda" : "para alugar";
 
-  if (
-      filtros.bairro &&
-      (filtros.bairro[0]?.split(",").length > 1)
-    ) {
-      titulo += ` em alguns bairros`;
+  // Bairro (somente o primeiro se houver)
+  let bairroTexto = "";
+  if (filtros.bairro && filtros.bairro.length > 0) {
+    const bairrosArray = filtros.bairro[0].split(",").map(b => b.trim()).filter(Boolean);
+    if (bairrosArray.length >= 1) {
+      bairroTexto = bairrosArray[0];
     }
-    // Localizações
-    if (filtros.cidade) {
-      titulo += ` em ${filtros.cidade}`;
-      if (filtros.bairro && filtros.bairro[0]?.split(",").length === 1) {
-        titulo += ` no bairro ${filtros.bairro[0]}`;
-      }
+  }
+
+  // Cidade
+  let cidadeTexto = filtros.cidade || "";
+
+  // Título principal simplificado
+  if (bairroTexto && cidadeTexto) {
+    titulo = `${tipoTexto} ${acaoTexto} - ${bairroTexto} - ${cidadeTexto}`;
+  } else if (cidadeTexto) {
+    titulo = `${tipoTexto} ${acaoTexto} - ${cidadeTexto}`;
+  } else {
+    titulo = `${tipoTexto} ${acaoTexto}`;
+  }
+
+  // Informações adicionais (opcional)
+  if (filtros.quartos) {
+    titulo += `, com ${filtros.quartos}+ quarto${filtros.quartos !== "1" ? "s" : ""}`;
+  }
+
+  if (filtros.suites) {
+    titulo += `, com ${filtros.suites}+ suíte${filtros.suites !== "1" ? "s" : ""}`;
+  }
+
+  if (filtros.vagas) {
+    titulo += `, com ${filtros.vagas}+ vaga${filtros.vagas !== "1" ? "s" : ""}`;
+  }
+
+  if (filtros.areaMinima) {
+    titulo += `, com área mínima de ${filtros.areaMinima}m²`;
+  }
+
+  if ((filtros.caracteristicas || []).length > 0) {
+    titulo += `, com ${filtros.caracteristicas!.join(", ")}`;
+  }
+
+  if (filtros.lancamentos === "s") {
+    titulo += `, lançamento`;
+  }
+
+  if (filtros.mobiliado === "sim") {
+    titulo += `, mobiliado`;
+  }
+
+  if (filtros.codigo) {
+    titulo += ` com código ${filtros.codigo}`;
+  }
+
+  if (filtros.valorMin || filtros.valorMax) {
+    if (filtros.valorMin && filtros.valorMax) {
+      titulo += `, entre R$ ${Number(filtros.valorMin).toLocaleString()} e R$ ${Number(filtros.valorMax).toLocaleString()}`;
+    } else if (filtros.valorMin) {
+      titulo += `, a partir de R$ ${Number(filtros.valorMin).toLocaleString()}`;
+    } else if (filtros.valorMax) {
+      titulo += `, até R$ ${Number(filtros.valorMax).toLocaleString()}`;
     }
+  }
 
   return titulo;
 };

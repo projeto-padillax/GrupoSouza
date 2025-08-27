@@ -36,11 +36,11 @@ const SecaoZod = z.object({
   descricao: z
     .string()
     .min(1, "Descrição é obrigatória.")
-    .max(350, "A descrição deve ter no máximo 255 caracteres."),
+    .max(400, "A descrição deve ter no máximo 400 caracteres."),
   palavrasChave: z
     .string()
     .min(1, "Palavras Chaves são obrigatórias.")
-    .max(350, "As palavras chaves deve ter no máximo 350 caracteres."),
+    .max(400, "As palavras chaves deve ter no máximo 400 caracteres."),
   url: z.string(),
   publicId: z.string().optional(),
   imagem: z.string().optional(),
@@ -100,7 +100,7 @@ export default function SecaoForm({ secao, mode }: SecaoFormProps) {
   };
 
   const handleBack = () => {
-    router.push("/admin/paginas");
+    router.push("/admin/secoes");
   };
 
   return (

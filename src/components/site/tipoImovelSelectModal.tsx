@@ -133,7 +133,7 @@ export function TypeSelectModal({
                       handleSelectAll(residenciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-semibold text-lg">Residenciais</h3>
+                  <h3 className="font-medium text-lg text-white">Residenciais</h3>
                 </div>
                 <div className="space-y-2">
                   {residenciaisTypes.map((type) => (
@@ -158,7 +158,7 @@ export function TypeSelectModal({
                         }
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm">
                         {type.label}
                       </span>
                     </div>
@@ -180,7 +180,7 @@ export function TypeSelectModal({
                       handleSelectAll(comerciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-semibold text-lg">Comerciais</h3>
+                  <h3 className="font-medium text-lg text-white">Comerciais</h3>
                 </div>
                 <div className="space-y-2">
                   {comerciaisTypes.map((type) => (
@@ -205,7 +205,7 @@ export function TypeSelectModal({
                         }
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm">
                         {type.label}
                       </span>
                     </div>
@@ -217,7 +217,7 @@ export function TypeSelectModal({
             <div className="grid grid-cols-2 gap-6">
               {/* Residenciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 pl-0 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
+                <div className="p-4 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -229,7 +229,7 @@ export function TypeSelectModal({
                       handleSelectAll(residenciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-semibold text-lg">Residenciais</h3>
+                  <h3 className="font-medium text-lg text-white">Residenciais</h3>
                 </div>
                 <div className="p-4 space-y-2 pl-0">
                   {residenciaisTypes.map((type) => (
@@ -254,7 +254,7 @@ export function TypeSelectModal({
                         }
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm">
                         {type.label}
                       </span>
                     </div>
@@ -264,7 +264,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 pl-0 border-b flex items-center gap-2 ml-3 border-0 shadow-none">
+                <div className="p-4 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -276,7 +276,7 @@ export function TypeSelectModal({
                       handleSelectAll(comerciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-semibold text-lg">Comerciais</h3>
+                  <h3 className="font-medium text-lg text-white">Comerciais</h3>
                 </div>
                 <div className="p-4 space-y-2 pl-0">
                   {comerciaisTypes.map((type) => (
@@ -301,7 +301,7 @@ export function TypeSelectModal({
                         }
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm">
                         {type.label}
                       </span>
                     </div>

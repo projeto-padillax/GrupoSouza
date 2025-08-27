@@ -22,7 +22,7 @@ export default async function Footer() {
   }
 
   return (
-    <section className="py-12 justify-items-center">
+    <section className="py-8 justify-items-center">
       <footer className="text-black px-8 sm:px-10 md:px-12 w-full max-w-7xl">
         {/* Container principal */}
         <div className="py-6 border-t border-b">
@@ -65,7 +65,7 @@ export default async function Footer() {
           {/* Menu Horizontal */}
           <div className="w-full pt-6 mb-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <div className="col-span-1 place-self-start md:place-self-start">
-              <h3 className="font-bold text-[#4F7DC3] mb-6">Navegação</h3>
+              <h2 className="font-bold text-[#4F7DC3] mb-6">Navegação</h2>
               <nav className="flex flex-col gap-4 md:gap-8">
                 <Link
                   href="/"
@@ -97,9 +97,9 @@ export default async function Footer() {
             <div className="md:col-span-2 lg:col-span-3 grow-1">
               {siteConfig?.enderecos?.map((endereco, index) => (
                 <div className="flex flex-col mb-8" key={index}>
-                  <h3 className="font-bold text-[#4F7DC3] mb-2">
+                  <h2 className="font-bold text-[#4F7DC3] mb-2">
                     Sede {index + 1}
-                  </h3>
+                  </h2>
                   <div className="flex flex-row flex-wrap items-center text-black gap-4">
                     <span className="w-max">{endereco.rua}</span>
                     {endereco.telefone1 && (
@@ -171,7 +171,7 @@ export default async function Footer() {
             </div>
           </div>
         </div>
-        <div className="justify-between pt-4 flex flex-row items-center w-full pb-16">
+        <div className="justify-center sm:justify-between pt-4 flex flex-col sm:flex-row items-center w-full pb-16 gap-2">
           <a
             href="https://www.leadlink.com.br/templatepro/gruposouza/"
             style={{ color: "#4d4d4d", fontWeight: 400 }}
