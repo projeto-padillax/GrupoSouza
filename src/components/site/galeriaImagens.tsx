@@ -17,9 +17,9 @@ export default function GaleriaImagens({ imagens, principal, video }: GaleriaIma
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4 h-[448px]">
+      <div className="flex flex-col md:flex-row gap-4 md:h-[448px]">
         <div
-          className="w-full md:w-4/7 h-full flex-shrink-0 relative rounded-md overflow-hidden cursor-pointer"
+          className="w-full aspect-square md:aspect-auto md:w-4/7 md:h-full relative rounded-md overflow-hidden cursor-pointer"
           onClick={() => setModalAberta(true)}
         >
           <Image

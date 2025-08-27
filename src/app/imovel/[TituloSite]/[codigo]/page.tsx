@@ -74,24 +74,32 @@ export default async function ImovelPage({
     imovel.Estudadação === "Sim" ||
     imovel.Etiqueta === "Sim";
 
-  function limparTitulo(titulo: string) {
+  function limparTitulo(titulo: string, cidade?: string) {
     if (!titulo) return "";
 
-    return (
-      titulo
-        .replace(/(\s*e\s*|\s*,\s*)?0m²/gi, "")
-        // remove "e 0 quarto(s)", ", 0 quarto(s)" ou " 0 quarto(s)"
-        .replace(/(\s*e\s*|\s*,\s*)?0\s*quarto\(s\)/gi, "")
-        // remove "e 0 banheiro(s)", ", 0 banheiro(s)" ou " 0 banheiro(s)"
-        .replace(/(\s*e\s*|\s*,\s*)?0\s*banheiro\(s\)/gi, "")
-        // limpar vírgulas e espaços sobrando
-        .replace(/\s+,/g, ",")
-        .replace(/,\s*,/g, ",")
-        .replace(/^,|,$/g, "")
-        .replace(/\s{2,}/g, " ")
-        .trim()
-    );
+    if (cidade?.trim()) {
+      const c = cidade.trim();
+      titulo = titulo
+        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*,\s*/i, (_, p1) => `${p1} ${c}, `)
+        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*(?=$|[.\-–—])/i, (_, p1) => `${p1} ${c}`);
+    }
+
+    const rmZero = (pat: string, s: string) =>
+      s.replace(new RegExp(`(^|[^0-9])(?:\\s*[,e]\\s*)?0\\s*${pat}`, "gi"), "$1");
+
+    let t = titulo;
+    t = rmZero("m²", t);
+    t = rmZero("quarto\\(s\\)", t);
+    t = rmZero("banheiro\\(s\\)", t);
+
+    return t
+      .replace(/\s+,/g, ",")
+      .replace(/,\s*,/g, ",")
+      .replace(/^\s*,|,\s*$/g, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
   }
+
 
   function gerarTitulo() {
     const capitalizar = (str: string) =>
@@ -171,7 +179,7 @@ export default async function ImovelPage({
               <div className="space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                    {limparTitulo(imovel.TituloSite) || gerarTitulo()}
+                    {limparTitulo(imovel.TituloSite, imovel.Cidade) || gerarTitulo()}
                   </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
@@ -247,19 +255,14 @@ export default async function ImovelPage({
                           strokeWidth={1}
                           className="text-[#4D4D4D] opacity-70 sm:size-[30px]"
                         />
-                        <span className="mt-1 sm:mt-2 text-center leading-5">
-                          {imovel.Categoria?.toLowerCase().replace(
-                            /\b\w/g,
-                            (c: string) => c.toUpperCase()
-                          )}
+                        <span className="mt-1 sm:mt-2 text-center leading-5 capitalize">
+                          {(imovel.Categoria ?? "").toLocaleLowerCase("pt-BR")}
                         </span>
                       </div>
                     )}
 
                     {imovel.Dormitorios > 0 && (
-                      <div className="flex items-end ml-2">
-                        {" "}
-                        {/* Adicionado ml-4 para espaçamento */}
+                      <div className="flex items-end ml-2"> {/* Adicionado ml-4 para espaçamento */}
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mr-2"
@@ -499,6 +502,10 @@ export default async function ImovelPage({
                   cidade={imovel.Cidade}
                   lat={imovel.GMapsLatitude}
                   lng={imovel.GMapsLongitude}
+                  endereco={imovel.endereco}
+                  numero={imovel.numero}
+                  uf={imovel.uf}
+                  cep={imovel.cep}
                 />
               </div>
 
