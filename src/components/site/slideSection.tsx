@@ -51,6 +51,8 @@ export default function SlideSection({ slides }: SlideSectionProps) {
                   <Link
                     href={slide.url ?? "#"}
                     className="absolute w-full h-full z-10"
+                      aria-label={slide.titulo ? `Abrir: ${slide.titulo}` : "Slide sem título"}
+  title={slide.titulo ? slide.titulo : "Slide sem título"}
                   >
                     {!slide.imagem && (
                       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -74,9 +76,11 @@ export default function SlideSection({ slides }: SlideSectionProps) {
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              className={`w-4 h-4 rounded-full transition-all duration-300 cursor-pointer ${
                 currentIndex === index ? "bg-[#ccc]" : "bg-[#e7e7e7]"
               }`}
+              aria-label={`Ir para o slide ${index + 1}`}
+              aria-current={currentIndex === index ? "true" : undefined}
             />
           ))}
         </div>

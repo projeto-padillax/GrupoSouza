@@ -14,6 +14,7 @@ import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Label } from "../ui/label";
 
 interface HeroSectionProps {
   imageUrl: string;
@@ -90,7 +91,7 @@ export function HeroSection(banner: HeroSectionProps) {
   };
 
   const handleSearch = () => {
-const newSearchParams = new URLSearchParams();
+    const newSearchParams = new URLSearchParams();
 
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
@@ -120,7 +121,7 @@ const newSearchParams = new URLSearchParams();
       router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${codigo}`);
     } catch (error) {
       console.error("Falha ao buscar imóveis:", error);
-    } 
+    }
   };
 
   return (
@@ -174,7 +175,12 @@ const newSearchParams = new URLSearchParams();
                     setSearchData({ ...searchData, action: value })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full font-medium border-0 shadow-none cursor-pointer">
+                  <SelectTrigger
+                    id="action-trigger"
+                    aria-labelledby="action-label"
+                    title="Ação"
+                    className="lg:data-[size=default]:h-12 w-full font-medium border-0 shadow-none cursor-pointer"
+                  >
                     <SelectValue placeholder="Comprar" />
                   </SelectTrigger>
                   <SelectContent>
@@ -187,11 +193,11 @@ const newSearchParams = new URLSearchParams();
                   variant="outline"
                   onClick={() => openModal("type")}
                   className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none cursor-pointer"
+                  aria-label="Selecionar tipo de imóvel"
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`font-medium ${
-                        searchData.tipos.length === 0
+                      className={`font-medium ${searchData.tipos.length === 0
                           ? "text-black"
                           : "text-black"}`
                       }
@@ -207,11 +213,11 @@ const newSearchParams = new URLSearchParams();
                   variant="outline"
                   onClick={() => openModal("location")}
                   className="justify-between bg-transparent font-normal lg:h-12 border-0 shadow-none cursor-pointer"
+                  aria-label="Selecionar localização"
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`font-medium ${
-                        searchData.locations.length === 0
+                      className={`font-medium ${searchData.locations.length === 0
                           ? "text-black"
                           : "text-black"}`
                       }
@@ -231,7 +237,12 @@ const newSearchParams = new URLSearchParams();
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
+                  <SelectTrigger
+                    className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium"
+                    id="min-trigger"
+                    aria-labelledby="min-label"
+                    title="Valor de"
+                  >
                     <SelectValue placeholder="Valor de" />
                   </SelectTrigger>
                   <SelectContent>
@@ -253,7 +264,12 @@ const newSearchParams = new URLSearchParams();
                     })
                   }
                 >
-                  <SelectTrigger className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium">
+                  <SelectTrigger
+                    className="lg:data-[size=default]:h-12 w-full border-0 shadow-none cursor-pointer font-medium"
+                    id="max-trigger"
+                    aria-labelledby="max-label"
+                    title="Valor até"
+                  >
                     <SelectValue placeholder="Valor até" />
                   </SelectTrigger>
                   <SelectContent>
@@ -269,6 +285,7 @@ const newSearchParams = new URLSearchParams();
               <Button
                 onClick={handleSearch}
                 className="bg-[#001c40] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4 cursor-pointer"
+                aria-label="Valor de/até"
               >
                 <Search className="h-6 w-6" />
               </Button>
@@ -298,6 +315,7 @@ const newSearchParams = new URLSearchParams();
                 <Button
                   onClick={handleSearchByCode}
                   className="bg-transparent hover:cursor-pointer text-white hover:bg-transparent has-[>svg]:px-0 has-[>svg]:pr-1"
+                  aria-label="Buscar imóveis"
                 >
                   <Search className="h-4 w-5" />
                 </Button>

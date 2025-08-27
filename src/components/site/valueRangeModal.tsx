@@ -61,7 +61,7 @@ export function ValueRangeModal({ isOpen, onClose, selectedRange, onRangeChange 
           {/* Valor De */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Valor De</label>
+              <label  htmlFor="valorDe" className="text-sm font-medium text-gray-700">Valor De</label>
               {tempRange.min && (
                 <Button
                   variant="ghost"
@@ -74,7 +74,7 @@ export function ValueRangeModal({ isOpen, onClose, selectedRange, onRangeChange 
               )}
             </div>
             <Select value={tempRange.min || ""} onValueChange={(value) => setTempRange({ ...tempRange, min: value || "" })}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" id="valorDe">
                 <SelectValue placeholder="Valor mínimo" />
               </SelectTrigger>
               <SelectContent>
@@ -90,7 +90,7 @@ export function ValueRangeModal({ isOpen, onClose, selectedRange, onRangeChange 
           {/* Valor Até */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Valor Até</label>
+              <label htmlFor="valorAte" className="text-sm font-medium text-gray-700">Valor Até</label>
               {tempRange.max && (
                 <Button
                   variant="ghost"
@@ -103,7 +103,7 @@ export function ValueRangeModal({ isOpen, onClose, selectedRange, onRangeChange 
               )}
             </div>
             <Select value={tempRange.max || ""} onValueChange={(value) => setTempRange({ ...tempRange, max: value || "" })}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" id="valorAte">
                 <SelectValue placeholder="Valor máximo" />
               </SelectTrigger>
               <SelectContent>
