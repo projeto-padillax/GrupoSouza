@@ -14,7 +14,6 @@ import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Label } from "../ui/label";
 
 interface HeroSectionProps {
   imageUrl: string;

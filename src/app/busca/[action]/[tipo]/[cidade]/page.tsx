@@ -52,7 +52,7 @@ const buildUrl = (filtros: Filtros) => {
   }
 
   // Cidade
-  let cidadeTexto = filtros.cidade || "";
+  const cidadeTexto = filtros.cidade || "";
 
   // Título principal simplificado
   if (bairroTexto && cidadeTexto) {

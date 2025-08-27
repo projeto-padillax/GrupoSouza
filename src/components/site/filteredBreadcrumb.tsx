@@ -100,7 +100,7 @@ export default function BreadCrumb() {
     
     // Construir query string base
     const baseQuery = new URLSearchParams();
-    let currentPath = pathname;
+    const currentPath = pathname;
 
     // 1. Adicionar Action (Comprar/Alugar)
     if (action) {

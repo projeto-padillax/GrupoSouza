@@ -9,7 +9,7 @@ export async function GET(
   try {
     const { codigo } = await params; // Destructure codigo directly from params
 
-    let imovel = await prisma.imovel.findUnique({
+    const imovel = await prisma.imovel.findUnique({
       where: {
         id: codigo, // Query by the 'Codigo' field in your Prisma schema
       },

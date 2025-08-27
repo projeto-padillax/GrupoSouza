@@ -126,7 +126,7 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
                         <ChevronLeft size={16} />
                     </button>
 
-                    <div className="flex-1 overflow-x-auto pb-3 md:pb-0">
+                    <div className="flex-1 overflow-x-auto pb-3 lg:pb-0">
                         <div className="flex w-max gap-2 mx-auto">
                             {datas.map((data, idx) => {
                                 const dia = labelDia(data)

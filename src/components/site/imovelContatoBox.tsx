@@ -73,7 +73,7 @@ export default function ImovelContatoBox({
                 <div
                     className="bg-white rounded-2xl shadow-md lg:shadow-[0_0_15px_5px_rgba(0,0,0,0.12)] p-4 sm:p-5 lg:p-8 w-full lg:max-w-[460px] mx-auto"
                 >
-                    <div className="flex items-center justify-between gap-3 mb-1">
+                    <div className="flex items-center justify-between gap-2 mb-1">
                         <p className="text-[20px] sm:text-[20px] font-semibold text-gray-800 truncate">
                             {valor > 0 ? `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}` : 'Consultar'}
 
@@ -82,7 +82,7 @@ export default function ImovelContatoBox({
                         {isVenda && (
                             <button
                                 onClick={() => abrirModal('financiamento')}
-                                className="text-[12px] border-b border-grey-300 pb-[1px] text-black hover:text-black hover:border-black transition"
+                                className="text-[12px] border-b border-grey-300 pb-[1px] text-black hover:text-black hover:border-black transition lg:w-min"
                             >
                                 Simular financiamento
                             </button>
