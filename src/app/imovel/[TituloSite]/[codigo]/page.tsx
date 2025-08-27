@@ -249,11 +249,8 @@ export default async function ImovelPage({
                           strokeWidth={1}
                           className="text-[#4D4D4D] opacity-70 sm:size-[30px]"
                         />
-                        <span className="mt-1 sm:mt-2 text-center leading-5">
-                          {imovel.Categoria?.toLowerCase().replace(
-                            /\b\w/g,
-                            (c: string) => c.toUpperCase()
-                          )}
+                        <span className="mt-1 sm:mt-2 text-center leading-5 capitalize">
+                          {(imovel.Categoria ?? "").toLocaleLowerCase("pt-BR")}
                         </span>
                       </div>
                     )}
