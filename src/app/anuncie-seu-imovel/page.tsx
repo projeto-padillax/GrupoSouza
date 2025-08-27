@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";

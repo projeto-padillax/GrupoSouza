@@ -46,7 +46,9 @@ export function LocationSelectModal({
 
   useEffect(() => {
     if (isOpen) {
+      console.log(selectedLocations)
       setTempSelectedLocations(selectedLocations);
+      setSelectedCidade(selectedLocations[0].split(":")[0] || ""); // Define a cidade selecionada com base na primeira localização selecionada
     }
   }, [isOpen, selectedLocations]);
 
