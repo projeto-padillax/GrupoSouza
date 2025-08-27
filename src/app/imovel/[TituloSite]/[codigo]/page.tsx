@@ -493,6 +493,10 @@ export default async function ImovelPage({
                   cidade={imovel.Cidade}
                   lat={imovel.GMapsLatitude}
                   lng={imovel.GMapsLongitude}
+                  endereco={imovel.endereco}
+                  numero={imovel.numero}
+                  uf={imovel.uf}
+                  cep={imovel.cep}
                 />
               </div>
 

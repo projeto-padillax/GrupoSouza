@@ -4,33 +4,63 @@ import { useState } from "react";
 import { Lock } from "lucide-react";
 
 interface LocalizacaoBoxProps {
-  bairro: string;
-  cidade: string;
-  lat: number | string;
-  lng: number | string;
+  bairro?: string;
+  cidade?: string;
+  endereco?: string;
+  numero?: string;
+  lat?: number | string;
+  lng?: number | string;
+  uf?: string;
+  cep?: string;
 }
 
-export default function LocalizacaoBox({ bairro, cidade, lat, lng }: LocalizacaoBoxProps) {
+export default function LocalizacaoBox({
+  bairro = "",
+  cidade = "",
+  endereco = "",
+  numero = "",
+  lat = "",
+  lng = "",
+  uf = "",
+  cep = "",
+}: LocalizacaoBoxProps) {
   const [mapaAberto, setMapaAberto] = useState(false);
+
+  const usarLatLng = lat !== "" && lng !== "";
+
+  const enderecoTexto = [
+    endereco,
+    numero,
+    bairro,
+    cidade,
+    uf,
+    cep,
+  ]
+    .filter((part) => part && part.trim() !== "")
+    .join(", ");
+
+  const src = usarLatLng
+    ? `https://www.google.com/maps?q=${lat},${lng}&z=17&output=embed`
+    : `https://www.google.com/maps?q=${encodeURIComponent(enderecoTexto)}&z=17&output=embed`;
 
   return (
     <div>
       <h2 className="text-[#4d4d4d] text-xl font-bold mb-2">Localização</h2>
       <p className="text-md text-gray-700 mb-8">
-        {bairro}, {cidade}
+        {enderecoTexto || "Endereço não disponível"}
       </p>
 
-      <div className="relative group overflow-hidden rounded-lg shadow-md">
+      <div className="relative group overflow-hidden rounded-lg shadow-md h-[180px]">
         <iframe
           width="100%"
-          height="300"
+          height="100%"
           style={{ border: 0 }}
           loading="lazy"
           allowFullScreen
-          className={`w-full h-[300px] object-cover transition duration-300 ${
+          className={`w-full h-full object-cover transition duration-300 ${
             mapaAberto ? "" : "grayscale-[40%] brightness-[0.6] pointer-events-none"
           }`}
-          src={`https://www.google.com/maps?q=${lat},${lng}&z=17&output=embed`}
+          src={src}
         />
 
         {!mapaAberto && (

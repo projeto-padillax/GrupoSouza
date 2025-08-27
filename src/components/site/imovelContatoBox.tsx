@@ -32,7 +32,7 @@ export default function ImovelContatoBox({
     return (
         <div className="block">
             <div className="lg:sticky lg:top-2">
-                <div className="flex justify-center mb-3 lg:mb-4">
+                <div className="flex justify-center mb-6 lg:mb-8">
                     <div className="flex items-start gap-4">
                         <div className="w-[70px] h-[70px] rounded-md overflow-hidden">
                             <Image
@@ -44,7 +44,7 @@ export default function ImovelContatoBox({
                             />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-[#111827] tracking-wide uppercase mb-2">
+                            <p className="text-sm font-semibold text-[#111827] tracking-wide uppercase mb-3">
                                 Nome Corretor
                             </p>
 
