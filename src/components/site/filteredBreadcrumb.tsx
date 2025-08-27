@@ -28,6 +28,70 @@ export default function BreadCrumb() {
   const breadcrumbItems = useMemo(() => {
     const items: { name: string; href: string }[] = [];
     
+    // Verificar se é uma rota de imóvel individual
+    const segments = pathname.split("/").filter(Boolean);
+    const isImovelRoute = segments[0] === "imovel";
+    
+    if (isImovelRoute && segments.length >= 3) {
+      // Rota: /imovel/apartamento-com-86m-3-quartos-1-suite-1-vaga-no-bairro-paulista-em-piracicaba/21736
+      const slugImovel = segments[1];
+      const idImovel = segments[2];
+      
+      // Extrair informações do slug
+      const decodedSlug = decodeURIComponent(slugImovel.replace(/\+/g, " "));
+      
+      // Extrair tipo (primeira palavra antes do primeiro hífen)
+      const tipo = decodedSlug.split("-")[0];
+      
+      // Extrair cidade (após "em-")
+      const cidadeMatch = decodedSlug.match(/em-([^-]+)(?:-|$)/);
+      const cidade = cidadeMatch ? cidadeMatch[1] : "";
+      
+      // Extrair bairro (após "bairro-" e antes de "-em-")
+      const bairroMatch = decodedSlug.match(/bairro-([^-]+(?:-[^-]+)*)-em-/);
+      const bairro = bairroMatch ? bairroMatch[1].replace(/-/g, " ") : "";
+      
+      // Extrair quartos
+      const quartosMatch = decodedSlug.match(/(\d+)-quartos?/);
+      const quartos = quartosMatch ? quartosMatch[1] : "";
+      
+      // 1. Tipo à venda/aluguel em Cidade
+      if (tipo && cidade) {
+        const tipoCapitalized = capitalize(tipo);
+        const cidadeCapitalized = capitalize(cidade);
+        items.push({
+          name: `${tipoCapitalized} em ${cidadeCapitalized}`,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}`,
+        });
+      }
+      
+      // 2. Bairro
+      if (bairro) {
+        const bairroCapitalized = capitalize(bairro);
+        items.push({
+          name: bairroCapitalized,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}&bairro=${bairro}`,
+        });
+      }
+      
+      // 3. Quartos
+      if (quartos) {
+        items.push({
+          name: `${quartos} quartos`,
+          href: `/busca?action=comprar&tipos=${tipo}&cidade=${cidade}&bairro=${bairro}&quartos=${quartos}`,
+        });
+      }
+      
+      // 4. ID do imóvel
+      items.push({
+        name: idImovel,
+        href: pathname,
+      });
+      
+      return items;
+    }
+    
+    // Lógica original para outras rotas
     // Pegar os parâmetros de query
     const action = searchParams.get("action") ?? "";
     const cidadeParam = searchParams.get("cidade") ?? "";
