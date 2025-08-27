@@ -32,7 +32,7 @@ export async function generateMetadata({
   return {
     title: imovel.TituloSite,
     description: imovel.Descricao,
-  }
+  };
 }
 
 export default async function ImovelPage({
@@ -97,7 +97,9 @@ export default async function ImovelPage({
     const capitalizar = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-    const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
+    const categoria = imovel.Categoria
+      ? capitalizar(imovel.Categoria)
+      : "Imóvel";
 
     const area =
       imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
@@ -119,7 +121,9 @@ export default async function ImovelPage({
         ? `${imovel.Vagas} vaga${imovel.Vagas === "1" ? "" : "s"}`
         : "";
 
-    const bairro = imovel.Bairro ? `no bairro ${capitalizar(imovel.Bairro)}` : "";
+    const bairro = imovel.Bairro
+      ? `no bairro ${capitalizar(imovel.Bairro)}`
+      : "";
     const cidade = imovel.Cidade ? `em ${capitalizar(imovel.Cidade)}` : "";
 
     const detalhes = [area && `com ${area}`, quartos, suites, vagas]
@@ -137,10 +141,12 @@ export default async function ImovelPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <div className="shadow-lg">
+        <Header />
+      </div>
       <main className="flex-1 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <section className="pt-4 border-t border-gray-200 mb-4">
+        <div className="py-4 justify-items-center">
+          <section className="px-8 sm:px-10 md:px-12 w-full max-w-7xl mb-4">
             <div className="flex justify-between items-center">
               <nav className="text-sm text-gray-500">
                 <BreadCrumb />
@@ -148,7 +154,7 @@ export default async function ImovelPage({
             </div>
           </section>
 
-          <section className="mb-8">
+          <section className="px-8 sm:px-10 md:px-12 w-full max-w-7xl mb-8">
             <GaleriaImagens
               imagens={imagensGaleria}
               principal={imovel.FotoDestaque}
@@ -160,7 +166,7 @@ export default async function ImovelPage({
             />
           </section>
 
-          <section className="mb-8">
+          <section className="px-8 sm:px-10 md:px-12 w-full max-w-7xl mb-8">
             <div className="grid grid-cols-1 lg:grid-cols-[3fr_1.25fr] gap-6 lg:gap-8">
               <div className="space-y-8">
                 <div className="space-y-4">
@@ -191,7 +197,7 @@ export default async function ImovelPage({
 
                     {(imovel.ValorCondominio &&
                       parseFloat(imovel.ValorCondominio) > 0.0) ||
-                      (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
+                    (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
                       <div className="flex items-center gap-2 text-xs text-black whitespace-nowrap">
                         {imovel.ValorCondominio &&
                           parseFloat(imovel.ValorCondominio) > 0 && (
@@ -251,11 +257,13 @@ export default async function ImovelPage({
                     )}
 
                     {imovel.Dormitorios > 0 && (
-                     <div className="flex items-end ml-2"> {/* Adicionado ml-4 para espaçamento */}
-                      <Dot
-                        size={25}
-                        className="text-[#0061bc] hidden sm:inline-block mr-2"
-                      />
+                      <div className="flex items-end ml-2">
+                        {" "}
+                        {/* Adicionado ml-4 para espaçamento */}
+                        <Dot
+                          size={25}
+                          className="text-[#0061bc] hidden sm:inline-block mr-2"
+                        />
                         <div className="flex flex-col items-center ml-1">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -273,18 +281,17 @@ export default async function ImovelPage({
                             {imovel.Dormitorios} quarto
                             {imovel.Dormitorios > 1 ? "s" : ""}
                             {imovel.Suites > 0
-                              ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? "s" : ""
-                              })`
+                              ? ` (${imovel.Suites} suíte${
+                                  imovel.Suites > 1 ? "s" : ""
+                                })`
                               : ""}
                           </span>
                         </div>
-                        </div>
-
-                      
+                      </div>
                     )}
 
                     {imovel.AreaPrivativa > 0 && (
-                       <div className="flex items-end ml-2">
+                      <div className="flex items-end ml-2">
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mx-2"
@@ -355,11 +362,11 @@ export default async function ImovelPage({
                             {imovel.AreaPrivativa} m² privativos
                           </span>
                         </div>
-                     </div>
+                      </div>
                     )}
 
                     {imovel.AreaTerreno > 0 && (
-                       <div className="flex items-end ml-2">
+                      <div className="flex items-end ml-2">
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mx-2"
@@ -430,7 +437,7 @@ export default async function ImovelPage({
                             {imovel.AreaTerreno} m² totais
                           </span>
                         </div>
-                        </div>
+                      </div>
                     )}
 
                     {imovel.Vagas > 0 && (
@@ -456,8 +463,7 @@ export default async function ImovelPage({
                             {imovel.Vagas} vaga{imovel.Vagas > 1 ? "s" : ""}
                           </span>
                         </div>
-                        </div>
-
+                      </div>
                     )}
                   </div>
                 </div>
