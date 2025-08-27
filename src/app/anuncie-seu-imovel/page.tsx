@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import Image from "next/image";
 import Header from "@/components/site/header";
 import Footer from "@/components/site/footer";
@@ -29,8 +31,8 @@ export default async function AnuncieImovel() {
       </div>
 
       <main className="flex-1">
-        <section className="relative w-full py-8">
-          <div className="w-[90%] mx-auto max-w-7xl">
+        <section className="justify-items-center py-8">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl">
             <div className="rounded-sm mb-8">
               <Suspense>
                 <BreadCrumb />
