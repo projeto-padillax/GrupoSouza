@@ -74,24 +74,32 @@ export default async function ImovelPage({
     imovel.Estudadação === "Sim" ||
     imovel.Etiqueta === "Sim";
 
-  function limparTitulo(titulo: string) {
+  function limparTitulo(titulo: string, cidade?: string) {
     if (!titulo) return "";
 
-    return (
-      titulo
-        .replace(/(\s*e\s*|\s*,\s*)?0m²/gi, "")
-        // remove "e 0 quarto(s)", ", 0 quarto(s)" ou " 0 quarto(s)"
-        .replace(/(\s*e\s*|\s*,\s*)?0\s*quarto\(s\)/gi, "")
-        // remove "e 0 banheiro(s)", ", 0 banheiro(s)" ou " 0 banheiro(s)"
-        .replace(/(\s*e\s*|\s*,\s*)?0\s*banheiro\(s\)/gi, "")
-        // limpar vírgulas e espaços sobrando
-        .replace(/\s+,/g, ",")
-        .replace(/,\s*,/g, ",")
-        .replace(/^,|,$/g, "")
-        .replace(/\s{2,}/g, " ")
-        .trim()
-    );
+    if (cidade?.trim()) {
+      const c = cidade.trim();
+      titulo = titulo
+        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*,\s*/i, (_, p1) => `${p1} ${c}, `)
+        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*(?=$|[.\-–—])/i, (_, p1) => `${p1} ${c}`);
+    }
+
+    const rmZero = (pat: string, s: string) =>
+      s.replace(new RegExp(`(^|[^0-9])(?:\\s*[,e]\\s*)?0\\s*${pat}`, "gi"), "$1");
+
+    let t = titulo;
+    t = rmZero("m²", t);
+    t = rmZero("quarto\\(s\\)", t);
+    t = rmZero("banheiro\\(s\\)", t);
+
+    return t
+      .replace(/\s+,/g, ",")
+      .replace(/,\s*,/g, ",")
+      .replace(/^\s*,|,\s*$/g, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
   }
+
 
   function gerarTitulo() {
     const capitalizar = (str: string) =>
@@ -165,7 +173,7 @@ export default async function ImovelPage({
               <div className="space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                    {limparTitulo(imovel.TituloSite) || gerarTitulo()}
+                    {limparTitulo(imovel.TituloSite, imovel.Cidade) || gerarTitulo()}
                   </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
@@ -251,11 +259,11 @@ export default async function ImovelPage({
                     )}
 
                     {imovel.Dormitorios > 0 && (
-                     <div className="flex items-end ml-2"> {/* Adicionado ml-4 para espaçamento */}
-                      <Dot
-                        size={25}
-                        className="text-[#0061bc] hidden sm:inline-block mr-2"
-                      />
+                      <div className="flex items-end ml-2"> {/* Adicionado ml-4 para espaçamento */}
+                        <Dot
+                          size={25}
+                          className="text-[#0061bc] hidden sm:inline-block mr-2"
+                        />
                         <div className="flex flex-col items-center ml-1">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -278,13 +286,13 @@ export default async function ImovelPage({
                               : ""}
                           </span>
                         </div>
-                        </div>
+                      </div>
 
-                      
+
                     )}
 
                     {imovel.AreaPrivativa > 0 && (
-                       <div className="flex items-end ml-2">
+                      <div className="flex items-end ml-2">
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mx-2"
@@ -355,11 +363,11 @@ export default async function ImovelPage({
                             {imovel.AreaPrivativa} m² privativos
                           </span>
                         </div>
-                     </div>
+                      </div>
                     )}
 
                     {imovel.AreaTerreno > 0 && (
-                       <div className="flex items-end ml-2">
+                      <div className="flex items-end ml-2">
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mx-2"
@@ -430,7 +438,7 @@ export default async function ImovelPage({
                             {imovel.AreaTerreno} m² totais
                           </span>
                         </div>
-                        </div>
+                      </div>
                     )}
 
                     {imovel.Vagas > 0 && (
@@ -456,7 +464,7 @@ export default async function ImovelPage({
                             {imovel.Vagas} vaga{imovel.Vagas > 1 ? "s" : ""}
                           </span>
                         </div>
-                        </div>
+                      </div>
 
                     )}
                   </div>
