@@ -96,41 +96,6 @@ export default async function ImovelPage({
     imovel.Estudadação === "Sim" ||
     imovel.Etiqueta === "Sim";
 
-  function limparTitulo(titulo: string, cidade?: string) {
-    if (!titulo) return "";
-
-    if (cidade?.trim()) {
-      const c = cidade.trim();
-      titulo = titulo
-        .replace(
-          /^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*,\s*/i,
-          (_, p1) => `${p1} ${c}, `
-        )
-        .replace(
-          /^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*(?=$|[.\-–—])/i,
-          (_, p1) => `${p1} ${c}`
-        );
-    }
-
-    const rmZero = (pat: string, s: string) =>
-      s.replace(
-        new RegExp(`(^|[^0-9])(?:\\s*[,e]\\s*)?0\\s*${pat}`, "gi"),
-        "$1"
-      );
-
-    let t = titulo;
-    t = rmZero("m²", t);
-    t = rmZero("quarto\\(s\\)", t);
-    t = rmZero("banheiro\\(s\\)", t);
-
-    return t
-      .replace(/\s+,/g, ",")
-      .replace(/,\s*,/g, ",")
-      .replace(/^\s*,|,\s*$/g, "")
-      .replace(/\s{2,}/g, " ")
-      .trim();
-  }
-
   function gerarTitulo() {
     const capitalizar = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
