@@ -114,7 +114,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         {/* Favoritos e Preço - sempre na parte inferior */}
         <div className="flex justify-between items-center mt-auto">
           <FavoriteButton property={imovel} />
-          <p className="text-lg text-gray-800">{formatPrice()}</p>
+          <p className="text-lg text-[#303030]">{formatPrice()}</p>
         </div>
       </div>
     </div>
