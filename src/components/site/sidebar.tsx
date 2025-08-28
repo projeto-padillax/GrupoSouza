@@ -99,7 +99,7 @@ export default function Sidebar({ dynamicItems }: SidebarProps) {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        className="rounded-md mr-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
+        className="rounded-md mr-0 text-[#303030] hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
         aria-label="Abrir menu"
       >
         <Menu className="h-6 w-6" />
