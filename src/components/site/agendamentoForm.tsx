@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format, addDays, isSaturday, isSunday } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { createFormulario } from '@/lib/actions/formularios'
 
@@ -75,10 +75,21 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
         })
     }
 
+    const [direction, setDirection] = useState<'left' | 'right'>('right')
+
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768)
+        checkMobile()
+        window.addEventListener('resize', checkMobile)
+        return () => window.removeEventListener('resize', checkMobile)
+    }, [])
+
     return (
         <div className="space-y-4">
             <div>
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+                <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800 mb-2">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 31 29"
@@ -107,7 +118,7 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
                     </svg>
                     Agendar visita
                 </h2>
-                <p className="text-sm text-black">
+                <p className="text-sm text-black mb-6">
                     Escolha a data e aguarde a confirmação de nossa equipe.
                 </p>
             </div>
@@ -116,7 +127,10 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
                 <div className="flex items-center gap-2 w-full">
                     <button
                         type="button"
-                        onClick={() => setStartOffset((prev) => Math.max(prev - 5, 1))}
+                        onClick={() => {
+                            setDirection('left')
+                            setStartOffset((prev) => Math.max(prev - (isMobile ? 3 : 9), 1))
+                        }}
                         className={[
                             "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
                             canGoBack ? "" : "opacity-40 pointer-events-none"
@@ -126,8 +140,8 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
                         <ChevronLeft size={16} />
                     </button>
 
-                    <div className="flex-1 overflow-x-auto pb-3 lg:pb-0">
-                        <div className="flex w-max gap-2 mx-auto">
+                    <div className={`flex-1 ${isMobile ? 'overflow-x-auto' : 'overflow-hidden'} pb-3 lg:pb-0`}>
+                        <div key={startOffset} className={`flex ${isMobile ? 'w-max' : 'min-w-full justify-center'} gap-2 ${direction === 'left' ? 'animate-slide-left' : 'animate-slide-right'}`}>
                             {datas.map((data, idx) => {
                                 const dia = labelDia(data)
                                 const dataFormatada = format(data, 'dd/MM')
@@ -158,7 +172,10 @@ export default function AgendamentoForm({ codigo }: AgendamentoFormProps) {
 
                     <button
                         type="button"
-                        onClick={() => setStartOffset((prev) => Math.min(prev + 5, 14))}
+                        onClick={() => {
+                            setDirection('right')
+                            setStartOffset((prev) => Math.min(prev + (isMobile ? 3 : 9), 14))
+                        }}
                         className={[
                             "shrink-0 rounded-xl border border-gray-400 px-2 py-2 hover:bg-gray-50",
                             canGoForward ? "" : "opacity-40 pointer-events-none"
