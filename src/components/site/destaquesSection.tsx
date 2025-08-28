@@ -30,7 +30,7 @@ function toSlug(text: string): string {
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
     const categoria = imovel.Categoria ? capitalizar(imovel.Categoria) : "Imóvel";
-
+  console.log(categoria)
     const area =
       imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
         ? `${imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida}m²`
@@ -127,7 +127,7 @@ export function DestaquesSection({ destaques }: DestaquesSectionProps) {
           {todosImoveis.map((imovel: Destaque) => (
             <Link
               key={imovel.id}
-              href={`/imovel/${encodeURIComponent(toSlug(imovel.TituloSite) || toSlug(gerarTitulo(imovel)))}/${imovel.Codigo}`}
+              href={`/imovel/${encodeURIComponent(toSlug(gerarTitulo(imovel)))}/${imovel.Codigo}`}
             >
               <ImovelCard
                 key={imovel.id}

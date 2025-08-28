@@ -27,10 +27,32 @@ export async function generateMetadata({
     }
   );
 
+  const capitalizar = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
   const imovel = await res.json();
+  let title = "";
+  if (imovel.Categoria) {
+    title += `${capitalizar(imovel.Categoria)} `;
+  }
+  if (imovel.status == "VENDA") {
+    title += `à venda em`;
+  } else {
+    title += `para alugar em`;
+  }
+  title += ` ${capitalizar(imovel.Cidade)} - ${imovel.Bairro}, `;
+  if (imovel.Dormitorios && imovel.Dormitorios != "0") {
+    title += `com ${imovel.Dormitorios} dormitórios, `;
+  }
+  if (imovel.Suites && imovel.Suites != "0") {
+    title += `${imovel.Suites} suites `;
+  }
+  if (imovel.Vagas && imovel.Vagas != "0") {
+    title += `e ${imovel.Vagas} vagas`;
+  }
 
   return {
-    title: imovel.TituloSite,
+    title: title,
     description: imovel.Descricao,
   };
 }
@@ -80,12 +102,21 @@ export default async function ImovelPage({
     if (cidade?.trim()) {
       const c = cidade.trim();
       titulo = titulo
-        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*,\s*/i, (_, p1) => `${p1} ${c}, `)
-        .replace(/^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*(?=$|[.\-–—])/i, (_, p1) => `${p1} ${c}`);
+        .replace(
+          /^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*,\s*/i,
+          (_, p1) => `${p1} ${c}, `
+        )
+        .replace(
+          /^\s*([A-Za-zÀ-ÖØ-öø-ÿ\s\/\-]+?\bem)\s*(?=$|[.\-–—])/i,
+          (_, p1) => `${p1} ${c}`
+        );
     }
 
     const rmZero = (pat: string, s: string) =>
-      s.replace(new RegExp(`(^|[^0-9])(?:\\s*[,e]\\s*)?0\\s*${pat}`, "gi"), "$1");
+      s.replace(
+        new RegExp(`(^|[^0-9])(?:\\s*[,e]\\s*)?0\\s*${pat}`, "gi"),
+        "$1"
+      );
 
     let t = titulo;
     t = rmZero("m²", t);
@@ -100,14 +131,22 @@ export default async function ImovelPage({
       .trim();
   }
 
-
   function gerarTitulo() {
     const capitalizar = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    
+    let status = ""  
+    if (imovel.status == "VENDA") {
+      status += ` à venda`;
+    } else {
+      status += ` para alugar`;
+    }
 
-    const categoria = imovel.Categoria
-      ? capitalizar(imovel.Categoria)
-      : "Imóvel";
+    let categoria = imovel.Categoria
+      ? capitalizar(imovel.Categoria.split("/")[0])
+      : "Imóvesssl";
+
+    categoria += status
 
     const area =
       imovel.AreaTerreno || imovel.AreaTotal || imovel.AreaConstruida
@@ -179,7 +218,7 @@ export default async function ImovelPage({
               <div className="space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl font-semibold text-[#111] leading-snug break-words">
-                    {limparTitulo(imovel.TituloSite, imovel.Cidade) || gerarTitulo()}
+                    {gerarTitulo()}
                   </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
@@ -262,7 +301,9 @@ export default async function ImovelPage({
                     )}
 
                     {imovel.Dormitorios > 0 && (
-                      <div className="flex items-end ml-2"> {/* Adicionado ml-4 para espaçamento */}
+                      <div className="flex items-end ml-2">
+                        {" "}
+                        {/* Adicionado ml-4 para espaçamento */}
                         <Dot
                           size={25}
                           className="text-[#0061bc] hidden sm:inline-block mr-2"

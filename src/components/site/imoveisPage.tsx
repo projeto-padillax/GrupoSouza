@@ -743,7 +743,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 <Link
                   key={imovel.id}
                   href={`/imovel/${encodeURIComponent(
-                    toSlug(imovel.TituloSite) || toSlug(gerarTitulos(imovel))
+                    toSlug(gerarTitulos(imovel))
                   )}/${imovel.Codigo}`}
                 >
                   <ImovelCard imovel={imovel} activeTab={searchData.action} />
