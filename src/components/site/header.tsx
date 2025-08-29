@@ -27,13 +27,13 @@ export default async function Header() {
                   <FavoriteIcon />
                 </Link>
                 <Link href="tel:+551934178190"
-                  className="flex items-center hover:text-[#005a9e]"
+                  className="flex items-center text-[#303030] hover:text-[#005a9e]"
                   aria-label="Ligar para o número (19) 3417-8190"
                 >
                   <Phone className="h-8 w-8 mr-1" />
                 </Link>
                 <Link href='https://wa.me/5519992430041'
-                  className="flex items-center hover:text-[#005a9e]"
+                  className="flex items-center text-[#303030] hover:text-[#005a9e]"
                   aria-label="Conversar via WhatsApp"
                 >
                   <FaWhatsapp className='h-8 w-8'></FaWhatsapp>

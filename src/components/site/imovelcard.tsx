@@ -74,10 +74,10 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           className={`flex justify-between items-center mb-4 ${hasAnyDetail ? "border-b border-gray-200 pb-3" : ""
             }`}
         >
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#303030]">
             {capitalizeCategory(imovel.Categoria)}
           </p>
-          <p className="text-sm text-gray-600 flex items-center gap-1">
+          <p className="text-sm text-[#303030] flex items-center gap-1">
             <CodigoImobiliariaIcon className="w-3 h-3 text-gray-400" />
             {imovel.Codigo}
           </p>
@@ -88,18 +88,18 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
           {hasAnyDetail ? (
             <div className="flex justify-between items-center w-full border-b border-gray-200 pb-3">
                {hasDormitorios && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#303030]">
                   {imovel.Dormitorios} quarto
                   {Number(imovel.Dormitorios) > 1 ? "s" : ""}
                 </p>
               )}
               {area && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#303030]">
                   {area}m²
                 </p>
               )}
               {hasVagas && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#303030]">
                   {imovel.Vagas} vaga
                   {Number(imovel.Vagas) > 1 ? "s" : ""}
                 </p>
@@ -114,7 +114,7 @@ export function ImovelCard({ imovel, activeTab }: PropertyCardProps) {
         {/* Favoritos e Preço - sempre na parte inferior */}
         <div className="flex justify-between items-center mt-auto">
           <FavoriteButton property={imovel} />
-          <p className="text-lg text-gray-800">{formatPrice()}</p>
+          <p className="text-lg text-[#303030]">{formatPrice()}</p>
         </div>
       </div>
     </div>

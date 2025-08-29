@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { LocationSelectModal } from "@/components/site/locationSelectModal";
 import { TypeSelectModal } from "@/components/site/tipoImovelSelectModal";
@@ -108,16 +108,48 @@ export function HeroSection(banner: HeroSectionProps) {
       newSearchParams.set("valorMax", searchData.valueRange.max);
 
     newSearchParams.set("page", String("1"));
-    const path = `/busca/${searchData.action}/${searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"}/${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}`;
+    const path = `/busca/${searchData.action}/${
+      searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"
+    }/${
+      searchData.locations.length > 0
+        ? searchData.locations[0].split(":")[0] +
+          "+" +
+          searchData.locations[0].split(":")[1]
+        : "Piracicaba"
+    }`;
 
     router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
+  };
 
+  const handleAdvancedSearch = () => {
+    const path = `/busca/${searchData.action}/${
+      searchData.tipos.length > 0 ? searchData.tipos[0] : "imóveis"
+    }/${
+      searchData.locations.length > 0
+        ? searchData.locations[0].split(":")[0] +
+          "+" +
+          searchData.locations[0].split(":")[1]
+        : "Piracicaba"
+    }`;
+
+    const newSearchParams = new URLSearchParams();
+    if (searchData.action) newSearchParams.set("action", searchData.action);
+    newSearchParams.set("page", String("1"));
+    router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
   };
 
   const handleSearchByCode = async () => {
     if (!codigo) return;
     try {
-      router.push(`/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${searchData.locations.length > 0 ? searchData.locations[0].split(":")[0] + "+" + searchData.locations[0].split(":")[1] : "Piracicaba"}/${codigo}`);
+      router.push(
+        `/imovel/${searchData.action}+${searchData.tipos[0] ?? "Imovel"}+em+${
+          searchData.locations.length > 0
+            ? searchData.locations[0].split(":")[0] +
+              "+" +
+              searchData.locations[0].split(":")[1]
+            : "Piracicaba"
+        }/${codigo}`
+      );
     } catch (error) {
       console.error("Falha ao buscar imóveis:", error);
     }
@@ -132,7 +164,11 @@ export function HeroSection(banner: HeroSectionProps) {
     >
       {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-      <div className={`z-10 py-8 px-8 sm:px-10 md:px-12 w-full h-full flex flex-col max-w-7xl ${!banner.subtitulo ? "items-center" : ""}`}>
+      <div
+        className={`z-10 py-8 px-8 sm:px-10 md:px-12 w-full h-full flex flex-col max-w-7xl ${
+          !banner.subtitulo ? "items-center" : ""
+        }`}
+      >
         <div className="">
           <Link
             href={banner.url}
@@ -140,25 +176,29 @@ export function HeroSection(banner: HeroSectionProps) {
           >
             {banner.titulo}
           </Link>
-          {banner.subtitulo && (<p className="text-xl text-white mb-28 md:mb-[160px]">{banner.subtitulo}</p>)}
+          {banner.subtitulo && (
+            <p className="text-xl text-white mb-28 md:mb-[160px]">
+              {banner.subtitulo}
+            </p>
+          )}
 
           {/* Search tabs */}
           <div className="flex gap-8">
             <Link
               href="https://www.gruposouza.leadlink.com.br/busca/comprar/cidade/piracicaba/lancamentos/s/1/"
-              className="pt-2 text-white bg-transparent text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+              className="pt-2 text-white bg-transparent text-[18.4px] font-semibold hover:font-semibold hover:border-b-[#4F7DC3] hover:border-b-2 border-b-2 border-b-transparent"
             >
               Lançamentos
             </Link>
             <Link
               href="#"
-              className="pt-2 bg-transparent text-white text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+              className="pt-2 bg-transparent text-white text-[18.4px] font-semibold hover:font-semibold hover:border-b-[#4F7DC3] hover:border-b-2 border-b-2 border-b-transparent"
             >
               Portugal
             </Link>
             <Link
               href="#"
-              className="pt-2 bg-transparent text-white text-[18.4px] font-extralight hover:font-semibold hover:border-b-white hover:border-b-2 border-b-2 border-b-transparent"
+              className="pt-2 bg-transparent text-white text-[18.4px] font-semibold hover:font-semibold hover:border-b-[#4F7DC3] hover:border-b-2 border-b-2 border-b-transparent"
             >
               Litoral
             </Link>
@@ -196,10 +236,11 @@ export function HeroSection(banner: HeroSectionProps) {
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`font-medium ${searchData.tipos.length === 0
+                      className={`font-medium ${
+                        searchData.tipos.length === 0
                           ? "text-black"
-                          : "text-black"}`
-                      }
+                          : "text-black"
+                      }`}
                     >
                       {getTypeDisplayText()}
                     </span>
@@ -216,10 +257,11 @@ export function HeroSection(banner: HeroSectionProps) {
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`font-medium ${searchData.locations.length === 0
+                      className={`font-medium ${
+                        searchData.locations.length === 0
                           ? "text-black"
-                          : "text-black"}`
-                      }
+                          : "text-black"
+                      }`}
                     >
                       Localização
                     </span>
@@ -291,6 +333,12 @@ export function HeroSection(banner: HeroSectionProps) {
             </div>
           </div>
           <div className="flex justify-start items-center text-white mt-2 mb-3 bg-transparent">
+            <Button
+              onClick={() => handleAdvancedSearch()}
+              className="text-xs w-[152px] font-semibold flex items-center border border-transparent gap-1 bg-transparent hover:bg-transparent focus:ring-2 focus:ring-white has-[>svg]:px-0 cursor-pointer mr-4"
+            >
+              BUSCA AVANÇADA <SlidersHorizontal className="h-4 w-5" />
+            </Button>
             {!isSearching ? (
               <Button
                 onClick={() => setIsSearching(true)}

@@ -123,6 +123,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     font-family: var(--font-montserrat), sans-serif;
     @apply bg-background text-foreground;
@@ -133,6 +134,40 @@ html {
   scroll-behavior: smooth;
 }
 
-.data-\[placeholder\]\:text-muted-foreground[data-placeholder]{
+.data-\[placeholder\]\:text-muted-foreground[data-placeholder] {
   color: black
+}
+
+@layer utilities {
+  .animate-slide-left {
+    animation: slideLeft 0.5s ease-in-out;
+  }
+
+  .animate-slide-right {
+    animation: slideRight 0.5s ease-in-out;
+  }
+
+  @keyframes slideLeft {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideRight {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }

@@ -128,7 +128,7 @@ export function LocationSelectModal({
         onOpenAutoFocus={(e) => e.preventDefault()}
         className="sm:max-w-4xl max-w-4xl max-h-[80vh] overflow-hidden flex flex-col w-[80%]"
       >
-        <DialogHeader>
+        <DialogHeader className="border-b pb-4">
           <DialogTitle>Localização</DialogTitle>
         </DialogHeader>
 
@@ -159,7 +159,7 @@ export function LocationSelectModal({
               placeholder="Buscar bairro..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 focus-visible:ring-[0px]"
+              className="pl-10 focus-visible:ring-[0px] text-sm"
             />
           </div>
         </div>

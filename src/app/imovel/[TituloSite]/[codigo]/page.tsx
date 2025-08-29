@@ -99,8 +99,8 @@ export default async function ImovelPage({
   function gerarTitulo() {
     const capitalizar = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    
-    let status = ""  
+
+    let status = ""
     if (imovel.status == "VENDA") {
       status += ` à venda`;
     } else {
@@ -186,7 +186,7 @@ export default async function ImovelPage({
                     {gerarTitulo()}
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d]">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-[#4d4d4d] w-full">
                     {hasBadges && (
                       <div className="flex gap-2 flex-wrap">
                         {[
@@ -207,18 +207,14 @@ export default async function ImovelPage({
                       </div>
                     )}
 
-                    {(imovel.ValorCondominio &&
-                      parseFloat(imovel.ValorCondominio) > 0.0) ||
-                    (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
+                    {(imovel.ValorCondominio && parseFloat(imovel.ValorCondominio) > 0.0) ||
+                      (imovel.ValorIptu && parseFloat(imovel.ValorIptu) > 0) ? (
                       <div className="flex items-center gap-2 text-xs text-black whitespace-nowrap">
                         {imovel.ValorCondominio &&
                           parseFloat(imovel.ValorCondominio) > 0 && (
                             <span>
                               Condomínio R${" "}
-                              {parseFloat(
-                                imovel.ValorCondominio
-                              ).toLocaleString("pt-BR")}
-                              /mês
+                              {parseFloat(imovel.ValorCondominio).toLocaleString("pt-BR")}/mês
                             </span>
                           )}
 
@@ -232,20 +228,24 @@ export default async function ImovelPage({
                             />
                           )}
 
-                        {imovel.ValorIptu != "" &&
+                        {imovel.ValorIptu &&
                           parseFloat(imovel.ValorIptu) > 0 && (
                             <span>
                               IPTU R${" "}
-                              {parseFloat(imovel.ValorIptu).toLocaleString(
-                                "pt-BR"
-                              )}
-                              /mês
+                              {parseFloat(imovel.ValorIptu).toLocaleString("pt-BR")}/mês
                             </span>
                           )}
                       </div>
                     ) : null}
 
-                    <div className="flex items-center gap-1 ml-4">
+                    <div
+                      className={`flex items-center gap-1 ${!hasBadges &&
+                          (!imovel.ValorCondominio || parseFloat(imovel.ValorCondominio) === 0) &&
+                          (!imovel.ValorIptu || parseFloat(imovel.ValorIptu) === 0)
+                          ? ''
+                          : 'ml-4'
+                        }`}
+                    >
                       <FavoriteButton property={imovel} />
                       <span className="font-bold">Salvar</span>
                     </div>
@@ -290,9 +290,8 @@ export default async function ImovelPage({
                             {imovel.Dormitorios} quarto
                             {imovel.Dormitorios > 1 ? "s" : ""}
                             {imovel.Suites > 0
-                              ? ` (${imovel.Suites} suíte${
-                                  imovel.Suites > 1 ? "s" : ""
-                                })`
+                              ? ` (${imovel.Suites} suíte${imovel.Suites > 1 ? "s" : ""
+                              })`
                               : ""}
                           </span>
                         </div>
@@ -477,7 +476,7 @@ export default async function ImovelPage({
                   </div>
                 </div>
 
-                <div className="mt-6 border-t border-gray-400"></div>
+                <div className="border-t"></div>
 
                 <div>
                   <p className="text-gray-800 text-lg mb-8">

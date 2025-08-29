@@ -255,21 +255,6 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
       titulo += ` com código ${codigo}`;
     }
 
-    // Faixa de preço
-    const min = searchData.valueRange.min;
-    const max = searchData.valueRange.max;
-    if (min || max) {
-      if (min && max) {
-        titulo += `, entre R$ ${Number(min).toLocaleString()} e R$ ${Number(
-          max
-        ).toLocaleString()}`;
-      } else if (min) {
-        titulo += `, a partir de R$ ${Number(min).toLocaleString()}`;
-      } else if (max) {
-        titulo += `, até R$ ${Number(max).toLocaleString()}`;
-      }
-    }
-
     setTitulo(titulo);
   }
 
@@ -704,7 +689,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
           </div>
         </div>
         <div className="justify-items-center">
-          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl flex items-center justify-between">
+          <div className="px-8 sm:px-10 md:px-12 w-full max-w-7xl flex flex-col gap-4 sm:gap-0 sm:flex-row items-center justify-between">
             <div className="h-auto min-h-6 rounded-sm">
               <h1 className="text-2xl font-bold text-[#4d4d4d]">{titulo}</h1>
             </div>

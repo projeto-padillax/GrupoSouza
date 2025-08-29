@@ -109,19 +109,19 @@ export function TypeSelectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="lg:max-w-2xl w-[70vw] sm:w-full h-[80vh] p-0">
-        <DialogHeader className="p-6 pb-4 border-b">
-          <DialogTitle className="flex items-center gap-2">
+      <DialogContent className="sm:max-w-2xl max-w-4xl max-h-[80vh] overflow-hidden flex flex-col w-[80%]">
+        <DialogHeader className="border-b pb-4">
+          <DialogTitle>
             Tipos de Imóveis
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-6 pt-4 pb-2">
+        <div className="flex-1 overflow-y-auto px-6">
           {isMobile ? (
             <div className="space-y-4">
               {/* Residenciais */}
               <div>
-                <div className="flex items-center gap-2 mb-2 ml-3 border-0 shadow-none">
+                <div className="py-2 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3] rounded-md">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -133,13 +133,13 @@ export function TypeSelectModal({
                       handleSelectAll(residenciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-medium text-lg text-white">Residenciais</h3>
+                  <h3 className="font-medium text-white">Residenciais</h3>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 pt-3">
                   {residenciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
+                      className={`flex items-center gap-2 px-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
                         tempSelectedTypes.includes(type.id)
                           ? "border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -168,7 +168,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div>
-                <div className="flex items-center gap-2 mb-2 ml-3 border-0 shadow-none">
+                <div className="py-2 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3] rounded-md">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -180,13 +180,13 @@ export function TypeSelectModal({
                       handleSelectAll(comerciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-medium text-lg text-white">Comerciais</h3>
+                  <h3 className="font-medium text-white">Comerciais</h3>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 pt-3">
                   {comerciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
+                      className={`flex items-center gap-2 px-3 rounded-lg cursor-pointer transition-colors border-0 shadow-none ${
                         tempSelectedTypes.includes(type.id)
                           ? " border shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -217,7 +217,7 @@ export function TypeSelectModal({
             <div className="grid grid-cols-2 gap-6">
               {/* Residenciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
+                <div className="py-2 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
                   <Checkbox
                     checked={allResidenciaisSelected}
                     ref={(el) => {
@@ -229,13 +229,13 @@ export function TypeSelectModal({
                       handleSelectAll(residenciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-medium text-lg text-white">Residenciais</h3>
+                  <h3 className="font-medium text-white">Residenciais</h3>
                 </div>
-                <div className="p-4 space-y-2 pl-0">
+                <div className="flex flex-col gap-2 py-3">
                   {residenciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
+                      className={`flex items-center gap-2 px-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
                         tempSelectedTypes.includes(type.id)
                           ? "border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -264,7 +264,7 @@ export function TypeSelectModal({
 
               {/* Comerciais */}
               <div className="border rounded-lg overflow-hidden">
-                <div className="p-4 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
+                <div className="py-2 pl-3 border-b flex items-center gap-2 border-0 shadow-none bg-[#4F7DC3]">
                   <Checkbox
                     checked={allComerciaisSelected}
                     ref={(el) => {
@@ -276,13 +276,13 @@ export function TypeSelectModal({
                       handleSelectAll(comerciaisTypes, checked as boolean)
                     }
                   />
-                  <h3 className="font-medium text-lg text-white">Comerciais</h3>
+                  <h3 className="font-medium text-white">Comerciais</h3>
                 </div>
-                <div className="p-4 space-y-2 pl-0">
+                <div className="flex flex-col gap-2 py-3">
                   {comerciaisTypes.map((type) => (
                     <div
                       key={type.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
+                      className={`flex items-center gap-2 px-3 rounded-lg cursor-pointer transition-colors pr-0 border-0 shadow-none ${
                         tempSelectedTypes.includes(type.id)
                           ? " border  shadow-sm"
                           : "hover:bg-gray-50 border border-transparent"
@@ -312,7 +312,7 @@ export function TypeSelectModal({
           )}
         </div>
 
-        <div className="border-t p-6 pt-4">
+        <div className="border-t pt-4">
           <div className="justify-self-center">
             <Button
               onClick={handleConfirm}

@@ -34,7 +34,7 @@ export default function FavoriteButton({ property }: Props) {
       <Heart
         size={24}
         className={`hover:text-blue-700 transition-colors duration-200 ${
-          isFav ? "text-blue-500 fill-blue-500" : "text-gray-400"
+          isFav ? "text-blue-500 fill-blue-500" : "text-[#303030]"
         }`}
       />
     </button>
