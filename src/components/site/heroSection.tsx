@@ -325,7 +325,7 @@ export function HeroSection(banner: HeroSectionProps) {
               </div>
               <Button
                 onClick={handleSearch}
-                className="bg-[#001c40] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4 cursor-pointer"
+                className="bg-[#4f7dc3] hover:bg-[#0084d7] hover:cursor-pointer w-36 md:h-12 md:w-12 md:mt-0 mt-4 cursor-pointer"
                 aria-label="Valor de/até"
               >
                 <Search className="h-6 w-6" />

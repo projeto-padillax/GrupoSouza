@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { ChevronDown, Filter, Search } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { LocationSelectModal } from "./locationSelectModal";
 import { TypeSelectModal } from "./tipoImovelSelectModal";
 import { Button } from "../ui/button";
@@ -485,7 +485,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
                 }}
               >
                 Filtros
-                <Filter className="h-4 w-4 text-gray-500 mr-1" />
+                <SlidersHorizontal className="h-4 w-5" />
               </Button>
 
               {/* Busca por código */}
