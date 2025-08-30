@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "vistaloftapi",
-    "vistaloftapi": "vistaloftapi"
-  },
-  "targets": {},
-  "etags": {}
-}

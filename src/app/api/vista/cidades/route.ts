@@ -1,5 +1,4 @@
-import { db } from "@/lib/firebase/clientApp";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { prisma } from "@/lib/neon/db";
 
 export async function POST() {
   try {
@@ -27,20 +26,19 @@ export async function POST() {
     if (!firstResponse.ok) throw new Error("Falha ao obter cidades");
 
     const firstData = await firstResponse.json();
-
     const cidades: string[] = firstData?.Cidade ?? [];
 
     if (!Array.isArray(cidades) || cidades.length === 0) {
       throw new Error("Nenhuma cidade encontrada");
     }
 
-    for (const cidade of cidades) {
-      if (cidade.length == 0) continue;
+    for (const cidadeNome of cidades) {
+      if (cidadeNome.length == 0) continue;
 
-      console.log(cidade);
+      console.log(cidadeNome);
       const pesquisa = {
         fields: ["Cidade", "Bairro"],
-        filter: { Cidade: cidade },
+        filter: { Cidade: cidadeNome },
       };
 
       const params = new URLSearchParams({
@@ -56,7 +54,7 @@ export async function POST() {
       });
 
       if (!response.ok) {
-        console.warn(`Falha ao buscar bairros da cidade: ${cidade}`);
+        console.warn(`Falha ao buscar bairros da cidade: ${cidadeNome}`);
         continue;
       }
 
@@ -69,10 +67,25 @@ export async function POST() {
           .filter((nome) => nome !== "")
       );
 
-      const cidadeId = cidade.replace(/[.#$\[\]/]/g, "_");
+      // Upsert city
+      const cidade = await prisma.cidade.upsert({
+        where: { nome: cidadeNome },
+        update: {},
+        create: { nome: cidadeNome },
+      });
 
-      await setDoc(doc(db, "cidades", cidadeId), {
-        bairros: [...new Set(bairros)],
+      // Clear existing bairros for the city to avoid duplicates
+      await prisma.bairro.deleteMany({
+        where: { cidadeId: cidade.id },
+      });
+
+      // Insert new bairros
+      await prisma.bairro.createMany({
+        data: [...new Set(bairros)].map((b) => ({
+          nome: b,
+          cidadeId: cidade.id,
+        })),
+        skipDuplicates: true,
       });
     }
 
@@ -94,27 +107,16 @@ export async function POST() {
 
 export async function GET() {
   try {
-    const snapshot = await getDocs(collection(db, "cidades"));
-
-    const cidadesMap = new Map<string, string[]>();
-
-    snapshot.docs.forEach((doc) => {
-      const cidadeId = doc.id.toLowerCase();
-      const bairros = doc.data().bairros ?? [];
-
-      if (!cidadesMap.has(cidadeId)) {
-        cidadesMap.set(cidadeId, bairros);
-      }
+    const cidadesComBairros = await prisma.cidade.findMany({
+      include: { bairros: true },
     });
 
-    const cidadesComBairros = Array.from(cidadesMap.entries()).map(
-      ([cidadeId, bairros]) => ({
-        cidade: cidadeId,
-        bairros,
-      })
-    );
+    const cidades = cidadesComBairros.map((c) => ({
+      cidade: c.nome.toLowerCase(),
+      bairros: c.bairros.map((b) => b.nome),
+    }));
 
-    return new Response(JSON.stringify({ cidades: cidadesComBairros }), {
+    return new Response(JSON.stringify({ cidades }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
