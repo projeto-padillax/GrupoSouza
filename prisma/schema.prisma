@@ -294,3 +294,16 @@ model Finalidade {
   nome String
   tipo String
 }
+
+model Cidade {
+  id      Int      @id @default(autoincrement())
+  nome    String   @unique
+  bairros Bairro[]
+}
+
+model Bairro {
+  id       Int    @id @default(autoincrement())
+  nome     String
+  cidadeId Int
+  cidade   Cidade @relation(fields: [cidadeId], references: [id])
+}

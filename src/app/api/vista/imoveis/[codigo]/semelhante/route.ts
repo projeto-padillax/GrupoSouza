@@ -1,8 +1,5 @@
+import { prisma } from "@/lib/neon/db";
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient(); // Initialize Prisma Client
-
 // Type definitions to match your Prisma schema and Firestore data
 // You can keep a more specific type if 'Imovel' doesn't contain all fields
 // but for now, it's mapped to the Prisma Imovel model.
