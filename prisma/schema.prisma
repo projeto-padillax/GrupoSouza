@@ -270,7 +270,7 @@ model Foto {
   urlPequena String?
 
   imovelId String
-  imovel   Imovel @relation(fields: [imovelId], references: [id])
+  imovel   Imovel @relation(fields: [imovelId], references: [id], onDelete: Cascade)
 
   @@index([imovelId, id])
   @@map("fotos")
@@ -282,7 +282,7 @@ model Caracteristica {
   valor String
 
   imovelId String
-  imovel   Imovel @relation(fields: [imovelId], references: [id])
+  imovel   Imovel @relation(fields: [imovelId], references: [id], onDelete: Cascade)
 
   @@index([imovelId])
   @@index([nome, valor])

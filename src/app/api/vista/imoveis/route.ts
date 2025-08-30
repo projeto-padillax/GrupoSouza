@@ -589,6 +589,87 @@ function parseSimNao(value: string | null): "Sim" | "Nao" | null {
   return null;
 }
 
+export async function PUT() {
+  try {
+    // Fetch first page to determine total pages
+    const firstPageUrl: string = buildListingsUrl(1);
+    const firstPageData: VistaApiResponse = await fetchData<VistaApiResponse>(firstPageUrl);
+    const totalPages: number = Number(firstPageData.paginas) || 1;
+
+    let allProperties: Record<string, any> = extractProperties(firstPageData);
+
+    // Fetch remaining pages concurrently
+    const pagePromises: Promise<Record<string, any>>[] = [];
+    for (let page = 2; page <= totalPages; page++) {
+      pagePromises.push(
+        fetchData<VistaApiResponse>(buildListingsUrl(page))
+          .then((data) => extractProperties(data))
+          .catch((err) => {
+            console.warn(`Falha ao buscar página ${page}: ${err.message}`);
+            return {};
+          })
+      );
+    }
+
+    const results: Record<string, any>[] = await Promise.all(pagePromises);
+    results.forEach((pageProperties) => {
+      allProperties = { ...allProperties, ...pageProperties };
+    });
+
+    const apiIds = Object.keys(allProperties);
+
+    // Get all existing IDs from database
+    const existingImoveis = await prisma.imovel.findMany({ select: { id: true, DataHoraAtualizacao: true } });
+    const existingIds = new Set(existingImoveis.map((i) => i.id));
+
+    // Concurrency limit to avoid overload
+    const limit = pLimit(5);
+
+    // Add or update properties from API
+    const upsertPromises = apiIds.map((code) =>
+      limit(async () => {
+        const property = allProperties[code];
+        const existing = existingImoveis.find((i) => i.id === code);
+
+        const apiDate = property.DataHoraAtualizacao ? new Date(property.DataHoraAtualizacao).getTime() : 0;
+        const dbDate = existing?.DataHoraAtualizacao ? new Date(existing.DataHoraAtualizacao).getTime() : 0;
+
+        if (!existing || apiDate > dbDate) {
+          await processAndUpsertProperty(code, property);
+        }
+      })
+    );
+
+    // Delete properties not in API
+    const deletePromises = existingImoveis
+      .filter((i) => !apiIds.includes(i.id))
+      .map((i) =>
+        limit(() => prisma.imovel.delete({ where: { id: i.id } }))
+      );
+
+    const [upsertResults, deleteResults] = await Promise.all([
+      Promise.allSettled(upsertPromises),
+      Promise.allSettled(deletePromises),
+    ]);
+
+    return NextResponse.json({
+      message: "Sincronização concluída.",
+      addedOrUpdated: upsertResults.filter((r) => r.status === "fulfilled").length,
+      deleted: deleteResults.filter((r) => r.status === "fulfilled").length,
+      failedUpserts: upsertResults.filter((r) => r.status === "rejected").length,
+      failedDeletes: deleteResults.filter((r) => r.status === "rejected").length,
+    });
+  } catch (error: any) {
+    console.error("Erro ao sincronizar imóveis:", error.message);
+    return NextResponse.json(
+      { error: "Erro interno ao sincronizar imóveis" },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 export async function DELETE() {
   try {
     // 1. Deletar todas as Características
