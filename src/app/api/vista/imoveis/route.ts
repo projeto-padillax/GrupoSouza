@@ -33,11 +33,6 @@ interface VistaPropertyDetailPhoto {
   FotoPequena?: string;
 }
 
-interface VistaPropertyDetails {
-  Foto?: Record<string, VistaPropertyDetailPhoto>;
-  [key: string]: any; // Para outros campos de detalhes
-}
-
 // Interfaces para corresponder ao seu schema Prisma para inputs aninhados
 interface ImovelPhotoCreateInput {
   destaque?: string | null;
@@ -67,23 +62,11 @@ const LISTING_RESEARCH_FIELDS: string[] = [
 ];
 
 
-// Campos para os detalhes (detalhes) - inclui a estrutura de fotos
-const DETAIL_RESEARCH_FIELDS: (string | Record<string, string[]>)[] = [
-  ...LISTING_RESEARCH_FIELDS, // Inclui todos os campos da listagem
-  { Foto: ["Foto", "FotoPequena", "Destaque"] } // ✨ ADICIONADO: Para buscar detalhes da foto
-];
 
 const BASE_PARAMS_LISTING: VistaBaseParams = {
   key: process.env.VISTA_KEY!,
   showtotal: "1"
 };
-
-const BASE_PARAMS_DETAILS: VistaBaseParams = {
-  key: process.env.VISTA_KEY!,
-};
-
-
-// --- Funções Auxiliares ---
 
 /**
  * Constrói a URL para buscar as listagens de imóveis.
@@ -106,27 +89,6 @@ const buildListingsUrl = (page: number): string => {
 
   return `${VISTA_BASE_URL}/listar?${params}`;
 };
-
-/**
- * Constrói a URL para buscar os detalhes de um imóvel, incluindo fotos.
- * ✨ CORRIGIDO: Esta função agora usa a lógica do seu makeUrlCadastraDetalhes
- * @param {string} propertyCode O código único do imóvel.
- * @returns {string} A URL completa para a API de detalhes do imóvel.
- */
-const buildDetailsUrl = (propertyCode: string): string => {
-  const researchPayload: VistaResearchPayload = {
-    fields: DETAIL_RESEARCH_FIELDS, // ✨ Usa os campos de detalhe que incluem a estrutura 'Foto'
-  };
-
-  const params = new URLSearchParams({
-    ...BASE_PARAMS_DETAILS,
-    pesquisa: JSON.stringify(researchPayload),
-    imovel: propertyCode // ✨ O código do imóvel é passado como parâmetro 'imovel'
-  });
-
-  return `${VISTA_BASE_URL}/detalhes?${params}`;
-};
-
 
 /**
  * Extrai os dados dos imóveis da resposta da API, excluindo metadados.
@@ -295,6 +257,7 @@ const processAndUpsertProperty = async (
   propertyData: VistaPropertyData
 ): Promise<void> => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { Caracteristicas, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
 
     const validDataHoraAtualizacao: string =
