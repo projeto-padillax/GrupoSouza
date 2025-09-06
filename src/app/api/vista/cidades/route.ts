@@ -1,5 +1,27 @@
 import { prisma } from "@/lib/neon/db";
 
+export async function DELETE() {
+  try {
+    // Primeiro apaga todos os bairros (para não dar FK error)
+    await prisma.bairro.deleteMany();
+
+    // Depois apaga todas as cidades
+    await prisma.cidade.deleteMany();
+
+    return new Response(
+      JSON.stringify({ message: "Todas as cidades e bairros foram deletados com sucesso" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("Erro ao deletar cidades:", error);
+    return new Response(JSON.stringify({ error: "Erro ao deletar cidades" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+
+
 export async function POST() {
   try {
     const basePesquisa = {
@@ -15,7 +37,7 @@ export async function POST() {
         ...baseParams,
         pesquisa: JSON.stringify(basePesquisa),
       });
-      return `https://gruposou-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
+      return `https://multiimo-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
     };
 
     const firstResponse = await fetch(makeUrl(), {
@@ -35,7 +57,6 @@ export async function POST() {
     for (const cidadeNome of cidades) {
       if (cidadeNome.length == 0) continue;
 
-      console.log(cidadeNome);
       const pesquisa = {
         fields: ["Cidade", "Bairro"],
         filter: { Cidade: cidadeNome },
@@ -46,7 +67,7 @@ export async function POST() {
         pesquisa: JSON.stringify(pesquisa),
       });
 
-      const url = `https://gruposou-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
+      const url = `https://multiimo-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
 
       const response = await fetch(url, {
         method: "GET",

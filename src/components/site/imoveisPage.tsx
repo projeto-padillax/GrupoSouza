@@ -119,7 +119,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
         ? searchData.locations[0].split(":")[0] +
           "+" +
           searchData.locations[0].split(":")[1]
-        : "Piracicaba"
+        : "porto alegre"
     }`;
     if (searchData.action) newSearchParams.set("action", searchData.action);
     if (searchData.tipos?.length > 0)
@@ -332,7 +332,7 @@ export default function ImoveisPage({ filtros }: { filtros: Filtros }) {
             ? searchData.locations[0].split(":")[0] +
               "+" +
               searchData.locations[0].split(":")[1]
-            : "Piracicaba"
+            : "porto alegre"
         }/${code}`
       );
     } catch (error) {

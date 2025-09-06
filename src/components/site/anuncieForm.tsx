@@ -15,7 +15,7 @@ const schema = z.object({
     endereco: z.string().min(3, "Informe o endereço"),
     bairro: z.string().min(1, "Informe o bairro"),
     cidade: z.string().min(1, "Informe a cidade"),
-    finalidade: z.enum(["ALUGUEL", "VENDA", "VENDA E ALUGUEL"], "Escolha a finalidade do anúncio"),
+    finalidade: z.enum(["Aluguel", "Venda", "Venda e Aluguel"], "Escolha a finalidade do anúncio"),
     valorDesejado: z
         .number("Insira o valor desejado")
         .positive("Número deve ser positivo"),
@@ -113,9 +113,9 @@ export default function AnuncieForm() {
                             defaultValue=""
                         >
                             <option value="" disabled>Selecione</option>
-                            <option value="ALUGUEL">Aluguel</option>
-                            <option value="VENDA">Venda</option>
-                            <option value="VENDA E ALUGUEL">Venda e Aluguel</option>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Venda">Venda</option>
+                            <option value="Venda e Aluguel">Venda e Aluguel</option>
                         </select>
                         {errors.finalidade && <p className="text-red-500 text-xs mt-1">{errors.finalidade.message}</p>}
                     </div>

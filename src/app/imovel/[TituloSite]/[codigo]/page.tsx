@@ -35,7 +35,7 @@ export async function generateMetadata({
   if (imovel.Categoria) {
     title += `${capitalizar(imovel.Categoria)} `;
   }
-  if (imovel.status == "VENDA") {
+  if (imovel.status == "Venda") {
     title += `à venda em`;
   } else {
     title += `para alugar em`;
@@ -101,7 +101,7 @@ export default async function ImovelPage({
       str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
     let status = ""
-    if (imovel.status == "VENDA") {
+    if (imovel.status == "Venda") {
       status += ` à venda`;
     } else {
       status += ` para alugar`;
@@ -516,13 +516,13 @@ export default async function ImovelPage({
 
               <ImovelContatoBox
                 financiamento={
-                  imovel.Status === "VENDA" ||
-                  imovel.Status === "VENDA E ALUGUEL"
+                  imovel.Status === "Venda" ||
+                  imovel.Status === "Venda e Aluguel"
                 }
                 codigoImovel={imovel.Codigo}
                 valor={parseFloat(imovel.ValorVenda || imovel.ValorLocacao)}
                 finalidade={
-                  imovel.Status as "VENDA" | "ALUGUEL" | "VENDA E ALUGUEL"
+                  imovel.Status as "Venda" | "Aluguel" | "Venda e Aluguel"
                 }
               />
             </div>

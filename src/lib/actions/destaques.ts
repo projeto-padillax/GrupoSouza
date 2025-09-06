@@ -16,7 +16,7 @@ export async function getDestaques() {
       where: {
         DestaqueWeb: "Sim",
         Lancamento: "Nao",
-        Status: "VENDA",
+        Status: "Venda",
       },
       take: 4,
     }),
@@ -25,14 +25,23 @@ export async function getDestaques() {
       where: {
         DestaqueWeb: "Sim",
         Lancamento: "Nao",
-        Status: "ALUGUEL",
+        Status: "Aluguel",
+      },
+      take: 4,
+    }),
+  ]);
+
+  const [randomLanc] = await Promise.all([
+    prisma.imovel.findMany({
+      where: {
+        DestaqueWeb: "Sim",
       },
       take: 4,
     }),
   ]);
 
   return {
-    lancamentos: lancamentos as Destaque[],
+    lancamentos: (lancamentos.length ? lancamentos : randomLanc) as Destaque[],
     venda: venda as Destaque[],
     aluguel: aluguel as Destaque[],
   };

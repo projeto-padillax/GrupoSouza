@@ -16,8 +16,8 @@ type Imovel = {
 };
 
 const STATUS_COMPATIVEIS = {
-  venda: ["VENDA", "VENDA E ALUGUEL"] as const,
-  aluguel: ["ALUGUEL", "VENDA E ALUGUEL"] as const,
+  venda: ["Venda", "Venda e Aluguel"] as const,
+  aluguel: ["Aluguel", "Venda e Aluguel"] as const,
 };
 
 // No longer needed as ValorVenda/ValorLocacao are numbers from Prisma
@@ -35,7 +35,7 @@ function decideModalidade(base: Imovel, explicit?: "venda" | "aluguel"): "venda"
   if (venda && venda > 0) return "venda";
   if (loc && loc > 0) return "aluguel";
   // Fallback to Status if prices are not available or zero
-  if (base.Status === "ALUGUEL") return "aluguel";
+  if (base.Status === "Aluguel") return "aluguel";
   return "venda";
 }
 
@@ -88,7 +88,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ codigo: 
     // const categoria = base.Categoria;
 
     // Ensure types for Prisma where clause are correct
-    const statusCompat = STATUS_COMPATIVEIS[modalidade] as readonly ("VENDA" | "ALUGUEL" | "VENDA E ALUGUEL")[];
+    const statusCompat = STATUS_COMPATIVEIS[modalidade] as readonly ("Venda" | "Aluguel" | "Venda e Aluguel")[];
 
     // 2. Build the Prisma query for similar properties
     const similarImoveis = await prisma.imovel.findMany({

@@ -10,7 +10,7 @@ interface ImovelContatoBoxProps {
     financiamento?: boolean
     codigoImovel: string
     valor: number
-    finalidade: 'VENDA' | 'ALUGUEL' | 'VENDA E ALUGUEL'
+    finalidade: 'Venda' | 'Aluguel' | 'Venda e Aluguel'
 }
 
 export default function ImovelContatoBox({
@@ -18,7 +18,7 @@ export default function ImovelContatoBox({
     valor,
     finalidade,
 }: ImovelContatoBoxProps) {
-    const isVenda = finalidade === 'VENDA' || finalidade === 'VENDA E ALUGUEL'
+    const isVenda = finalidade === 'Venda' || finalidade === 'Venda e Aluguel'
 
     const [abrirAgendamento, setAbrirAgendamento] = useState(false)
     const [modalAberta, setModalAberta] = useState(false)

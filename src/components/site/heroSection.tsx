@@ -115,7 +115,7 @@ export function HeroSection(banner: HeroSectionProps) {
         ? searchData.locations[0].split(":")[0] +
           "+" +
           searchData.locations[0].split(":")[1]
-        : "Piracicaba"
+        : "porto alegre"
     }`;
 
     router.push(`${path}?${decodeURIComponent(newSearchParams.toString())}`);
@@ -129,7 +129,7 @@ export function HeroSection(banner: HeroSectionProps) {
         ? searchData.locations[0].split(":")[0] +
           "+" +
           searchData.locations[0].split(":")[1]
-        : "Piracicaba"
+        : "porto alegre"
     }`;
 
     const newSearchParams = new URLSearchParams();
@@ -147,7 +147,7 @@ export function HeroSection(banner: HeroSectionProps) {
             ? searchData.locations[0].split(":")[0] +
               "+" +
               searchData.locations[0].split(":")[1]
-            : "Piracicaba"
+            : "porto alegre"
         }/${codigo}`
       );
     } catch (error) {
@@ -185,7 +185,7 @@ export function HeroSection(banner: HeroSectionProps) {
           {/* Search tabs */}
           <div className="flex gap-8">
             <Link
-              href="https://www.gruposouza.leadlink.com.br/busca/comprar/cidade/piracicaba/lancamentos/s/1/"
+              href="https://www.gruposouza.leadlink.com.br/busca/comprar/cidade/porto alegre/"
               className="pt-2 text-white bg-transparent text-[18.4px] font-semibold hover:font-semibold hover:border-b-[#4F7DC3] hover:border-b-2 border-b-2 border-b-transparent"
             >
               Lançamentos

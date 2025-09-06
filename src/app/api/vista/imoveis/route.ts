@@ -52,7 +52,7 @@ interface ImovelCaracteristicaCreateInput {
 }
 
 // --- Constantes ---
-const VISTA_BASE_URL = "https://gruposou-rest.vistahost.com.br/imoveis";
+const VISTA_BASE_URL = "https://multiimo-rest.vistahost.com.br/imoveis";
 const PROPERTIES_PER_PAGE = 50;
 
 // Campos para a listagem (listar)
@@ -60,7 +60,7 @@ const LISTING_RESEARCH_FIELDS: string[] = [
   "Codigo", "ValorIptu", "ValorCondominio", "Categoria", "InformacaoVenda", "ObsVenda",
   "AreaTerreno", "Bairro", "GMapsLatitude", "GMapsLongitude", "DescricaoWeb", "Cidade",
   "ValorVenda", "ValorLocacao", "Dormitorios", "Suites", "Vagas", "AreaTotal",
-  "Caracteristicas", "InfraEstrutura", "Descricao", "DataHoraAtualizacao", "Lancamento",
+  "Caracteristicas", "Descricao", "DataHoraAtualizacao", "Lancamento",
   "Finalidade", "Status", "Empreendimento", "Endereco",
   "Numero", "Complemento", "UF", "CEP", "DestaqueWeb", "FotoDestaque", "Latitude", "Longitude",
   "TituloSite", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado", "AreaConstruida"
@@ -505,7 +505,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action") ?? "comprar";
     const tipos = searchParams.get("tipos")?.split(",").filter(Boolean) || [];
     const bairros = searchParams.get("bairro")?.split(",").filter(Boolean) || [];
-    const cidade = searchParams.get("cidade") ?? "piracicaba";
+    const cidade = searchParams.get("cidade") ?? "porto alegre";
     const valorMin = Number(searchParams.get("valorMin")) || null;
     const valorMax = Number(searchParams.get("valorMax")) || null;
     const quartos = searchParams.get("quartos") || null;
@@ -532,7 +532,7 @@ export async function GET(request: NextRequest) {
 
     // --- Filtros base ---
     const whereClause: any = {
-      Status: isAluguel ? "ALUGUEL" : "VENDA",
+      Status: isAluguel ? "Aluguel" : "Venda",
     };
 
     if (cidade) whereClause.Cidade = { equals: cidade, mode: "insensitive" };

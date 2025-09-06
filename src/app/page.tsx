@@ -31,6 +31,7 @@ export default async function Home() {
     getDestaques(),
   ]);
 
+
   return (
     <ClientLayout>
       <div className="min-h-screen flex flex-col">

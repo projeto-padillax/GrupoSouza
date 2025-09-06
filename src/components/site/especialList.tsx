@@ -100,8 +100,8 @@ export default function EspecialList({ id }: EspecialListProps) {
     return <p className="text-center text-gray-500 py-8">Nenhum imóvel encontrado.</p>
   }
 
-  const paraComprar = imoveis.filter((i) => i.Status === 'VENDA')
-  const paraAlugar = imoveis.filter((i) => i.Status === 'ALUGUEL')
+  const paraComprar = imoveis.filter((i) => i.Status === 'Venda')
+  const paraAlugar = imoveis.filter((i) => i.Status === 'Aluguel')
 
   return (
     <div className="w-full py-8 space-y-10">

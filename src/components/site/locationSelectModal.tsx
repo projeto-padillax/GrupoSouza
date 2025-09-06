@@ -73,8 +73,8 @@ export function LocationSelectModal({
 
         const cidadesOrdenadas: LocationOption[] = cidadesMapeadas.sort(
           (a: LocationOption, b: LocationOption) => {
-            if (a.cidade.toLowerCase() === "piracicaba") return -1;
-            if (b.cidade.toLowerCase() === "piracicaba") return 1;
+            if (a.cidade.toLowerCase() === "porto alegre") return -1;
+            if (b.cidade.toLowerCase() === "porto alegre") return 1;
             return a.cidade.localeCompare(b.cidade);
           }
         );
@@ -85,7 +85,7 @@ export function LocationSelectModal({
         if (cidadesOrdenadas.length > 0) {
           setSelectedCidade(
             cidadesOrdenadas.find(
-              (c) => c.cidade.toLowerCase() === "piracicaba"
+              (c) => c.cidade.toLowerCase() === "porto alegre"
             )?.cidade || cidadesOrdenadas[0].cidade
           );
         }

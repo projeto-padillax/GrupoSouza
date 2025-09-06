@@ -21,7 +21,7 @@ export async function POST() {
         pesquisa: JSON.stringify(pesquisa),
       });
 
-      return `https://gruposou-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
+      return `https://multiimo-rest.vistahost.com.br/imoveis/listarConteudo?${params}`;
     };
 
     // Requisições paralelas

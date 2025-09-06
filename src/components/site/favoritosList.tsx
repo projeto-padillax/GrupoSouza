@@ -9,8 +9,8 @@ import { Imovel } from "@prisma/client";
 export default function FavoritesList() {
   const favoritos = useFavoriteStore((state) => state.favorites);
 
-  const comprar = favoritos.filter((favorito) => favorito.Status === "VENDA");
-  const alugar = favoritos.filter((favorito) => favorito.Status === "ALUGUEL");
+  const comprar = favoritos.filter((favorito) => favorito.Status === "Venda");
+  const alugar = favoritos.filter((favorito) => favorito.Status === "Aluguel");
 
   if (favoritos.length === 0) {
     return (
