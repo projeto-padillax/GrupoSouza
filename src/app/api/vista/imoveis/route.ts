@@ -66,6 +66,7 @@ const LISTING_RESEARCH_FIELDS: string[] = [
   "TituloSite", "FotoDestaqueEmpreendimento", "VideoDestaque", "Mobiliado", "AreaConstruida"
 ];
 
+
 // Campos para os detalhes (detalhes) - inclui a estrutura de fotos
 const DETAIL_RESEARCH_FIELDS: (string | Record<string, string[]>)[] = [
   ...LISTING_RESEARCH_FIELDS, // Inclui todos os campos da listagem
@@ -176,51 +177,156 @@ interface VistaPropertyData {
   [key: string]: any; // Permite outros campos dinâmicos da API Vista
 }
 
-// ... (restante do código até processAndUpsertProperty)
+const images = [
+  {
+    destaque: "true",
+    codigo: "1",
+    url: "https://www.template.leadlink.com.br/fotos/g/43e7430a8dcdbeb3d5045d8b27277c3416.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRDlxSFFzWjRDb2VTTmNmTStYZDhmRWc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/43e7430a8dcdbeb3d5045d8b27277c3416.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRDlxSFFzWjRDb2VTTmNmTStYZDhmRWc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "2",
+    url: "https://www.template.leadlink.com.br/fotos/g/43e7430a8dcdbeb3d5045d8b27277c3416.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRDlxSFFzWjRDb2VTTmNmTStYZDhmRWc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/43e7430a8dcdbeb3d5045d8b27277c3416.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRDlxSFFzWjRDb2VTTmNmTStYZDhmRWc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "3",
+    url: "https://www.template.leadlink.com.br/fotos/g/cc0a0ac29fd07a2201e7644af4a034b304.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRElUMUJEbEhMQUhNT0ZOL1J2Z2RFWHc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/cc0a0ac29fd07a2201e7644af4a034b304.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRElUMUJEbEhMQUhNT0ZOL1J2Z2RFWHc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "4",
+    url: "https://www.template.leadlink.com.br/fotos/g/cc0a0ac29fd07a2201e7644af4a034b304.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRElUMUJEbEhMQUhNT0ZOL1J2Z2RFWHc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/cc0a0ac29fd07a2201e7644af4a034b304.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRElUMUJEbEhMQUhNT0ZOL1J2Z2RFWHc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "5",
+    url: "https://www.template.leadlink.com.br/fotos/g/c250e9ccc5aa2599be4dbd5d396fc1ca09.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHdEalhKNFhwNlFRdEVCTzVRS3FHalE9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/c250e9ccc5aa2599be4dbd5d396fc1ca09.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHdEalhKNFhwNlFRdEVCTzVRS3FHalE9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "6",
+    url: "https://www.template.leadlink.com.br/fotos/g/ac715d73262a8931c68643b20348e65a15.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHc4ZllyQUpzSXAxZnJNSjd5Q1RRMHc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/ac715d73262a8931c68643b20348e65a15.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHc4ZllyQUpzSXAxZnJNSjd5Q1RRMHc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "7",
+    url: "https://www.template.leadlink.com.br/fotos/g/95b31c500c98126cd840b63c4c6d32da03.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFlPTWRIYlZqVE5teWpBNXVHOUJMUXc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/95b31c500c98126cd840b63c4c6d32da03.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFlPTWRIYlZqVE5teWpBNXVHOUJMUXc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "8",
+    url: "https://www.template.leadlink.com.br/fotos/g/0f24a4ec171afffaa1241725079e81c611.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHp5QXNQZWxkSnd2UkozWnUxRWFCREE9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/0f24a4ec171afffaa1241725079e81c611.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHp5QXNQZWxkSnd2UkozWnUxRWFCREE9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "9",
+    url: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "10",
+    url: "https://www.template.leadlink.com.br/fotos/g/1d1f26f44e4a8ab1e800e40a01b575a614.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFBZZ3p1bXVSOWJHSHNUTVMyN2FlSFE9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/1d1f26f44e4a8ab1e800e40a01b575a614.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFBZZ3p1bXVSOWJHSHNUTVMyN2FlSFE9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "11",
+    url: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "12",
+    url: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/67cee18a300f0fb2b599a0826e4bef5e02.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHk3N0JwbFFJWmdGWmJDc0pvVll6U0E9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "13",
+    url: "https://www.template.leadlink.com.br/fotos/g/64be2d96a47ce7930d903538927540e912.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHJ0aUdiSHhQTkJMN2lwRjBLYm1KK0E9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/64be2d96a47ce7930d903538927540e912.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRHJ0aUdiSHhQTkJMN2lwRjBLYm1KK0E9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "14",
+    url: "https://www.template.leadlink.com.br/fotos/g/521d08720c218eef37a5a102b867fd7610.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFZ3azZuK1N5Vi9udlUza3Z5RmZyR1E9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/521d08720c218eef37a5a102b867fd7610.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFZ3azZuK1N5Vi9udlUza3Z5RmZyR1E9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "15",
+    url: "https://www.template.leadlink.com.br/fotos/g/b3109116d5677067f340113d97e2ea2206.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFFPT3hkczFVRnVrYjhYRWJ4cmNrVlE9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/b3109116d5677067f340113d97e2ea2206.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFFPT3hkczFVRnVrYjhYRWJ4cmNrVlE9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "16",
+    url: "https://www.template.leadlink.com.br/fotos/g/12b23ac519d4979587a2c988673f464807.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFM5Qzg2emtTYk5HUklRWjR3QitSdHc9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/12b23ac519d4979587a2c988673f464807.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRFM5Qzg2emtTYk5HUklRWjR3QitSdHc9PQ==",
+},
+{
+    destaque: "true",
+    codigo: "17",
+    url: "https://www.template.leadlink.com.br/fotos/g/63aaf027a86ffde424918a637da73b3505.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRGxmek00dHdZU2NOV1hpREo0cHZpcFE9PQ==",
+    urlPequena: "https://www.template.leadlink.com.br/fotos/g/63aaf027a86ffde424918a637da73b3505.webp?token=cEt6YmlubGFGVnM0Q1pIZVJlSjFOellIWkY3RGxzOFVOc1JIN1RWQXoyb0lwZFltN2xoVFlLbzJESThnQ3lxRGxmek00dHdZU2NOV1hpREo0cHZpcFE9PQ=="
+},
+]
 
-/**
- * Processa um único imóvel, busca seus detalhes e o insere/atualiza no banco de dados.
- * @param {string} code O código do imóvel.
- * @param {VistaPropertyData} propertyData Os dados iniciais do imóvel.
- */
-const processAndUpsertProperty = async (code: string, propertyData: VistaPropertyData): Promise<void> => {
+// 🔄 Função utilitária para embaralhar
+function shuffleArray<T>(array: T[]): T[] {
+  return array
+    .map((item) => ({ item, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ item }) => item);
+}
+
+const processAndUpsertProperty = async (
+  code: string,
+  propertyData: VistaPropertyData
+): Promise<void> => {
   try {
-    // ✨ Include 'CodigoImobiliaria' in the destructuring
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { Caracteristicas, Foto, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
+    const { Caracteristicas, DataHoraAtualizacao, Cidade, CodigoImobiliaria, ...restOfProperty } = propertyData || {};
 
     const validDataHoraAtualizacao: string =
       DataHoraAtualizacao && !isNaN(Date.parse(DataHoraAtualizacao))
         ? new Date(DataHoraAtualizacao).toISOString()
         : new Date().toISOString();
 
-    const details: VistaPropertyDetails = await fetchData<VistaPropertyDetails>(buildDetailsUrl(code)).catch(err => {
-      console.warn(`Não foi possível buscar detalhes para o imóvel ${code}: ${err.message}`);
-      return {};
-    });
+    // 🚫 Ignora fotos da API
+    const shuffledPhotos = shuffleArray(images);
 
-    const photosToCreate: ImovelPhotoCreateInput[] = Object.values(details.Foto || {}).map((photo: VistaPropertyDetailPhoto) => ({
-      destaque: photo.Destaque !== undefined && photo.Destaque !== null ? String(photo.Destaque) : null,
-      codigo: photo.Codigo ?? null,
-      url: photo.Foto ?? null,
-      urlPequena: photo.FotoPequena ?? null,
-    }));
+    // 📌 Define a primeira como destaque (campo e relacionamento)
+    const fotoDestaque = shuffledPhotos.length > 0 ? shuffledPhotos[0].url : null;
 
-    const characteristicsToCreate: ImovelCaracteristicaCreateInput[] = Object.entries(Caracteristicas || {}).map(([key, value]: [string, any]) => ({
-      nome: key,
-      valor: String(value),
-    }));
+    // Todas as fotos continuam no relacionamento
+    const photosToCreate: ImovelPhotoCreateInput[] = shuffledPhotos;
+
+    const characteristicsToCreate: ImovelCaracteristicaCreateInput[] =
+      Object.entries(Caracteristicas || {}).map(
+        ([key, value]: [string, any]) => ({
+          nome: key,
+          valor: String(value),
+        })
+      );
 
     const parseToInt = (value: string | null | undefined): number | null => {
-      if (value === null || value === undefined || value.trim() === '') {
-        return null;
-      }
+      if (!value || value.trim() === "") return null;
       const parsed = parseInt(value, 10);
       return isNaN(parsed) ? null : parsed;
     };
 
     const parseToFloat = (value: string | null | undefined): number | null => {
-      if (!value || value.trim() === '') return 0;
+      if (!value || value.trim() === "") return 0;
       const parsed = parseFloat(value);
       return isNaN(parsed) ? null : parsed;
     };
@@ -231,58 +337,50 @@ const processAndUpsertProperty = async (code: string, propertyData: VistaPropert
     const areaTerrenoFloat = parseToFloat(restOfProperty.AreaTerreno);
     const areaConstruidaFloat = parseToFloat(restOfProperty.AreaConstruida);
 
-    const photosUpdateOperations: any = {};
-    if (photosToCreate.length > 0) {
-      photosUpdateOperations.fotos = {
-        deleteMany: {},
-        create: photosToCreate,
-      };
-    }
-
-    const caracteristicasUpdateOperations: any = {};
-    if (characteristicsToCreate.length > 0) {
-      caracteristicasUpdateOperations.caracteristicas = {
-        deleteMany: {},
-        create: characteristicsToCreate,
-      };
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { AreaTotal, AreaTerreno, AreaConstruida, ...rest } = restOfProperty;
-
 
     await prisma.imovel.upsert({
       where: { id: code },
       update: {
-        ...rest, // agora rest não contém os campos de área
-        Cidade: Cidade,
+        ...rest,
+        Cidade,
         ValorVenda: valorVendaInt,
         ValorLocacao: valorLocacaoInt,
         AreaTotal: areaTotalFloat,
         AreaTerreno: areaTerrenoFloat,
         AreaConstruida: areaConstruidaFloat,
         DataHoraAtualizacao: validDataHoraAtualizacao,
-        ...photosUpdateOperations,
-        ...caracteristicasUpdateOperations,
+        FotoDestaque: fotoDestaque, // 👈 atualiza campo com a primeira foto
+        fotos: {
+          deleteMany: {},
+          create: photosToCreate,
+        },
+        caracteristicas: {
+          deleteMany: {},
+          create: characteristicsToCreate,
+        },
       },
       create: {
         id: code,
-        ...rest, // rest sem campos de área
-        Cidade: Cidade,
+        ...rest,
+        Cidade,
         ValorVenda: valorVendaInt,
         ValorLocacao: valorLocacaoInt,
         AreaTotal: areaTotalFloat,
         AreaTerreno: areaTerrenoFloat,
         AreaConstruida: areaConstruidaFloat,
         DataHoraAtualizacao: validDataHoraAtualizacao,
+        FotoDestaque: fotoDestaque, // 👈 cria campo com a primeira foto
         fotos: {
-          create: photosToCreate
+          create: photosToCreate,
         },
         caracteristicas: {
-          create: characteristicsToCreate
+          create: characteristicsToCreate,
         },
       },
     });
+
     console.log(`Imóvel ${code} processado e upserted com sucesso.`);
   } catch (error: any) {
     console.error(`Erro ao processar imóvel ${code}:`, error.message);

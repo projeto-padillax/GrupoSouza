@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.template.leadlink.com.br',
+        pathname: '**',
+      },
     ],
   },
 };
