@@ -53,7 +53,7 @@ export async function generateMetadata({
 
   return {
     title: title,
-    description: imovel.Descricao,
+    description: imovel.Descricao || imovel.DescricaoWeb,
   };
 }
 
@@ -480,7 +480,7 @@ export default async function ImovelPage({
 
                 <div>
                   <p className="text-gray-800 text-lg mb-8">
-                    {imovel.Descricao}
+                    {imovel.Descricao || imovel.DescricaoWeb}
                   </p>
                 </div>
 
